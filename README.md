@@ -206,8 +206,9 @@ Zachowania dodane w tym etapie:
   aktywna zakładka albo licznik. Na ekranach pełnoekranowych (wyszukiwarka, webview, dodatkowe informacje,
   rejestracja) zjeżdża w dół.
 - **Karta „Aktualny wynik” zwija się do belki** (wzorzec dużego tytułu z Human Interface Guidelines i zwijanego
-  paska Material 3): przy przewijaniu jedzie wolniej niż treść i gaśnie, a jej liczba wjeżdża
-  jako druga linia belki („11 z 14 w normie”). Bez skalowania, żeby ruch był spokojny. Lista parametrów zawsze jest nad kartą.
+  paska Material 3): przy przewijaniu jedzie wolniej niż treść i wsuwa się pod matową belkę,
+  a jej liczba wjeżdża jako druga linia belki („11 z 14 w normie”). Bez skalowania i bez wygaszania, żeby ruch był
+  spokojny i karta pozostała czytelna do końca. Lista parametrów przechodzi nad kartą.
 - **W tle karty jest bardzo delikatny blask** — miękkie światło z lewej góry, które powoli oddycha (16 s).
   Przy włączonym „Ogranicz ruch” w systemie blask stoi, a karta nie animuje się przy przewijaniu.
 - **Chipy sposobu realizacji gasną szybciej, niż zwija się ich pas** — nie widać obcięcia od dołu i nie wchodzą

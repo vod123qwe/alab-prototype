@@ -179,11 +179,8 @@
           raf = 0; const y = body.scrollTop, p = Math.max(0, Math.min(1, y / D));
           top.classList.toggle('is-scrolled', y > 8);
           top.classList.toggle('is-summary', p > 0.55);
-          if (card && !reduce) {
-            // prosty ruch: karta jedzie wolniej niż treść i gaśnie, bez skalowania
-            card.style.setProperty('--py', (y * 0.18).toFixed(1) + 'px');
-            card.style.opacity = String(Math.max(0, 1 - p * 1.2));
-          }
+          // prosty ruch: karta jedzie wolniej niż treść i wsuwa się pod belkę; bez wygaszania i bez skalowania
+          if (card && !reduce) card.style.setProperty('--py', (y * 0.18).toFixed(1) + 'px');
         });
       };
       body.addEventListener('scroll', onScroll, { passive: true }); onScroll();
