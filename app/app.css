@@ -170,8 +170,11 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 .shop { background: var(--background-surface); }
 .shop__head { position: absolute; top: 0; left: 0; right: 0; z-index: 5; background: transparent; color: #fff; overflow: hidden; }
 /* granatowe wypełnienie kończy się nad pasem narożników — w pasie treść prześwituje między „uszami” */
-.shop__fill { position: absolute; left: 0; right: 0; top: 0; bottom: 24px; background: var(--main-primary); overflow: hidden; transition: box-shadow .2s ease; }
-.shop__head.is-scrolled .shop__fill { box-shadow: 0 8px 24px rgba(4,56,124,.18); }
+.shop__fill { position: absolute; inset: 0; background: var(--main-primary); overflow: hidden; transition: box-shadow .2s ease;
+  /* dolny pas 24 px wycięty maską poza dwoma narożnikami — narożniki mają to samo tło (zdjęcie + gradient), więc nie odcinają się kolorem */
+  -webkit-mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - 24px) no-repeat, radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px) 0 100% / 24px 24px no-repeat, radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px) 100% 100% / 24px 24px no-repeat;
+  mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - 24px) no-repeat, radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px) 0 100% / 24px 24px no-repeat, radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px) 100% 100% / 24px 24px no-repeat; }
+.shop__head.is-scrolled .shop__fill { filter: drop-shadow(0 6px 14px rgba(4,56,124,.22)); }
 .shop__bg { position: absolute; left: 0; right: 0; top: 0; height: 468px; overflow: hidden; pointer-events: none; }
 .shop__bg img { position: absolute; width: 840px; height: 840px; left: 50%; top: 50%; margin: -420px 0 0 -133px; transform-origin: center; object-fit: cover; rotate: 75deg; opacity: .95; will-change: transform; }
 .shop__bgOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 6%, #04387c 98%); }
@@ -182,10 +185,7 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 .shop__chips { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; padding-right: 20px; }
 .shop__chips::-webkit-scrollbar { display: none; }
 .shop__chips > * { flex: 0 0 auto; }
-.shop__corner { position: relative; height: 24px; background: transparent; pointer-events: none; }
-.shop__corner::before, .shop__corner::after { content: ""; position: absolute; top: 0; width: 24px; height: 24px; background: var(--main-primary); }
-.shop__corner::before { left: 0; -webkit-mask: radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px); mask: radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px); }
-.shop__corner::after { right: 0; -webkit-mask: radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px); mask: radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px); }
+.shop__corner { position: relative; height: 24px; pointer-events: none; }
 .shop__scroll { padding: 0 !important; gap: 0 !important; -webkit-overflow-scrolling: touch; }
 .shop__spacer { flex: 0 0 auto; height: 234px; }
 .shop__content { display: flex; flex-direction: column; gap: var(--space-9xl); padding: 4px 20px 130px; }
