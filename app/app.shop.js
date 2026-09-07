@@ -224,22 +224,49 @@
   };
 
   // ---------------- zachowanie paska przy scrollu (iOS-like collapse) ----------------
+  // Nagłówek zwija się etapami (wzorzec iOS: UINavigationBar + UISearchController, Material 3 „scroll-away”):
+  //   góra → pasek, pole szukania i chipy sposobu realizacji
+  //   przewijanie w dół → najpierw chowają się chipy, potem cały rząd z wyszukiwarką i filtrami
+  //   lekki ruch w górę → wraca wyszukiwarka z filtrami; dopiero na samej górze wracają chipy
+  // Na stronie głównej sklepu (bez paska z tytułem) chowamy tylko chipy — wyszukiwarka zostaje przypięta.
   function setupShopScroll(root, route) {
     const head = $('#shop-head', root), scroll = $('#shop-scroll', root), spacer = $('#shop-spacer', root), chipsWrap = $('#shop-chips', root);
     if (!head || !scroll) return;
-    const wrap = head.querySelector('.shop__searchWrap');
-    const measure = () => { head.classList.remove('is-collapsed'); chipsWrap.style.height = ''; wrap.style.paddingBottom = ''; wrap.style.gap = ''; spacer.style.height = head.offsetHeight + 'px'; head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; };
+    const wrap = head.querySelector('.shop__searchWrap'), row = head.querySelector('.shop__searchRow');
+    const listing = !!head.querySelector('.shop__nav--bar');   // listing kategorii / wyników ma pasek z tytułem
+    const measure = () => {
+      head.classList.remove('is-collapsed', 'is-searchhidden');
+      chipsWrap.style.height = ''; wrap.style.paddingBottom = ''; wrap.style.gap = '';
+      if (row) { row.style.height = ''; row.style.opacity = ''; row.style.transform = ''; }
+      spacer.style.height = head.offsetHeight + 'px';
+      head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; head.dataset.row = row ? row.offsetHeight : 0;
+    };
     measure();
     const COLLAPSE = 72; // px scrolla, po których chipy są schowane
-    let raf = 0;
+    let raf = 0, last = scroll.scrollTop, searchHidden = false;
+    const applySearch = () => {
+      if (!listing || !row) return;
+      const rh = +head.dataset.row;
+      row.style.height = searchHidden ? '0px' : rh + 'px';
+      row.style.opacity = searchHidden ? '0' : '1';
+      row.style.transform = searchHidden ? 'translateY(-6px)' : 'none';
+      head.classList.toggle('is-searchhidden', searchHidden);
+    };
     const onScroll = () => {
       if (raf) return; raf = requestAnimationFrame(() => {
-        raf = 0; const y = scroll.scrollTop; const p = Math.max(0, Math.min(1, y / COLLAPSE));
+        raf = 0; const y = scroll.scrollTop, d = y - last; const p = Math.max(0, Math.min(1, y / COLLAPSE));
         const ch = +head.dataset.chips; chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(1 - p); chipsWrap.style.transform = `translateY(${-10 * p}px)`;
         // po zwinięciu: 28 px od pola do dolnej krawędzi granatu; boczne zaokrąglenia zostają, treść prześwituje między nimi
         wrap.style.paddingBottom = (24 + 4 * p) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
         head.classList.toggle('is-collapsed', p >= 1); head.classList.toggle('is-scrolled', y > 4);
-        st().scroll[route] = y;
+        if (listing) {
+          const was = searchHidden;
+          if (y < 8) searchHidden = false;
+          else if (d > 4 && p >= 1) searchHidden = true;
+          else if (d < -4) searchHidden = false;
+          if (was !== searchHidden) applySearch();
+        }
+        last = y; st().scroll[route] = y;
       });
     };
     scroll.addEventListener('scroll', onScroll, { passive: true });
