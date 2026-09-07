@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALAB • Sklep — prototyp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Przejdź do treści</a>
+
+<!-- ====================== HERO / SZUKAJ ====================== -->
+<header class="hero">
+  <div class="wrap hero__inner">
+
+    <div class="hero__brandbar">
+      <span class="hero__brand" aria-label="ALAB laboratoria">
+        <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a2.6 2.6 0 0 0-1.5 4.72v2.2l-2.9 1.68A2.6 2.6 0 1 0 8.9 15.9l1.6-.92v2.1a2.6 2.6 0 1 0 3 0v-2.1l1.6.92a2.6 2.6 0 1 0 1.3-4.1l-2.9-1.68v-2.2A2.6 2.6 0 0 0 12 3.2Z"/></svg>
+        <b>ALAB</b><i>laboratoria</i>
+      </span>
+      <nav class="hero__nav" aria-label="Nawigacja główna">
+        <a href="#" class="t-label-large-em">Start</a>
+        <a href="#" class="t-label-large-em is-current" aria-current="page">Sklep</a>
+        <a href="#" class="t-label-large-em">Wyniki</a>
+        <a href="#" class="t-label-large-em">Koszyk <span class="badge-count" data-cart-count>0</span></a>
+      </nav>
+    </div>
+
+    <form class="search" role="search" onsubmit="return false">
+      <label class="search__field">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+        <input type="search" placeholder="Szukaj badania…" aria-label="Szukaj badania">
+      </label>
+      <button class="search__filter" type="button" aria-label="Filtry">
+        <!-- lejek — ikona filtra (ic_outline_filter_funnel_01) -->
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"/></svg>
+      </button>
+    </form>
+
+    <div class="chips" role="radiogroup" aria-label="Sposób realizacji">
+      <button class="chip is-selected" role="radio" aria-checked="true">Punkt pobrań</button>
+      <button class="chip" role="radio" aria-checked="false">ALAB w domu</button>
+      <button class="chip" role="radio" aria-checked="false">Wysyłkowe</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <!-- ====================== LOKALIZACJA ====================== -->
+    <section class="place" aria-label="Wybrany punkt pobrań">
+      <span class="place__pin" aria-hidden="true">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><path d="m9.5 11.5 1.8 1.8 3.4-3.6"/></svg>
+      </span>
+      <span class="place__name t-label-xlarge-em">Puławska 10</span>
+      <button class="link t-label-large-em" type="button">Zmień</button>
+    </section>
+
+    <!-- ====================== KATEGORIE ====================== -->
+    <section class="sect" aria-labelledby="h-kat">
+      <h2 id="h-kat" class="sect__title t-headline-xlarge">Kategorie badań</h2>
+      <ul class="tiles" id="tiles"></ul>
+    </section>
+
+    <!-- ====================== PAKIETY ====================== -->
+    <section class="sect" aria-labelledby="h-pak">
+      <div class="sect__head">
+        <h2 id="h-pak" class="sect__title t-headline-xlarge">Popularne pakiety</h2>
+        <button class="link t-label-large-em" type="button">Pokaż wszystkie</button>
+      </div>
+      <ul class="cards" id="packages"></ul>
+      <button class="btn btn--secondary" type="button">Pokaż wszystkie pakiety</button>
+    </section>
+
+    <!-- ====================== BADANIA ====================== -->
+    <section class="sect" aria-labelledby="h-bad">
+      <div class="sect__head">
+        <h2 id="h-bad" class="sect__title t-headline-xlarge">Popularne badania</h2>
+        <button class="link t-label-large-em" type="button">Pokaż wszystkie</button>
+      </div>
+      <ul class="cards" id="tests"></ul>
+      <button class="btn btn--secondary" type="button">Pokaż wszystkie badania</button>
+    </section>
+
+  </div>
+</main>
+
+<!-- ====================== TAB BAR (mobile) ====================== -->
+<nav class="tabbar" aria-label="Nawigacja dolna">
+  <a href="#" class="tab">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-8Z"/></svg>
+    <span class="t-label-xsmall">Start</span>
+  </a>
+  <a href="#" class="tab is-current" aria-current="page">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+    <span class="t-label-xsmall">Sklep</span>
+  </a>
+  <a href="#" class="tab">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M10 12h5M10 16h5"/></svg>
+    <span class="t-label-xsmall">Wyniki</span>
+  </a>
+  <a href="#" class="tab">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h3l2 10h9"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/><path d="M8 8h12l-1.6 6H9.2"/></svg>
+    <span class="t-label-xsmall">Koszyk</span>
+    <span class="tab__count" data-cart-count>0</span>
+  </a>
+</nav>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

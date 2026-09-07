@@ -1,0 +1,74 @@
+/* ============================================================
+   ALAB • Design System — tokeny wyciągnięte z Figmy
+   Plik: Alab • Design system (xnsgOdaVVKCkzjyStSOdVv)
+   Wartości 1:1 ze zmiennych i stylów tekstowych biblioteki.
+   ============================================================ */
+
+:root {
+  /* --- Kolor: Background --- */
+  --bg-surface: #ffffff;
+  --bg-surface-quaternary: #eaf0f9;
+  --bg-surface-alpha-light: rgba(255, 255, 255, 0.16);
+
+  /* --- Kolor: Main --- */
+  --main-primary: #04387c;   /* granat — hero, nagłówki na kolorze */
+  --main-accent: #096bcd;    /* niebieski — CTA, akcenty */
+
+  /* --- Kolor: Content --- */
+  --on-surface: #0e141c;
+  --on-surface-secondary: #515862;
+  --on-surface-tertiary: #6e7283;
+  --on-primary: #ffffff;
+  --on-accent: #ffffff;
+  --on-scrim: #ffffff;
+  --on-scrim-secondary: rgba(255, 255, 255, 0.72);
+
+  /* --- Kolor: Outline --- */
+  --border-secondary: #f1f1f1;
+  --border-on-scrim: rgba(255, 255, 255, 0.32);
+
+  /* --- Kolor: stany dodatkowe (z makiet) --- */
+  --success: #17864a;        /* badge rabatu */
+  --club: #431da3;           /* ALAB Club */
+
+  /* --- Promień --- */
+  --r-pill: 999px;
+  --r-card: 28px;
+  --r-tile: 16px;
+  --r-control: 12px;
+
+  /* --- Odstępy --- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+
+  /* --- Wymiary kontrolek --- */
+  --control-h: 52px;
+  --tap-min: 44px;
+
+  /* --- Cień: elevation/e1 --- */
+  --e1: 0 2px 8px rgba(14, 20, 28, 0.06);
+  --e2: 0 8px 24px rgba(14, 20, 28, 0.10);
+}
+
+/* ============================================================
+   Typografia — nazwy 1:1 ze stylami tekstowymi w Figmie
+   ============================================================ */
+
+.t-headline-xlarge   { font: 700 20px/24px var(--font); letter-spacing: -1px; }
+.t-headline-large    { font: 700 16px/24px var(--font); letter-spacing: -1px; }
+.t-headline-medium   { font: 700 14px/20px var(--font); letter-spacing: -1px; }
+.t-body-large        { font: 600 16px/24px var(--font); }
+.t-body-small        { font: 500 12px/16px var(--font); }
+.t-label-xlarge-em   { font: 700 16px/20px var(--font); }
+.t-label-large-em    { font: 700 14px/16px var(--font); }
+.t-label-medium-em   { font: 700 12px/16px var(--font); }
+.t-label-small-em    { font: 700 11px/12px var(--font); }
+.t-label-xsmall      { font: 600 9px/10px var(--font); }
+
+:root { --font: "Manrope", "Segoe UI", system-ui, -apple-system, sans-serif; }

@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="_CodeCell">
+<mask id="path-1-inside-1_0_278" fill="white">
+<path d="M0 0H60V60H0V0Z"/>
+</mask>
+<path d="M0 0H60V60H0V0Z" fill="white"/>
+<path d="M0 0V-1H-1V0H0ZM0 60H-1V61H0V60ZM0 0V1H60V0V-1H0V0ZM60 60V59H0V60V61H60V60ZM0 60H1V0H0H-1V60H0Z" fill="#E2E2E2" mask="url(#path-1-inside-1_0_278)"/>
+<circle id="Ellipse 49" opacity="0.2" cx="29.75" cy="30" r="4" fill="#0E141C"/>
+</g>
+</svg>

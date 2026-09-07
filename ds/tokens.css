@@ -1,0 +1,130 @@
+/* ============================================================
+   ALAB • Design System — tokeny (zmienne Figmy 1:1)
+   Źródło: Alab • Design system (xnsgOdaVVKCkzjyStSOdVv)
+   Nazwy CSS = nazwy zmiennych Figmy zapisane kebab-case:
+   Main/accent → --main-accent, Content/onSurface → --content-on-surface
+   ============================================================ */
+
+:root {
+  --font-family-primary: "Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* --- Main --- */
+  --main-primary: #04387c;
+  --main-accent: #096bcd;
+  --main-accent-loyalty: #8401cb;
+
+  /* --- Background --- */
+  --background-surface: #ffffff;
+  --background-surface-secondary: #f6f7f8;
+  --background-surface-tertiary: #e8e8e8;
+  --background-surface-quaternary: #eaf0f9;
+  --background-surface-inverse: #04387c;
+  --background-surface-alpha-light: rgba(255, 255, 255, 0.08);
+  --background-scrim: rgba(0, 0, 0, 0.4);
+
+  /* --- Content --- */
+  --content-on-surface: #0e141c;
+  --content-on-surface-secondary: #515862;
+  --content-on-surface-tertiary: #6e7283;
+  --content-on-primary: #ffffff;
+  --content-on-accent: #ffffff;
+  --content-on-scrim: #ffffff;
+  --content-on-scrim-secondary: rgba(255, 255, 255, 0.8);
+
+  /* --- Outline --- */
+  --outline-border: #e2e2e2;
+  --outline-border-secondary: #f1f1f1;
+  --outline-border-controls: #8f8f8f;
+  --outline-border-alpha-dark: rgba(0, 0, 0, 0.08);
+  --outline-border-alpha-light: rgba(255, 255, 255, 0.2);
+
+  /* --- Functional --- */
+  --functional-success: #228738;
+  --functional-error: #dd3d2f;
+
+  /* --- Brand gradient (ALAB club) --- */
+  --gradient-brand: linear-gradient(0deg, #461ba6 0%, #7512c3 100%);
+
+  /* --- Odstępy (space/*) --- */
+  --space-xs: 2px;
+  --space-sm: 4px;
+  --space-md: 8px;
+  --space-lg: 10px;
+  --space-xl: 12px;
+  --space-2xl: 16px;
+  --space-4xl: 20px;
+  --space-5xl: 24px;
+  --space-6xl: 32px;
+  --global-margin: 20px;
+  --screen-margin: 24px;
+
+  /* --- Promienie (radius/*) --- */
+  --radius-none: 0;
+  --radius-small: 6px;
+  --radius-medium: 12px;
+  --radius-large: 16px;
+  --radius-xlarge: 24px;
+  --radius-screen: 36px;
+  --radius-pill: 999px;
+  --button-button-icon: 999px;
+
+  /* --- Wymiary kontrolek --- */
+  --control-h: 60px;        /* Button, TextField box */
+  --control-h-tiny: 40px;   /* ButtonTiny */
+  --icon-button-l: 56px;
+  --icon-button-m: 48px;
+  --icon-button-s: 40px;
+  --border-sm: 1.5px;
+
+  /* --- Efekty --- */
+  --inner-shadow-input-active: inset 0 0 0 4px rgba(9, 107, 205, 0.1);
+
+  /* --- Typografia: rozmiary/interlinie (zmienne Figmy) --- */
+  --display-large-font-size: 36px;   --display-large-line-height: 36px;
+  --display-medium-font-size: 30px;  --display-medium-line-height: 40px;
+  --display-small-font-size: 24px;   --display-small-line-height: 32px;
+  --headline-xlarge-font-size: 20px; --headline-xlarge-line-height: 24px;
+  --headline-large-font-size: 16px;  --headline-large-line-height: 24px;
+  --headline-medium-font-size: 14px; --headline-medium-line-height: 20px;
+  --body-large-font-size: 16px;      --body-large-line-height: 24px;
+  --body-medium-font-size: 14px;     --body-medium-line-height: 20px;
+  --body-small-font-size: 13px;      --body-small-line-height: 20px;
+  --body-xsmall-font-size: 12px;     --body-xsmall-line-height: 18px;
+  --body-xxsmall-font-size: 11px;    --body-xxsmall-line-height: 16px;
+  --label-xlarge-font-size: 16px;    --label-xlarge-line-height: 20px;
+  --label-large-font-size: 14px;     --label-large-line-height: 16px;
+  --label-medium-font-size: 12px;    --label-medium-line-height: 16px;
+  --label-small-font-size: 11px;     --label-small-line-height: 12px;
+  --label-xsmall-font-size: 9px;     --label-xsmall-line-height: 10px;
+}
+
+/* ============================================================
+   Style tekstowe — klasy o nazwach 1:1 ze stylami Figmy
+   display/* i headline/* = Bold, letter-spacing -2% / -1%
+   body/* = SemiBold; label/* = SemiBold, *-emphasized = Bold
+   ============================================================ */
+
+.t-display-large  { font: 700 var(--display-large-font-size)/var(--display-large-line-height) var(--font-family-primary); letter-spacing: -0.02em; }
+.t-display-medium { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; }
+.t-display-small  { font: 700 var(--display-small-font-size)/var(--display-small-line-height) var(--font-family-primary); letter-spacing: -0.02em; }
+
+.t-headline-xlarge { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; }
+.t-headline-large  { font: 700 var(--headline-large-font-size)/var(--headline-large-line-height) var(--font-family-primary); letter-spacing: -0.01em; }
+.t-headline-medium { font: 700 var(--headline-medium-font-size)/var(--headline-medium-line-height) var(--font-family-primary); letter-spacing: -0.01em; }
+
+.t-body-large   { font: 600 var(--body-large-font-size)/var(--body-large-line-height) var(--font-family-primary); }
+.t-body-medium  { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); }
+.t-body-small   { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); }
+.t-body-xsmall  { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); }
+.t-body-xxsmall { font: 600 var(--body-xxsmall-font-size)/var(--body-xxsmall-line-height) var(--font-family-primary); }
+
+.t-label-xlarge    { font: 600 var(--label-xlarge-font-size)/var(--label-xlarge-line-height) var(--font-family-primary); }
+.t-label-xlarge-em { font: 700 var(--label-xlarge-font-size)/var(--label-xlarge-line-height) var(--font-family-primary); }
+.t-label-large     { font: 600 var(--label-large-font-size)/var(--label-large-line-height) var(--font-family-primary); }
+.t-label-large-em  { font: 700 var(--label-large-font-size)/var(--label-large-line-height) var(--font-family-primary); }
+.t-label-medium    { font: 600 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.t-label-medium-em { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.t-label-small     { font: 600 var(--label-small-font-size)/var(--label-small-line-height) var(--font-family-primary); }
+.t-label-small-em  { font: 700 var(--label-small-font-size)/var(--label-small-line-height) var(--font-family-primary); }
+.t-label-xsmall    { font: 600 var(--label-xsmall-font-size)/var(--label-xsmall-line-height) var(--font-family-primary); }
+.t-label-xsmall-em { font: 700 var(--label-xsmall-font-size)/var(--label-xsmall-line-height) var(--font-family-primary); }

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ALAB">
+<meta name="theme-color" content="#04387c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>ALAB • Prototyp — rejestracja i logowanie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../ds/tokens.css">
+<link rel="stylesheet" href="../ds/components.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<aside class="dev" id="dev">
+  <div class="dev__head">
+    <span class="dev__logo" id="dev-logo"></span>
+    <div><b>ALAB • Prototyp</b><span>Onboarding → rejestracja → dashboard</span></div>
+  </div>
+  <div class="dev__group">Ścieżka</div>
+  <nav class="dev__nav" id="dev-nav"></nav>
+  <div class="dev__group">Dane testowe</div>
+  <ul class="dev__hints">
+    <li><code>600 000 000</code> → numer już zarejestrowany</li>
+    <li><code>000000</code> → kod SMS nieprawidłowy</li>
+    <li><code>zajety@alab.pl</code> → e-mail już wykorzystany</li>
+    <li>hasło <code>blokada</code> → konto zablokowane</li>
+    <li>hasło <code>zle12345</code> → dane nieprawidłowe</li>
+    <li><code>fail@alab.pl</code> (reset) → nie udało się wysłać</li>
+  </ul>
+  <div class="dev__actions">
+    <button type="button" id="dev-reset">Zacznij od nowa</button>
+    <a href="../storybook/index.html">Storybook →</a>
+  </div>
+</aside>
+
+<main class="stage">
+  <div class="phone ds" id="phone">
+    <div class="phone__screen" id="screen"></div>
+    <div class="phone__overlay" id="overlay"></div>
+  </div>
+</main>
+
+<script src="../ds/icons.js"></script>
+<script src="../ds/components.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

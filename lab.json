@@ -1,0 +1,32 @@
+{
+  "name": "ALAB • Prototyp + Storybook",
+  "tagline": "DS ALAB w kodzie: storybook komponentów i klikalna rejestracja → dashboard",
+  "description": "Design system ALAB przeniesiony do HTML/CSS/JS (tokeny, style tekstowe, 18 komponentów) ze storybookiem oraz klikalny prototyp ścieżki Splash → Onboarding → Rejestracja (3 kroki, kod SMS) → Zgody ALAB club → Face ID → Dashboard, plus logowanie i reset hasła z obsługą błędów. Bez buildu.",
+  "category": "client",
+  "status": "wip",
+  "type": "web-static",
+  "tags": [
+    "alab",
+    "prototyp",
+    "storybook",
+    "design-system",
+    "mobile-first"
+  ],
+  "tech": [
+    "html",
+    "css",
+    "js"
+  ],
+  "launch": {
+    "dev": "python -m http.server 8802 --directory \"F:/AI - Tests/alab/prototype\"",
+    "devUrl": "http://localhost:8802/app/",
+    "file": "app/index.html"
+  },
+  "links": {
+    "figma": "https://www.figma.com/design/Qsc72CoT02rxWM4jF7aIxw/Alab-%E2%80%A2-Design?node-id=1416-56513",
+    "figmaDs": "https://www.figma.com/design/xnsgOdaVVKCkzjyStSOdVv/Alab-%E2%80%A2-Design-system"
+  },
+  "icon": "smartphone",
+  "accent": "#096BCD",
+  "notes": "Gdzie skończyłem (2026-09-07): storybook DS + pełna ścieżka rejestracji/logowania działa. Dalej: prawdziwy ekran Dashboardu z Figmy (teraz iframe sklepu), kolejne komponenty DS (Cells, Tabs, Badge), potwierdzenie założeń z README."
+}
