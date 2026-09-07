@@ -47,7 +47,7 @@
   const chips = (style) => {
     const sel = st().delivery;
     return [['punkt', 'Punkt Pobrań'], ['dom', 'ALAB w domu'], ['wysylka', 'Zestaw wysyłkowy']].map(([id, label]) =>
-      DS.FilterChip({ label, selected: sel === id, attrs: { 'data-delivery': id, class: style === 'oncolor' ? 'ds-FilterChip--oncolor' : '' } })).join('');
+      DS.FilterChip({ label, selected: sel === id, style, attrs: { 'data-delivery': id } })).join('');
   };
 
   // ---------------- Sklep • Strona główna ----------------
@@ -136,7 +136,6 @@
         // po zwinięciu: 28 px od pola do dolnej krawędzi granatu; boczne zaokrąglenia zostają, treść prześwituje między nimi
         wrap.style.paddingBottom = (24 + 4 * p) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
         head.classList.toggle('is-collapsed', p >= 1); head.classList.toggle('is-scrolled', y > 4);
-        if (bg) bg.style.transform = `translateY(${-y * 0.25}px)`;
         st().scroll.shop = y;
       });
     };

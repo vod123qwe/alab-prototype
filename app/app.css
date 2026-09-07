@@ -176,9 +176,9 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
   mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - 24px) no-repeat, radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px) 0 100% / 24px 24px no-repeat, radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px) 100% 100% / 24px 24px no-repeat; }
 .shop__head.is-scrolled .shop__fill { filter: drop-shadow(0 6px 14px rgba(4,56,124,.22)); }
 .shop__bg { position: absolute; left: 0; right: 0; top: 0; height: 468px; overflow: hidden; pointer-events: none; }
-.shop__bg img { position: absolute; width: 840px; height: 840px; left: 50%; top: 50%; margin: -420px 0 0 -133px; transform-origin: center; object-fit: cover; rotate: 75deg; opacity: .95; will-change: transform; }
+/* ProductBackground z Figmy: kwadrat 840.74 obrócony o 75°, środek w (50% + 287.34px, 162.84px), rozmyty (Content Background = blur 50) */
+.shop__bg img { position: absolute; width: 840.74px; height: 840.74px; left: calc(50% + 287.34px); top: 162.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(50px); }
 .shop__bgOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 6%, #04387c 98%); }
-.shop__bg { filter: blur(30px); transform: scale(1.1); }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; }

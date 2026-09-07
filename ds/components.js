@@ -131,8 +131,10 @@
     `</div></div>`;
 
   // ---------- FilterChip ----------
-  DS.FilterChip = ({ label = 'Chip', selected = false, fill = false, attrs: a } = {}) =>
-    `<button type="button" class="${cls('ds', 'ds-FilterChip', selected && 'is-selected', fill && 'ds-FilterChip--fill')}" aria-pressed="${selected}" ${attrs(a)}>${esc(label)}</button>`;
+  DS.FilterChip = ({ label = 'Chip', selected = false, fill = false, style, attrs: a } = {}) => {
+    const { class: extra, ...rest } = a || {};
+    return `<button type="button" class="${cls('ds', 'ds-FilterChip', style === 'oncolor' && 'ds-FilterChip--oncolor', selected && 'is-selected', fill && 'ds-FilterChip--fill', extra)}" aria-pressed="${selected}" ${attrs(rest)}>${esc(label)}</button>`;
+  };
 
   // ---------- StepsIndicator ----------
   DS.StepsIndicator = ({ steps = 3, current = 1, label = '', text = true, onScrim = false, stepLabel } = {}) => {

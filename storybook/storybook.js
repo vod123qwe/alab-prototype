@@ -109,8 +109,9 @@
     filterchip: { title: 'FilterChip', figma: '567:6772', desc: 'Chip wyboru (np. płeć). Selected: tło Main/primary, tekst biały. Unselected: border 1.5 Outline/border.',
       controls: [text('label', 'Label', 'Kobieta'), bool('selected', 'Selected', true)],
       render: p => DS.FilterChip(p),
-      matrix: () => cell('selected', DS.FilterChip({ label: 'Kobieta', selected: true })) + cell('unselected', DS.FilterChip({ label: 'Mężczyzna' })) + cell('para na szerokość', `<div style="display:flex;gap:5px;width:327px">${DS.FilterChip({ label: 'Kobieta', selected: true, fill: true })}${DS.FilterChip({ label: 'Mężczyzna', fill: true })}</div>`),
-      props: [['label', 'string', ''], ['selected', 'boolean', ''], ['fill', 'boolean', 'flex: 1 w rzędzie']] },
+      matrix: () => cell('selected', DS.FilterChip({ label: 'Kobieta', selected: true })) + cell('unselected', DS.FilterChip({ label: 'Mężczyzna' })) + cell('para na szerokość', `<div style="display:flex;gap:5px;width:327px">${DS.FilterChip({ label: 'Kobieta', selected: true, fill: true })}${DS.FilterChip({ label: 'Mężczyzna', fill: true })}</div>`) +
+        `</div><div class="sb-matrix sb-matrix--dark">` + cell('onColor · selected', DS.FilterChip({ label: 'Punkt Pobrań', selected: true, style: 'oncolor' })) + cell('onColor · unselected', DS.FilterChip({ label: 'ALAB w domu', style: 'oncolor' })),
+      props: [['label', 'string', ''], ['selected', 'boolean', ''], ['style', "'solid' | 'oncolor'", 'Figma: Style (onColor na granatowym hero)'], ['fill', 'boolean', 'flex: 1 w rzędzie']] },
 
     steps: { fn: 'StepsIndicator', title: 'StepsIndicator · LineIndicator', figma: 'StepsIndicator 741:2045 · LineIndicator 2874:2', desc: 'Pasek postępu kroków (4px, radius 12) z etykietami 12/18. OnScrim: białe paski na kolorze.',
       controls: [sel('steps', 'Steps', ['2', '3', '4', '5'], '3'), sel('current', 'Current', ['1', '2', '3', '4', '5'], '1'), text('label', 'Label', 'Twoje dane'), bool('text', 'Text', true), bool('onScrim', 'On scrim')],

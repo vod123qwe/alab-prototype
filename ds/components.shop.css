@@ -78,7 +78,8 @@
 /* ---------- ProductCard (CellPackage / CellTest) ---------- */
 .ds-ProductCard { display: flex; flex-direction: column; width: 100%; background: var(--background-surface); border: 1px solid var(--outline-border); border-radius: var(--radius-extralarge); }
 .ds-ProductCard__surface { display: flex; flex-direction: column; gap: var(--space-5xl); padding: 24px 24px 20px; }
-.ds-ProductCard--package .ds-ProductCard__surface { border-bottom: 1px solid var(--outline-border); border-radius: 0 0 var(--radius-extralarge) var(--radius-extralarge); margin-bottom: -1px; }
+.ds-ProductCard { overflow: hidden; }
+.ds-ProductCard--package .ds-ProductCard__surface { border-bottom: 1px solid var(--outline-border); }
 .ds-ProductCard__text { display: flex; flex-direction: column; gap: var(--space-5xl); align-items: flex-start; }
 .ds-ProductCard__heading { display: flex; flex-direction: column; gap: var(--space-md); width: 100%; }
 .ds-ProductCard__meta { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
