@@ -57,7 +57,8 @@
     { id: 'cart', label: 'Koszyk', icon: 'cart', route: 'tab/cart' },
   ];
   TABS.forEach(t => FADE_ROUTES.add(t.route)); FADE_ROUTES.add('search');
-  const tabBar = (active) => DS.BottomTabBar({ active, items: TABS.map(t => ({ ...t, badge: t.id === 'cart' && st().cart ? st().cart : null })), attrs: { class: 'shop__tabbar' } });
+  // badge: Koszyk = liczba pozycji, Wyniki = liczba nowych wyników (app.results.js)
+  const tabBar = (active) => DS.BottomTabBar({ active, items: TABS.map(t => ({ ...t, badge: t.id === 'cart' ? (st().cart || null) : (t.id === 'results' ? ((APP.results && APP.results.newCount()) || null) : null) })), attrs: { class: 'shop__tabbar' } });
   const chips = (style) => TYPES.map(id => DS.FilterChip({ label: DELIVERY[id].label, selected: type() === id, style, attrs: { 'data-delivery': id } })).join('');
   const locCell = () => { const c = DELIVERY[type()].cell; return DS.CellOrderTypeStatus({ icon: c.icon, title: c.title, status: c.status, attrs: c.action ? { 'data-action': c.action } : { tabindex: '-1' } }); };
   const HOME_TILES = 6; // siatka: > 6 kategorii → 5 + „Wszystkie kategorie”, ≤ 6 → wszystkie
@@ -104,7 +105,6 @@
       <div class="screen__top">${DS.TopBar({ leading: false, title })}</div>
       <div class="screen__body shop__scroll" style="padding-bottom:120px">${DS.ScreenState({ asset: A + asset, title, body })}</div>${tabBar(id)}</div>`;
   SCREENS['tab/start'] = () => tabPlaceholder('start', 'Dzień dobry', 'Ekran Start (dashboard) powstanie na bazie Modułu 2. W prototypie pokazujemy tu ścieżkę zakupową w zakładce Sklep.', 'il_phone_tick.png');
-  SCREENS['tab/results'] = () => tabPlaceholder('results', 'Wyniki', 'Tutaj znajdą się wyniki badań (Moduł 7). W prototypie zakładka jest zaślepką.', 'il_mail_sent.png');
   SCREENS['tab/cart'] = () => `<div class="screen shop" data-tab="cart">
       <div class="screen__top">${DS.TopBar({ leading: false, title: 'Koszyk', subtitle: st().cart ? plural(st().cart, 'pozycja', 'pozycje', 'pozycji') : null })}</div>
       <div class="screen__body shop__scroll" style="padding-bottom:120px">${st().cart
@@ -256,6 +256,7 @@
     const onScroll = () => { const y = scroll.scrollTop, sc = y > 8; head.classList.toggle('is-scrolled', sc); APP.setThemeColor(sc ? '#ffffff' : '#04387c'); if (bg) bg.style.transform = `translateY(${-Math.max(0, Math.min(y, 468))}px)`; st().scroll[route] = y; };
     onScroll();
     scroll.addEventListener('scroll', onScroll, { passive: true });
+    APP.hideOnScrollDown(scroll, cta);
     if (cta && buy && 'IntersectionObserver' in window) { new IntersectionObserver(([e]) => cta.classList.toggle('is-visible', !e.isIntersecting && e.boundingClientRect.top < 0), { root: scroll, threshold: 0 }).observe(buy); }
     // karta produktu otwiera się zawsze od góry (jak nowy ekran w iOS) — pozycji nie przywracamy
   }
@@ -337,5 +338,5 @@
   // panel deweloperski: dopisz trasy sklepu
   APP.ROUTES.splice(APP.ROUTES.findIndex(r => r[1] === 'dashboard'), 1, ['Sklep · Strona główna', 'dashboard'], ['Sklep · Wyszukiwarka', 'search'], ['Listing · Hormony', 'category/hormony'], ['Listing · Wszystkie pakiety', 'list/packages'], ['Produkt · Badanie', 'product/t-morf-roz'], ['Produkt · Pakiet', 'product/p-tarcz'], ['Zakładka Start', 'tab/start'], ['Zakładka Wyniki', 'tab/results'], ['Zakładka Koszyk', 'tab/cart']);
   APP.renderNav();
-  APP.shop = { st, card, forType, catsFor, DELIVERY };
+  APP.shop = { st, card, forType, catsFor, DELIVERY, tabBar, TABS };
 })();

@@ -61,6 +61,22 @@ const ICONS = {
   'check-circle-outline': 'ic_outline_check_circle.svg',
   'home-pin': 'ic_home_pin.svg',
   'settings': 'ic_outline_settings_04.svg',
+  'user-01': 'ic_outline_user_01.svg',
+  'chevron-up': 'ic_outline_chevron_up.svg',
+  'chevron-down': 'ic_outline_chevron_down.svg',
+  'check-fill': 'ic_tick_check_fill.svg',
+  'warning-fill': 'ic_line_warning_tr_fr.svg',
+  'chevron-up-single': 'ic_tests_chevron_up_single.svg',
+  'check-circle-fill': 'ic_line_check_cr_fr.svg',
+  'badge-warning': 'ic_badge_warning.svg',
+  'question-square': 'ic_line_question_mark_sq_fr.svg',
+  'calendar': 'ic_outline_calendar.svg',
+  'clock': 'ic_outline_clock.svg',
+  'info-circle-fill': 'ic_info_circle_fill.svg',
+  'chevron-right-20': 'ic_chevron_right_20.svg',
+  'material': 'ic_line_material.svg',
+  'method': 'ic_line_method.svg',
+  'lab-pin': 'ic_line_lab_pin.svg',
 };
 
 function clean(svg) {

@@ -278,3 +278,41 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 
 /* rząd filtrów listingu: bleed do krawędzi ekranu (reszta stylu w DS: .ds-FilterRow) */
 .shop__filters { margin: 0 -20px; padding: 0 20px; }
+
+/* ------------------------------------------------------------
+   Wyniki badań (Moduł 7) — lista, szczegóły, dodatkowe informacje, webview
+   Marginesy i odstępy 1:1 z sekcji „Wyniki badań” 2516:102053.
+   ------------------------------------------------------------ */
+/* dzieci przewijanej kolumny nie mogą się kurczyć — inaczej karty o stałej wysokości (podsumowanie wyniku) zapadają się */
+.results__body > *, .result__body > *, .rinfo__body > * { flex: 0 0 auto; }
+.results__body { gap: 32px; padding: 32px 20px 130px; }
+.results__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; margin: 0; }
+.results__groups { display: flex; flex-direction: column; gap: 32px; }
+.results__group { display: flex; flex-direction: column; gap: 24px; }
+.results__cards { display: flex; flex-direction: column; gap: 12px; }
+
+.result__body { gap: 28px; padding: 32px 20px 220px; }
+.result__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; margin: 0; }
+.result__person { display: flex; align-items: center; gap: 8px; font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.result__person .ds-icon { width: 16px; height: 16px; flex: 0 0 auto; }
+.result__groups { display: flex; flex-direction: column; gap: 24px; transition: opacity .12s ease; }
+.result__groups.is-swapping { opacity: 0; }
+.result__more { display: flex; flex-direction: column; gap: 20px; }
+.result__more .ds-Cell { padding: 0; }
+.result__actions { position: absolute; left: 0; right: 0; bottom: 84px; z-index: 6; }
+
+.rinfo__body { gap: 28px; padding: 32px 20px 40px; }
+.rinfo__rows { display: flex; flex-direction: column; gap: 32px; }
+.webview__body { padding: 0 24px; }
+.webview__body .ds-ScreenState__title { font-size: var(--display-small-font-size); line-height: var(--display-small-line-height); }
+@media (max-width: 900px) {
+  .results__body { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+  .result__body { padding-bottom: calc(200px + env(safe-area-inset-bottom)); }
+}
+
+/* pasek akcji / przyklejone CTA schowane przy przewijaniu w dół */
+.result__actions { transition: transform .28s cubic-bezier(.32,.72,0,1), opacity .2s ease; }
+.result__actions.is-hidden, .product__cta.is-hidden { transform: translateY(130%); opacity: 0; pointer-events: none; }
+
+/* puste stany w listingach: wyśrodkowane w dostępnej wysokości kontenera */
+.shop__listing > .ds-SearchEmpty, .result__groups > .ds-SearchEmpty { min-height: 45vh; justify-content: center; }

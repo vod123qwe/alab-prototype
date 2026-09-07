@@ -257,7 +257,7 @@
   }
   // Przejścia jak w iOS: push (nowy wjeżdża z prawej, stary odjeżdża w lewo i ciemnieje),
   // pop (odwrotnie), fade (splash → onboarding, → dashboard). Bez dir = przerysowanie w miejscu.
-  const FADE_ROUTES = new Set(['splash', 'dashboard', 'start']);
+  const FADE_ROUTES = new Set(['splash', 'dashboard', 'start', 'results-empty']);
   const T_MS = 380;
   function stagger(root) {
     const items = $$('.screen__body > *, .start__content > *, .ds-ScreenState__content > *, .ds-ScreenState > .ds-Button, .onb__slide .onb__text > *', root);
@@ -460,7 +460,26 @@
   };
 
   // ---------------- API dla modułów (app.shop.js) ----------------
-  window.APP = { setThemeColor, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav };
+  // Pasek akcji chowa się przy przewijaniu w dół i wraca po lekkim ruchu w górę (wzorzec z aplikacji natywnych,
+  // Material 3 „scroll-away” / iOS toolbar). Przy samym dole i na górze ekranu pasek jest zawsze widoczny.
+  function hideOnScrollDown(scroll, bar, { min = 24, step = 4 } = {}) {
+    if (!scroll || !bar) return;
+    let last = scroll.scrollTop, raf = 0;
+    scroll.addEventListener('scroll', () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const y = scroll.scrollTop, d = y - last;
+        const atBottom = y + scroll.clientHeight >= scroll.scrollHeight - 8;
+        if (atBottom || y < min) bar.classList.remove('is-hidden');
+        else if (d > step) bar.classList.add('is-hidden');
+        else if (d < -step) bar.classList.remove('is-hidden');
+        last = y;
+      });
+    }, { passive: true });
+  }
+
+  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav };
 
   // ---------------- panel deweloperski ----------------
   function renderNav() { $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="#/${r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join(''); $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current())); }

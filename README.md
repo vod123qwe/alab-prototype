@@ -161,3 +161,43 @@ Ceny formatujemy zawsze z groszami (leksykon), choć część masterów pokazuje
 - Przyklejone CTA siedzi dokładnie na tab barze (wysokość liczona w JS, bo zależy od safe-area telefonu).
 - Dodanie do koszyka nie zmienia przycisku (można dodać kolejną sztukę): potwierdzeniem jest snackbar, licznik na zakładce Koszyk (z ilością w koszyku) i lekka haptyka `DS.haptic()` — Android przez `navigator.vibrate`, iOS przez przełącznik `<input type="checkbox" switch>` klikany programowo (workaround z iOS 18, do sprawdzenia na telefonie).
 - Naprawione: `BottomTabBar` ignorował klasę z `attrs` (drugi atrybut class), przez co `.shop__tabbar` nie istniał w DOM.
+
+## Etap 4 (2026-09-07) — Wyniki badań, FAQ, webview
+
+Nowe ekrany, 1:1 z sekcji „Wyniki badań” 2516:102053 i „Podstrony” 2265:66486 w pliku Alab • Design:
+
+- **Lista wyników** `#/tab/results` — „Listing • Wyniki wyszukiwania” 2516:102054: tytuł „Wyniki badań”, grupy lat
+  (rok + linia), karty `CellTestResult` (tytuł, osoba, data, pill statusu). Najnowszy wynik ma wariant „New”
+  (2 px obwódki, cień, aureola) i liczbę na zakładce Wyniki; po wejściu w wynik znacznik gaśnie.
+- **Stan pusty** `#/results-empty` — „Wyniki • Empty state” 2516:102079: ilustracja na blobie, tytuł, opis
+  i „Przejdź do sklepu”. Wszystkie stany puste (wyniki, koszyk, zakładki) są wyśrodkowane w dostępnej wysokości.
+- **Szczegóły badania** `#/result/<id>` — 2516:102083: karta „Aktualny wynik” (gradient, pierścień postępu, pill-e),
+  segmenty Wszystkie / Poza normą, zwijane grupy parametrów (`AccordionGroup`) z trzema typami wiersza
+  (`ParamRow`: wartość + norma, tor normy z kropką, wynik jakościowy ujemny/dodatni), wiersz „Dodatkowe informacje”,
+  stała informacja „Wyniki skonsultuj z lekarzem” i pasek akcji Udostępnij / Pobierz PDF.
+- **Dodatkowe informacje** `#/rinfo/<id>` — 2516:102151: materiał, metoda, laboratorium, data pobrania i wyniku, uwagi.
+- **FAQ** — arkusz „Najczęstsze pytania” z rozwijanymi pytaniami (`AccordionCell`), otwierany z karty produktu.
+  Cztery pytania na sztywno; pierwsza odpowiedź 1:1 z Figmy, pozostałe to treść prototypowa.
+- **Webview** `#/webview/<klucz>` — „FlowPlaceholder” 2265:66488: zostaje tylko górna belka, treść to placeholder.
+  Otwiera się z „Pełny opis badania” na karcie produktu i z zachęt ALAB club.
+
+Zachowania dodane w tym etapie:
+
+- **Pasek akcji chowa się przy przewijaniu w dół** i wraca po lekkim ruchu w górę (karta wyniku i przyklejone CTA
+  na karcie produktu). Na samej górze i przy dole listy pasek jest zawsze widoczny.
+- **Assety stanów ekranu** mają blob w tle (`il_blob.svg`) i są większe niż wcześniej — wzorzec PlaceholderAsset 349:293.
+
+Nowe komponenty DS (w storybooku): `CellTestResult`, `BadgeStatus`, `YearRule`, `ResultSummary`, `SwitchableTabRow`,
+`AccordionGroup`, `AccordionCell`, `ParamRow`, `StatusLabel`, `RangeSlider`, `ToastMessage`, `CellContent`.
+
+### Założenia (etap 4)
+
+- Wyniki, parametry i normy w `app/data.results.js` to **szablony z danymi przykładowymi**, nie wyniki Pacjenta.
+  Liczby w karcie „Aktualny wynik” wyliczamy z listy parametrów (w Figmie karta pokazuje 52/56 przy kilku wierszach).
+- Nazwy grup parametrów morfologii są nasze („Parametry główne”, „Krwinki białe”, „Wskaźniki czerwonokrwinkowe”) —
+  w Figmie zostały domyślne nazwy z komponentu („Pokarmowe • 4”, „Hormony tarczycy • 5”).
+- Odpowiedzi FAQ 2-4 i podpisy statusów („Poniżej normy”) to treść prototypowa do potwierdzenia.
+- `RangeSlider` liczy pozycję liniowo: norma zajmuje środkowe 50% toru, wynik poza normą przyklejamy do krawędzi
+  z marginesem 5% (zgodnie z opisem komponentu w DS 2483:41824).
+- Daty piszemy z miesiącem z małej litery (leksykon ALAB); listing w Figmie ma „12 Marca 2026”.
+- „Udostępnij” i „Pobierz PDF” pokazują snackbar — to funkcje systemowe, poza zakresem prototypu.

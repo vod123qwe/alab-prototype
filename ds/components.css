@@ -10,6 +10,8 @@
 :where(.ds) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; text-align: inherit; }
 :where(.ds) button:focus-visible, :where(.ds) [tabindex]:focus-visible { outline: 2px solid var(--main-accent); outline-offset: 2px; }
 :where(.ds) p { margin: 0; }
+/* atrybut hidden musi wygrywać z display: flex/grid w komponentach (zwijane treści akordeonów) */
+.ds [hidden], .ds[hidden] { display: none !important; }
 :where(.ds) a { color: inherit; }
 
 /* Ikony — inline SVG, kolor przez currentColor */
@@ -302,8 +304,11 @@
    ------------------------------------------------------------ */
 .ds-ScreenState { display: flex; flex-direction: column; align-items: center; gap: var(--space-2xl); padding: var(--space-4xl) var(--global-margin); width: 100%; }
 .ds-ScreenState__content { display: flex; flex-direction: column; align-items: center; gap: var(--space-6xl); padding-bottom: var(--space-2xl); width: 100%; }
-.ds-ScreenState__asset { padding: var(--space-2xl); }
-.ds-ScreenState__asset img { display: block; width: 132px; height: 132px; object-fit: contain; }
+/* PlaceholderAsset 164×164 (349:293): blob w tle obrócony -31°, ilustracja nieco większa od pola i przycięta do niego */
+.ds-ScreenState__asset { position: relative; width: 148px; height: 148px; flex: 0 0 auto; }
+.ds-ScreenState__blob { position: absolute; left: -11.4%; top: -5.13%; width: 118.3%; height: 113.5%; transform: rotate(-31.08deg); }
+/* ilustracja wyśrodkowana w obu osiach i nieco większa od pola — działa i dla kwadratowych, i dla szerokich grafik */
+.ds-ScreenState__art { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 108%; max-height: 108%; width: auto; height: auto; object-fit: contain; }
 .ds-ScreenState__text { display: flex; flex-direction: column; gap: var(--space-2xl); width: 100%; text-align: center; }
 .ds-ScreenState__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; }
 .ds-ScreenState__body { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); white-space: pre-line; }

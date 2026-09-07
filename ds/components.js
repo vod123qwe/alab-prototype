@@ -164,9 +164,10 @@
     `</div></div>`;
 
   // ---------- BottomActionsBar ----------
-  DS.BottomActionsBar = ({ buttons = [], layout = 'vertical', homeIndicator = true, attrs: a } = {}) =>
-    `<div class="${cls('ds', 'ds-BottomActionsBar', layout === 'horizontal' && 'ds-BottomActionsBar--horizontal')}" ${attrs(a)}>` +
-    `<div class="ds-BottomActionsBar__buttons">${buttons.join('')}</div>` + (homeIndicator ? DS.HomeIndicator() : '') + `</div>`;
+  DS.BottomActionsBar = ({ buttons = [], layout = 'vertical', homeIndicator = true, attrs: a } = {}) => {
+    const { class: extra, ...rest } = a || {}; // klasa z attrs dokleja się do klasy komponentu
+    return `<div class="${cls('ds', 'ds-BottomActionsBar', layout === 'horizontal' && 'ds-BottomActionsBar--horizontal', extra)}" ${attrs(rest)}>` +
+    `<div class="ds-BottomActionsBar__buttons">${buttons.join('')}</div>` + (homeIndicator ? DS.HomeIndicator() : '') + `</div>`; };
 
   // ---------- presentSheet: arkusz w #overlay z gestem zamykania jak w iOS (UISheetPresentationController) ----------
   // Ciągnięcie w dół przesuwa arkusz 1:1 za palcem i rozjaśnia scrim, odsłaniając ekran pod spodem. Puszczenie poniżej progu
@@ -255,7 +256,7 @@
   // ---------- ScreenState ----------
   DS.ScreenState = ({ asset, title = '', body = '', buttons = [] } = {}) =>
     `<div class="ds ds-ScreenState"><div class="ds-ScreenState__content">` +
-    (asset ? `<div class="ds-ScreenState__asset"><img src="${esc(asset)}" alt=""></div>` : '') +
+    (asset ? `<div class="ds-ScreenState__asset"><img class="ds-ScreenState__blob" src="${DS.ASSETS}il_blob.svg" alt=""><img class="ds-ScreenState__art" src="${esc(asset)}" alt=""></div>` : '') +
     `<div class="ds-ScreenState__text"><p class="ds-ScreenState__title">${esc(title)}</p><p class="ds-ScreenState__body">${esc(body)}</p></div></div>` +
     buttons.join('') + `</div>`;
 
