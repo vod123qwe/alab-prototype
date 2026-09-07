@@ -242,6 +242,15 @@
   // powitanie po rejestracji/logowaniu (raz)
   window.addEventListener('hashchange', () => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
 
+  // Kolor tła dokumentu i theme-color = kolor dolnej krawędzi ekranu (pas poza oknem PWA na iOS maluje html)
+  const DARK_ROUTES = new Set(['splash', 'start']);
+  function updateChrome(route) {
+    const dark = DARK_ROUTES.has(route);
+    const color = dark ? '#04387c' : '#ffffff';
+    if (matchMedia('(max-width: 900px)').matches) document.documentElement.style.backgroundColor = color;
+    let m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement('meta'); m.name = 'theme-color'; document.head.appendChild(m); } m.content = color;
+  }
+
   // ---------------- router ----------------
   const ROUTES = [
     ['Splash', 'splash'], ['Onboarding 1/3', 'onboarding/1'], ['Onboarding 2/3', 'onboarding/2'], ['Onboarding 3/3', 'onboarding/3'], ['Start', 'start'],
@@ -286,6 +295,7 @@
     }
     DS.enhance(next);
     (window.APP?.afterRender || []).forEach(f => { try { f(route, next); } catch (err) { console.error(err); } });
+    updateChrome(route);
     $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === route));
     if (route === 'register/2') setTimeout(() => $('#otp .ds-InputCode__hidden')?.focus(), T_MS);
     if (route === 'reset') setTimeout(() => $('#r-email')?.focus(), T_MS);

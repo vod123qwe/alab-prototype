@@ -1,6 +1,7 @@
 /* Prototyp — rama telefonu + panel deweloperski (poza DS) i układy ekranów (na DS) */
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: none; -webkit-tap-highlight-color: transparent; font: 500 14px/20px "Manrope", system-ui, sans-serif; color: #0e141c; }
+html { background: #e9edf2; transition: background-color .3s ease; }
+html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-highlight-color: transparent; font: 500 14px/20px "Manrope", system-ui, sans-serif; color: #0e141c; }
 
 /* panel boczny */
 .dev { position: fixed; inset: 0 auto 0 0; width: 260px; background: #fff; border-right: 1px solid #e3e6ea; display: flex; flex-direction: column; overflow-y: auto; }
@@ -48,11 +49,12 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 /* Telefon: pełny ekran, prawdziwy status bar i home indicator systemu zamiast makiet */
 @media (max-width: 900px) {
   .dev { display: none; } .stage { margin: 0; padding: 0; min-height: 100dvh; }
-  .phone { width: 100vw; height: 100dvh; border-radius: 0; box-shadow: none; }
+  .phone { width: 100vw; height: 100dvh; min-height: -webkit-fill-available; border-radius: 0; box-shadow: none; }
+  body { background: transparent; }
   .ds-StatusBar { display: none; }
-  .screen__top, .onb__status, .splash__top, .club__banner > div:first-of-type { padding-top: max(20px, env(safe-area-inset-top)); }
-  .start__header { top: calc(16px + max(20px, env(safe-area-inset-top))); }
-  .onb__skip { top: calc(8px + max(20px, env(safe-area-inset-top))); }
+  .screen__top, .onb__status, .splash__top, .club__banner > div:first-of-type { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); }
+  .start__header { top: calc(16px + env(safe-area-inset-top, 0px) + 20px); }
+  .onb__skip { top: calc(8px + env(safe-area-inset-top, 0px) + 20px); }
   .ds-HomeIndicator { height: max(16px, env(safe-area-inset-bottom)); padding: 0; }
   .ds-HomeIndicator__bar { display: none; }
   .ds-TextField__input, .ds-InputCode__hidden { font-size: 16px; }
@@ -181,8 +183,8 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 .shop__bgOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 6%, #04387c 98%); }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
-.shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; }
-.shop__chips { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; padding-right: 20px; }
+.shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; margin: 0 -20px; }
+.shop__chips { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; padding: 0 20px; scroll-padding: 0 20px; -webkit-overflow-scrolling: touch; }
 .shop__chips::-webkit-scrollbar { display: none; }
 .shop__chips > * { flex: 0 0 auto; }
 .shop__corner { position: relative; height: 24px; pointer-events: none; }
@@ -198,6 +200,7 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 /* Wyszukiwarka */
 .search__top { background: var(--background-surface); }
 .search__fieldWrap { display: flex; flex-direction: column; gap: 12px; padding: 12px 20px 20px; }
+.search__fieldWrap .shop__chips { margin: 0 -20px; }
 .search__body { gap: 20px !important; padding: 0 20px 24px !important; }
 .search__count { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
 .search__group { display: flex; flex-direction: column; gap: 16px; }
@@ -208,7 +211,7 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 
 @media (max-width: 900px) {
   .shop__head .ds-StatusBar { display: none; }
-  .shop__nav { height: max(20px, env(safe-area-inset-top)); }
+  .shop__nav { height: calc(env(safe-area-inset-top, 0px) + 20px); }
   .shop__tabbar .ds-HomeIndicator { height: max(20px, env(safe-area-inset-bottom)); }
   .shop__content { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
 }
@@ -216,6 +219,6 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 /* Ukryte menu prototypu: strefa tapnięcia w miejscu status bara */
 .devzone { position: absolute; top: 0; left: 0; right: 0; height: 62px; z-index: 8; background: transparent; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .devzone:focus-visible { outline: 2px solid var(--main-accent); outline-offset: -4px; }
-@media (max-width: 900px) { .devzone { height: max(20px, env(safe-area-inset-top)); } }
+@media (max-width: 900px) { .devzone { height: calc(env(safe-area-inset-top, 0px) + 20px); } }
 .devmenu__list { display: flex; flex-direction: column; gap: 4px; }
 .devmenu__foot { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); padding-bottom: 8px; }
