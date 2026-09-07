@@ -56,7 +56,7 @@
     const card = (p) => DS.ProductCard({ ...p, attrs: { class: st().added[p.id] ? 'is-added' : '' }, cta: st().added[p.id] ? 'Dodano' : (p.cta || 'Do koszyka') });
     return `<div class="screen shop" data-tab="shop">
       <header class="shop__head" id="shop-head">
-        <div class="shop__bg"><img src="${A}img_shop_bg.png" alt=""><div class="shop__bgOverlay"></div></div>
+        <div class="shop__fill"><div class="shop__bg"><img src="${A}img_shop_bg.png" alt=""><div class="shop__bgOverlay"></div></div></div>
         <div class="shop__nav">${DS.StatusBar({ light: true })}</div>
         <div class="shop__searchWrap">
           ${DS.SearchField({ style: 'oncolor', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania' } })}
@@ -125,7 +125,7 @@
     const head = $('#shop-head', root), scroll = $('#shop-scroll', root), spacer = $('#shop-spacer', root), chipsWrap = $('#shop-chips', root);
     if (!head || !scroll) return;
     const bg = head.querySelector('.shop__bg img'), wrap = head.querySelector('.shop__searchWrap'), corner = head.querySelector('.shop__corner');
-    const measure = () => { head.classList.remove('is-collapsed'); chipsWrap.style.height = ''; wrap.style.paddingBottom = ''; corner.style.height = ''; wrap.style.gap = ''; spacer.style.height = head.offsetHeight + 'px'; head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; };
+    const measure = () => { head.classList.remove('is-collapsed'); chipsWrap.style.height = ''; wrap.style.paddingBottom = ''; wrap.style.gap = ''; spacer.style.height = head.offsetHeight + 'px'; head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; };
     measure();
     const COLLAPSE = 72; // px scrolla, po których chipy są schowane
     let raf = 0;
@@ -133,8 +133,8 @@
       if (raf) return; raf = requestAnimationFrame(() => {
         raf = 0; const y = scroll.scrollTop; const p = Math.max(0, Math.min(1, y / COLLAPSE));
         const ch = +head.dataset.chips; chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(1 - p); chipsWrap.style.transform = `translateY(${-10 * p}px)`;
-        // po zwinięciu: 28 px od pola do dolnej krawędzi paska (bez białego rogu), treść wjeżdża pod pasek z ostrą krawędzią
-        wrap.style.paddingBottom = (24 + 4 * p) + 'px'; corner.style.height = (24 * (1 - p)) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
+        // po zwinięciu: 28 px od pola do dolnej krawędzi granatu; boczne zaokrąglenia zostają, treść prześwituje między nimi
+        wrap.style.paddingBottom = (24 + 4 * p) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
         head.classList.toggle('is-collapsed', p >= 1); head.classList.toggle('is-scrolled', y > 4);
         if (bg) bg.style.transform = `translateY(${-y * 0.25}px)`;
         st().scroll.shop = y;

@@ -324,7 +324,8 @@
    Mikrointerakcje (dotyk / fokus / zmiana stanu)
    ------------------------------------------------------------ */
 .ds-Button, .ds-ButtonTiny, .ds-IconButton, .ds-FilterChip, .ds-Prefix { transition: transform .14s ease, background-color .14s ease, border-color .14s ease, color .14s ease, filter .14s ease, opacity .14s ease; }
-.ds-Button:active, .ds-ButtonTiny:active, .ds-FilterChip:active, .ds-Prefix:active { transform: scale(.97); }
+.ds-Button:active, .ds-ButtonTiny:active, .ds-Prefix:active { transform: scale(.97); }
+.ds-FilterChip:active { transform: scale(.985); }
 .ds-IconButton:active { transform: scale(.9); }
 .ds-SelectableCell, .ds-CellSelectCountry { transition: background-color .16s ease; }
 .ds-SelectableCell:active, .ds-CellSelectCountry:active { background-color: var(--background-surface-secondary); }
@@ -340,7 +341,7 @@
 .ds-Checkbox svg path { stroke-dasharray: 16; stroke-dashoffset: 16; }
 .ds-Checkbox.is-checked svg path { animation: ds-draw .26s .06s ease forwards; }
 .ds-Radio::after { transition: transform .24s cubic-bezier(.34,1.56,.64,1); }
-.ds-FilterChip.is-selected { animation: ds-pop .26s cubic-bezier(.34,1.56,.64,1); }
+.ds-FilterChip.is-selected { animation: ds-soft .22s ease-out; }
 
 .ds-LineIndicator { position: relative; overflow: hidden; }
 .ds-LineIndicator.is-active { background: var(--background-surface-quaternary); }
@@ -357,7 +358,8 @@
 .ds-BottomSheet { animation: ds-sheet .38s cubic-bezier(.32,.72,0,1) both; }
 .ds-Scrim { animation: ds-fade .3s ease both; }
 
-@keyframes ds-pop { 0% { transform: scale(.85); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes ds-pop { 0% { transform: scale(.9); } 55% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@keyframes ds-soft { from { transform: scale(.97); } to { transform: scale(1); } }
 @keyframes ds-draw { to { stroke-dashoffset: 0; } }
 @keyframes ds-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes ds-shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
