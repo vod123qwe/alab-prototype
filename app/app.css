@@ -256,10 +256,12 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .product__head .ds-IconButton--onscrim { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
 .product__head.is-scrolled .ds-IconButton--onscrim { background: transparent; border-color: transparent; color: var(--content-on-surface); }
 .product__head.is-scrolled .ds-StatusBar--light { color: var(--content-on-surface); }
-.product__scroll { background: var(--background-surface-secondary); }
-.product__hero { position: relative; flex: 0 0 468px; height: 468px; background: var(--main-primary); overflow: hidden; }
-/* tło = eksport frame'u ProductBackground z Figmy (375×468, blob + gradient do surfaceSecondary) — 1:1 z designem */
-.product__hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+/* Tło hero leży POD przewijaną treścią jako osobna warstwa: przy scrollu w górę JS przesuwa je razem z treścią,
+   przy ciągnięciu w dół (rubber band) zostaje na miejscu. Obraz = eksport frame'u ProductBackground z Figmy (375×468). */
+.product__scroll { background: transparent; position: relative; z-index: 1; }
+.product__bg { position: absolute; inset: 0; z-index: 0; background: var(--background-surface-secondary); will-change: transform; }
+.product__bg img { display: block; width: 100%; height: 468px; object-fit: cover; object-position: center top; }
+.product__heroSpacer { flex: 0 0 468px; height: 468px; }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
 .product__main { gap: 24px; padding: 36px 24px 36px; /* +12 dp góra/dół vs pozostałe karty */ border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
 .product__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; margin: 0; color: var(--content-on-surface); }

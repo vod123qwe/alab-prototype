@@ -197,8 +197,9 @@
     const buyAttrs = un ? { 'data-action': 'change-point' } : { 'data-action': 'add-to-cart', 'data-product': p.id, 'data-title': p.title };
     return `<div class="screen shop product" data-tab="shop">
       <header class="product__head" id="prod-head">${DS.TopBar({ transparent: true, light: true, title: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania' })}</header>
+      <div class="product__bg" id="prod-bg"><img src="${A}img_product_bg.png" alt=""></div>
       <div class="screen__body shop__scroll product__scroll" id="prod-scroll">
-        <div class="product__hero"><img src="${A}img_product_bg.png" alt=""></div>
+        <div class="product__heroSpacer"></div>
         <div class="product__content">
           <div class="ds ds-Surface product__main">
             <h1 class="product__title">${esc(p.title)}</h1>
@@ -246,12 +247,13 @@
   }
   // karta produktu: pasek nawigacji wypełnia się granatem po zjechaniu z hero; przyklejone CTA pojawia się, gdy główny przycisk znika z ekranu
   function setupProductScroll(root, route) {
-    const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root), bar = $('.shop__tabbar', root);
+    const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root), bar = $('.shop__tabbar', root), bg = $('#prod-bg', root);
     if (!head || !scroll) return;
     // przyklejone CTA siedzi dokładnie na tab barze (jego wysokość zależy od safe-area telefonu)
     const placeCta = () => { if (cta && bar) cta.style.bottom = bar.offsetHeight + 'px'; };
     placeCta(); window.addEventListener('resize', placeCta, { passive: true });
-    const onScroll = () => { const sc = scroll.scrollTop > 8; head.classList.toggle('is-scrolled', sc); APP.setThemeColor(sc ? '#ffffff' : '#04387c'); st().scroll[route] = scroll.scrollTop; };
+    // grafika hero jedzie w górę razem z treścią, ale przy ciągnięciu w dół (rubber band, scrollTop < 0) stoi w miejscu
+    const onScroll = () => { const y = scroll.scrollTop, sc = y > 8; head.classList.toggle('is-scrolled', sc); APP.setThemeColor(sc ? '#ffffff' : '#04387c'); if (bg) bg.style.transform = `translateY(${-Math.max(0, Math.min(y, 468))}px)`; st().scroll[route] = y; };
     onScroll();
     scroll.addEventListener('scroll', onScroll, { passive: true });
     if (cta && buy && 'IntersectionObserver' in window) { new IntersectionObserver(([e]) => cta.classList.toggle('is-visible', !e.isIntersecting && e.boundingClientRect.top < 0), { root: scroll, threshold: 0 }).observe(buy); }

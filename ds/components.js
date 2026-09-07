@@ -216,14 +216,20 @@
   };
 
   // ---------- haptic: lekka wibracja potwierdzenia ----------
-  // Android/Chrome: navigator.vibrate. iOS Safari nie ma Vibration API — od iOS 18 haptyk systemowy wyzwala przełącznik
-  // <input type="checkbox" switch> klikany przez label (workaround, do zweryfikowania na telefonie).
+  // Android/Chrome: navigator.vibrate. iOS Safari nie ma Vibration API — od iOS 18 haptyk systemowy wyzwala zmiana stanu
+  // przełącznika <input type="checkbox" switch>. Element musi być w DOM i renderowany (nie display:none / pointer-events:none),
+  // a klik trzeba wykonać synchronicznie w obsłudze gestu użytkownika. Wymaga włączonej „Haptyki systemowej” w iOS.
   DS.haptic = (kind = 'light') => {
     const ms = kind === 'medium' ? 20 : kind === 'success' ? [10, 40, 10] : 10;
-    if (navigator.vibrate) { try { navigator.vibrate(ms); return; } catch (_) { /* brak wsparcia */ } }
-    let l = document.getElementById('ds-haptic');
-    if (!l) { l = document.createElement('label'); l.id = 'ds-haptic'; l.setAttribute('aria-hidden', 'true'); l.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none'; l.innerHTML = '<input type="checkbox" switch tabindex="-1">'; document.body.appendChild(l); }
-    try { l.click(); } catch (_) { /* ignoruj */ }
+    if (navigator.vibrate) { try { if (navigator.vibrate(ms)) return; } catch (_) { /* brak wsparcia */ } }
+    let inp = document.getElementById('ds-haptic');
+    if (!inp) {
+      const wrap = document.createElement('div'); wrap.setAttribute('aria-hidden', 'true');
+      wrap.style.cssText = 'position:fixed;left:0;bottom:0;width:2px;height:2px;overflow:hidden;opacity:.01;z-index:-1';
+      inp = document.createElement('input'); inp.type = 'checkbox'; inp.setAttribute('switch', ''); inp.id = 'ds-haptic'; inp.tabIndex = -1;
+      wrap.appendChild(inp); document.body.appendChild(wrap);
+    }
+    try { inp.click(); } catch (_) { /* ignoruj */ }
   };
 
   // ---------- Snackbar ----------
