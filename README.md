@@ -44,6 +44,11 @@ komponent `SelectableCell` → `DS.SelectableCell({...})` / `.ds-SelectableCell`
 
 ## Na telefonie
 
+**Najprościej:** publiczny link GitHub Pages: https://vod123qwe.github.io/alab-prototype/app/ (storybook: https://vod123qwe.github.io/alab-prototype/storybook/). Repo jest publiczne, więc ekrany i kod są widoczne dla każdego z linkiem.
+
+Wariant w sieci lokalnej (bez publikacji):
+
+
 1. Telefon i komputer w tej samej sieci Wi-Fi. Odpal `serve.bat` (serwer na 0.0.0.0:8802, otwiera `qr.html` z kodem QR do zeskanowania).
 2. Adres ręcznie: `http://<IP komputera>:8802/app/` (IP wypisuje serve.bat, dziś 192.168.1.15).
 3. iPhone: Udostępnij → „Do ekranu początkowego” — prototyp działa na pełnym ekranie (manifest + meta Apple), bez paska Safari, z prawdziwym status barem i safe area.
