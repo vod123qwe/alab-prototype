@@ -464,7 +464,9 @@
   function renderNav() { $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="#/${r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join(''); $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current())); }
   $('#dev-logo').innerHTML = DS.ICONS['alabek'];
   renderNav();
-  $('#dev-reset').addEventListener('click', () => { S = initial(); history = []; lastRoute = ''; if (current() === 'splash') render_('fade'); else go('splash'); });
+  const resetAll = () => { S = initial(); history = []; lastRoute = ''; if (current() === 'splash') render_('fade'); else go('splash'); };
+  window.APP.reset = resetAll;
+  $('#dev-reset').addEventListener('click', resetAll);
   if (matchMedia('(max-width: 900px)').matches) document.body.classList.add('is-mobile');
 
   window.addEventListener('hashchange', route);
