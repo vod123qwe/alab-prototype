@@ -170,12 +170,12 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    Sklep — natywny TopBar (zwijany hero) + TabBar; Wyszukiwarka
    ============================================================ */
 .shop { background: var(--background-surface); }
-.shop__head { position: absolute; top: 0; left: 0; right: 0; z-index: 5; background: transparent; color: #fff; overflow: hidden; }
+.shop__head { --corner: 24px; position: absolute; top: 0; left: 0; right: 0; z-index: 5; background: transparent; color: #fff; overflow: hidden; }
 /* granatowe wypełnienie kończy się nad pasem narożników — w pasie treść prześwituje między „uszami” */
 .shop__fill { position: absolute; inset: 0; background: var(--main-primary); overflow: hidden; transition: box-shadow .2s ease;
-  /* dolny pas 24 px wycięty maską poza dwoma narożnikami — narożniki mają to samo tło (zdjęcie + gradient), więc nie odcinają się kolorem */
-  -webkit-mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - 24px) no-repeat, radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px) 0 100% / 24px 24px no-repeat, radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px) 100% 100% / 24px 24px no-repeat;
-  mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - 24px) no-repeat, radial-gradient(circle at 100% 100%, transparent 23.5px, #000 24px) 0 100% / 24px 24px no-repeat, radial-gradient(circle at 0 100%, transparent 23.5px, #000 24px) 100% 100% / 24px 24px no-repeat; }
+  /* dolny pas o wysokości --corner wycięty maską poza dwoma narożnikami — narożniki mają to samo tło (zdjęcie + gradient), więc nie odcinają się kolorem */
+  -webkit-mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - var(--corner)) no-repeat, radial-gradient(circle at 100% 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 0 100% / var(--corner) var(--corner) no-repeat, radial-gradient(circle at 0 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 100% 100% / var(--corner) var(--corner) no-repeat;
+  mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - var(--corner)) no-repeat, radial-gradient(circle at 100% 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 0 100% / var(--corner) var(--corner) no-repeat, radial-gradient(circle at 0 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 100% 100% / var(--corner) var(--corner) no-repeat; }
 .shop__head.is-scrolled .shop__fill { filter: drop-shadow(0 6px 14px rgba(4,56,124,.22)); }
 .shop__bg { position: absolute; left: 0; right: 0; top: 0; height: 468px; overflow: hidden; pointer-events: none; }
 /* ProductBackground z Figmy: kwadrat 840.74 obrócony o 75°, środek w (50% + 287.34px, 162.84px), rozmyty (Content Background = blur 50) */
@@ -187,7 +187,7 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .shop__chips { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; padding: 0 20px; scroll-padding: 0 20px; -webkit-overflow-scrolling: touch; }
 .shop__chips::-webkit-scrollbar { display: none; }
 .shop__chips > * { flex: 0 0 auto; }
-.shop__corner { position: relative; height: 24px; pointer-events: none; }
+.shop__corner { position: relative; height: var(--corner); pointer-events: none; transition: height .3s cubic-bezier(.32,.72,0,1); }
 .shop__scroll { padding: 0 !important; gap: 0 !important; -webkit-overflow-scrolling: touch; }
 .shop__spacer { flex: 0 0 auto; height: 234px; }
 .shop__content { display: flex; flex-direction: column; gap: var(--space-9xl); padding: 4px 20px 130px; }
@@ -324,6 +324,13 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .result .screen__top .ds-TopBar, .rinfo .screen__top .ds-TopBar { background: transparent; }
 .result .screen__top.is-scrolled, .rinfo .screen__top.is-scrolled { background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px); box-shadow: 0 0 12px rgba(0,0,0,.04); }
 
-/* rząd z wyszukiwarką i filtrami na listingu: chowa się przy przewijaniu w dół, wraca po ruchu w górę */
-.shop__searchRow { overflow: hidden; will-change: height; transition: height .28s cubic-bezier(.32,.72,0,1), opacity .2s ease, transform .28s cubic-bezier(.32,.72,0,1); }
-.shop__head.is-searchhidden .shop__searchWrap { padding-top: 0; }
+/* Listing: blok pod paskiem (wyszukiwarka z filtrami + chipy) zwija się jednym ruchem — te same czasy i easing,
+   żeby nic nie schodziło kaskadowo. Wysokości elementów podaje JS w --row-h / --chips-h. */
+.shop--listing .shop__searchRow { overflow: hidden; height: var(--row-h, auto); transition: height .3s cubic-bezier(.32,.72,0,1), opacity .22s ease; }
+.shop--listing .shop__chipsWrap { height: var(--chips-h, auto); transition: height .3s cubic-bezier(.32,.72,0,1), opacity .22s ease; }
+.shop--listing .shop__searchWrap { transition: padding .3s cubic-bezier(.32,.72,0,1), gap .3s cubic-bezier(.32,.72,0,1); }
+.shop--listing .shop__head.is-collapsed .shop__chipsWrap { height: 0; opacity: 0; }
+.shop--listing .shop__head.is-collapsed .shop__searchWrap { gap: 0; padding-bottom: 28px; }
+.shop--listing .shop__head.is-searchhidden .shop__searchRow { height: 0; opacity: 0; }
+.shop--listing .shop__head.is-searchhidden.is-collapsed .shop__searchWrap { padding: 0 20px; }
+.shop--listing .shop__head.is-searchhidden { --corner: 16px; }

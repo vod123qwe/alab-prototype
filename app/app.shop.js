@@ -50,11 +50,12 @@
   };
 
   // ---------------- wspólne kawałki UI ----------------
+  // ikony dolnej nawigacji parami: outline gdy nieaktywna, wypełniona i niebieska gdy aktywna (BottomTabBar 156:1388)
   const TABS = [
-    { id: 'start', label: 'Start', icon: 'home', route: 'tab/start' },
-    { id: 'shop', label: 'Sklep', icon: 'search-active', route: 'dashboard' },
-    { id: 'results', label: 'Wyniki', icon: 'folder', route: 'tab/results' },
-    { id: 'cart', label: 'Koszyk', icon: 'cart', route: 'tab/cart' },
+    { id: 'start', label: 'Start', icon: 'home', iconActive: 'home-active', route: 'tab/start' },
+    { id: 'shop', label: 'Sklep', icon: 'search-lg', iconActive: 'search-active', route: 'dashboard' },
+    { id: 'results', label: 'Wyniki', icon: 'folder', iconActive: 'folder-active', route: 'tab/results' },
+    { id: 'cart', label: 'Koszyk', icon: 'cart', iconActive: 'cart-active', route: 'tab/cart' },
   ];
   TABS.forEach(t => FADE_ROUTES.add(t.route)); FADE_ROUTES.add('search');
   // badge: Koszyk = liczba pozycji, Wyniki = liczba nowych wyników (app.results.js)
@@ -224,47 +225,43 @@
   };
 
   // ---------------- zachowanie paska przy scrollu (iOS-like collapse) ----------------
-  // Nagłówek zwija się etapami (wzorzec iOS: UINavigationBar + UISearchController, Material 3 „scroll-away”):
-  //   góra → pasek, pole szukania i chipy sposobu realizacji
-  //   przewijanie w dół → najpierw chowają się chipy, potem cały rząd z wyszukiwarką i filtrami
-  //   lekki ruch w górę → wraca wyszukiwarka z filtrami; dopiero na samej górze wracają chipy
-  // Na stronie głównej sklepu (bez paska z tytułem) chowamy tylko chipy — wyszukiwarka zostaje przypięta.
+  // Nagłówek sklepu przy przewijaniu (wzorzec iOS: UINavigationBar + UISearchController, Material 3 „scroll-away”):
+  //  • strona główna: pole szukania zostaje przypięte, a rząd chipów zwija się proporcjonalnie do ruchu palca,
+  //  • listing kategorii / wyników: w dół cały blok pod paskiem (wyszukiwarka z filtrami + chipy) schodzi JEDNYM ruchem,
+  //    lekki ruch w górę przywraca wyszukiwarkę z filtrami, a chipy wracają dopiero na samej górze.
   function setupShopScroll(root, route) {
     const head = $('#shop-head', root), scroll = $('#shop-scroll', root), spacer = $('#shop-spacer', root), chipsWrap = $('#shop-chips', root);
     if (!head || !scroll) return;
     const wrap = head.querySelector('.shop__searchWrap'), row = head.querySelector('.shop__searchRow');
-    const listing = !!head.querySelector('.shop__nav--bar');   // listing kategorii / wyników ma pasek z tytułem
+    const listing = !!head.querySelector('.shop__nav--bar');   // listing ma pasek z tytułem, strona główna nie
     const measure = () => {
       head.classList.remove('is-collapsed', 'is-searchhidden');
-      chipsWrap.style.height = ''; wrap.style.paddingBottom = ''; wrap.style.gap = '';
-      if (row) { row.style.height = ''; row.style.opacity = ''; row.style.transform = ''; }
+      chipsWrap.style.cssText = ''; wrap.style.paddingBottom = ''; wrap.style.gap = '';
+      if (row) row.style.height = '';
       spacer.style.height = head.offsetHeight + 'px';
-      head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; head.dataset.row = row ? row.offsetHeight : 0;
+      head.dataset.chips = chipsWrap.offsetHeight; head.dataset.row = row ? row.offsetHeight : 0;
+      if (listing) { chipsWrap.style.setProperty('--chips-h', head.dataset.chips + 'px'); if (row) row.style.setProperty('--row-h', head.dataset.row + 'px'); }
     };
     measure();
-    const COLLAPSE = 72; // px scrolla, po których chipy są schowane
-    let raf = 0, last = scroll.scrollTop, searchHidden = false;
-    const applySearch = () => {
-      if (!listing || !row) return;
-      const rh = +head.dataset.row;
-      row.style.height = searchHidden ? '0px' : rh + 'px';
-      row.style.opacity = searchHidden ? '0' : '1';
-      row.style.transform = searchHidden ? 'translateY(-6px)' : 'none';
-      head.classList.toggle('is-searchhidden', searchHidden);
-    };
+    const COLLAPSE = 72;   // strona główna: px scrolla, po których chipy są schowane
+    const TRIGGER = 24;    // listing: po tylu px w dół chowamy blok pod paskiem
+    let raf = 0, last = scroll.scrollTop;
     const onScroll = () => {
       if (raf) return; raf = requestAnimationFrame(() => {
-        raf = 0; const y = scroll.scrollTop, d = y - last; const p = Math.max(0, Math.min(1, y / COLLAPSE));
-        const ch = +head.dataset.chips; chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(1 - p); chipsWrap.style.transform = `translateY(${-10 * p}px)`;
-        // po zwinięciu: 28 px od pola do dolnej krawędzi granatu; boczne zaokrąglenia zostają, treść prześwituje między nimi
-        wrap.style.paddingBottom = (24 + 4 * p) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
-        head.classList.toggle('is-collapsed', p >= 1); head.classList.toggle('is-scrolled', y > 4);
+        raf = 0; const y = scroll.scrollTop, d = y - last;
+        head.classList.toggle('is-scrolled', y > 4);
         if (listing) {
-          const was = searchHidden;
-          if (y < 8) searchHidden = false;
-          else if (d > 4 && p >= 1) searchHidden = true;
-          else if (d < -4) searchHidden = false;
-          if (was !== searchHidden) applySearch();
+          // jeden stan = jeden ruch; klasy przełączamy skokowo, animację robi CSS na obu elementach naraz
+          if (y < 8) head.classList.remove('is-collapsed', 'is-searchhidden');
+          else if (d > 4 && y > TRIGGER) head.classList.add('is-collapsed', 'is-searchhidden');
+          else if (d < -4) head.classList.remove('is-searchhidden');
+        } else {
+          const p = Math.max(0, Math.min(1, y / COLLAPSE));
+          const ch = +head.dataset.chips;
+          chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(1 - p); chipsWrap.style.transform = `translateY(${-10 * p}px)`;
+          // po zwinięciu: 28 px od pola do dolnej krawędzi granatu; boczne zaokrąglenia zostają, treść prześwituje między nimi
+          wrap.style.paddingBottom = (24 + 4 * p) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
+          head.classList.toggle('is-collapsed', p >= 1);
         }
         last = y; st().scroll[route] = y;
       });
@@ -272,6 +269,7 @@
     scroll.addEventListener('scroll', onScroll, { passive: true });
     const y0 = st().scroll[route] || 0; if (y0) { scroll.scrollTop = y0; onScroll(); }
   }
+
   // karta produktu: pasek nawigacji wypełnia się granatem po zjechaniu z hero; przyklejone CTA pojawia się, gdy główny przycisk znika z ekranu
   function setupProductScroll(root, route) {
     const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root), bar = $('.shop__tabbar', root), bg = $('#prod-bg', root);

@@ -194,9 +194,13 @@ Zachowania dodane w tym etapie:
 - **TopBar na szczegółach wyniku i dodatkowych informacjach** unosi się nad treścią i po przewinięciu przechodzi
   w wariant „On scroll” (Background/surface 82% + blur 32 + cień), tak jak na karcie produktu.
 - **Karuzela** („Kupując w pakiecie, oszczędzasz”) trzyma margines ekranu także po przewinięciu (`scroll-padding-inline`).
-- **Nagłówek listingu zwija się etapami**: w dół najpierw chowają się chipy sposobu realizacji, potem cały rząd
-  z wyszukiwarką i przyciskiem filtrów (zostaje pasek z tytułem). Lekki ruch w górę przywraca wyszukiwarkę,
-  a chipy wracają dopiero na samej górze. Na stronie głównej sklepu wyszukiwarka zostaje przypięta jak dotąd.
+- **Nagłówek listingu**: przy przewijaniu w dół cały blok pod paskiem (wyszukiwarka z filtrami + chipy sposobu
+  realizacji) schodzi **jednym ruchem** — te same czasy i easing, żeby nic nie zjeżdżało kaskadowo. Lekki ruch w górę
+  przywraca wyszukiwarkę z filtrami, a chipy wracają dopiero na samej górze. W stanie ze schowaną wyszukiwarką pasek
+  jest węższy (pas narożników 24 → 16 px, bez dolnego odstępu). Na stronie głównej sklepu wyszukiwarka zostaje
+  przypięta, a chipy zwijają się proporcjonalnie do ruchu palca, jak dotąd.
+- **Ikony dolnej nawigacji parami z DS** (BottomTabBar 156:1388): nieaktywna zakładka ma ikonę outline w kolorze
+  Content/onSurfaceTertiary, aktywna wypełnioną w Main/accent.
 - **Karta produktu ma jednolite tło** Background/surfaceSecondary — ta sama szarość, którą kończy się gradient hero.
 - **Karta „Aktualny wynik”**: gdy wszystkie parametry są w normie, pierścień dostaje zieloną odznakę z tickiem,
   a ekran nie pokazuje segmentów Wszystkie / Poza normą ani pill-a „Poza normą” — nie ma czego filtrować.
