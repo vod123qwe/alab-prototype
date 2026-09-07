@@ -172,14 +172,15 @@ html, body { margin: 0; height: 100%; background: #e9edf2; overscroll-behavior: 
 .shop__head.is-scrolled { box-shadow: 0 8px 24px rgba(4,56,124,.18); }
 .shop__bg { position: absolute; left: 0; right: 0; top: 0; height: 468px; overflow: hidden; pointer-events: none; }
 .shop__bg img { position: absolute; width: 840px; height: 840px; left: 50%; top: 50%; margin: -420px 0 0 -133px; transform-origin: center; object-fit: cover; rotate: 75deg; opacity: .95; will-change: transform; }
-.shop__bgOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 6%, #04387c 98%); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); }
+.shop__bgOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 6%, #04387c 98%); }
+.shop__bg { filter: blur(30px); transform: scale(1.1); }
 .shop__nav { position: relative; }
-.shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; }
+.shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; }
 .shop__chips { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; padding-right: 20px; }
 .shop__chips::-webkit-scrollbar { display: none; }
 .shop__chips > * { flex: 0 0 auto; }
-.shop__corner { position: relative; height: 24px; background: var(--background-surface); border-radius: 24px 24px 0 0; }
+.shop__corner { position: relative; height: 24px; background: var(--background-surface); border-radius: 24px 24px 0 0; overflow: hidden; will-change: height; }
 .shop__scroll { padding: 0 !important; gap: 0 !important; -webkit-overflow-scrolling: touch; }
 .shop__spacer { flex: 0 0 auto; height: 234px; }
 .shop__content { display: flex; flex-direction: column; gap: var(--space-9xl); padding: 4px 20px 130px; }

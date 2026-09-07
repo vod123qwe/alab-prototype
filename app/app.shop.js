@@ -124,8 +124,8 @@
   function setupShopScroll(root) {
     const head = $('#shop-head', root), scroll = $('#shop-scroll', root), spacer = $('#shop-spacer', root), chipsWrap = $('#shop-chips', root);
     if (!head || !scroll) return;
-    const bg = head.querySelector('.shop__bg img');
-    const measure = () => { head.classList.remove('is-collapsed'); chipsWrap.style.height = ''; spacer.style.height = head.offsetHeight + 'px'; head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; };
+    const bg = head.querySelector('.shop__bg img'), wrap = head.querySelector('.shop__searchWrap'), corner = head.querySelector('.shop__corner');
+    const measure = () => { head.classList.remove('is-collapsed'); chipsWrap.style.height = ''; wrap.style.paddingBottom = ''; corner.style.height = ''; wrap.style.gap = ''; spacer.style.height = head.offsetHeight + 'px'; head.dataset.full = head.offsetHeight; head.dataset.chips = chipsWrap.offsetHeight; };
     measure();
     const COLLAPSE = 72; // px scrolla, po których chipy są schowane
     let raf = 0;
@@ -133,6 +133,8 @@
       if (raf) return; raf = requestAnimationFrame(() => {
         raf = 0; const y = scroll.scrollTop; const p = Math.max(0, Math.min(1, y / COLLAPSE));
         const ch = +head.dataset.chips; chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(1 - p); chipsWrap.style.transform = `translateY(${-10 * p}px)`;
+        // po zwinięciu: 28 px od pola do dolnej krawędzi paska (bez białego rogu), treść wjeżdża pod pasek z ostrą krawędzią
+        wrap.style.paddingBottom = (24 + 4 * p) + 'px'; corner.style.height = (24 * (1 - p)) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
         head.classList.toggle('is-collapsed', p >= 1); head.classList.toggle('is-scrolled', y > 4);
         if (bg) bg.style.transform = `translateY(${-y * 0.25}px)`;
         st().scroll.shop = y;
