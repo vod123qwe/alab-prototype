@@ -206,12 +206,10 @@ Zachowania dodane w tym etapie:
   aktywna zakładka albo licznik. Na ekranach pełnoekranowych (wyszukiwarka, webview, dodatkowe informacje,
   rejestracja) zjeżdża w dół.
 - **Karta „Aktualny wynik” zwija się do belki** (wzorzec dużego tytułu z Human Interface Guidelines i zwijanego
-  paska Material 3): przy przewijaniu jedzie wolniej niż treść, delikatnie maleje i gaśnie, a jej liczba wjeżdża
-  jako druga linia belki („11 z 14 w normie”). Lista parametrów zawsze jest nad kartą.
-- **Karta reaguje na ruch telefonu** (żyroskop): przechył lewo-prawo i przód-tył przesuwa ją o kilka pikseli,
-  a grafika w tle idzie mocniej, co daje głębię. Ruch jest wygładzany filtrem, więc nie drga. iOS wymaga zgody
-  na czujniki, o którą pytamy raz po pierwszym tapnięciu; odmowa oznacza po prostu nieruchomą kartę.
-  Przy włączonym „Ogranicz ruch” w systemie oba efekty są wyłączone.
+  paska Material 3): przy przewijaniu jedzie wolniej niż treść i gaśnie, a jej liczba wjeżdża
+  jako druga linia belki („11 z 14 w normie”). Bez skalowania, żeby ruch był spokojny. Lista parametrów zawsze jest nad kartą.
+- **W tle karty jest bardzo delikatny blask** — miękkie światło z lewej góry, które powoli oddycha (16 s).
+  Przy włączonym „Ogranicz ruch” w systemie blask stoi, a karta nie animuje się przy przewijaniu.
 - **Chipy sposobu realizacji gasną szybciej, niż zwija się ich pas** — nie widać obcięcia od dołu i nie wchodzą
   pod wyszukiwarkę.
 - **Karta produktu ma jednolite tło** Background/surfaceSecondary — ta sama szarość, którą kończy się gradient hero.
