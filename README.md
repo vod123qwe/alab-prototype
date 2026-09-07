@@ -8,7 +8,7 @@ Trzy warstwy, jeden zestaw komponentów:
 | **DS w kodzie** | `ds/` | tokeny (`tokens.css`), komponenty (`components.css` + `components.js`), ikony (`icons.js`), assety z Figmy (`assets/`) |
 | **Storybook** | `storybook/index.html` | katalog fundamentów i komponentów z playgroundem, matrycą wariantów i tabelą props |
 | **Prototyp** | `app/index.html` | ścieżka Splash → Onboarding → Start → Rejestracja (3 kroki) → Zgody ALAB club → Face ID → Dashboard, plus Logowanie i Reset hasła |
-| Sklep (starszy) | `index.html` | zakodowany ekran „Sklep • Strona główna”; w prototypie służy jako dashboard (iframe) |
+| Sklep (starszy) | `index.html` | pierwsza, responsywna wersja ekranu sklepu (poza prototypem; zostawiona dla porównania) |
 
 ## Uruchomienie
 
@@ -34,6 +34,20 @@ Ikony są generowane z `ds/assets/*.svg` skryptem `node ds/build-icons.js` (uruc
 
 Nazwy w kodzie = nazwy w Figmie: zmienna `Content/onSurface` → `--content-on-surface`, styl `label/xlarge-emphasized` → `.t-label-xlarge-em`,
 komponent `SelectableCell` → `DS.SelectableCell({...})` / `.ds-SelectableCell`.
+
+## Sklep (dashboard) — natywny TopBar i TabBar
+
+Zakładka **Sklep** to ekran „Sklep • Strona główna” (656:7311) zbudowany z komponentów DS (`ds/components.shop.js`): SearchField onColor, chipy typu odbioru,
+CellOrderTypeStatus, siatka CategoryTile, sekcje z ProductCard (CellPackage/CellTest z badge’ami Code/Premium/Basic), BottomTabBar.
+
+- **TopBar przy scrollu** (w Figmie brak opisu tego zachowania — przyjęte wg iOS, UINavigationBar + UISearchController): pole szukania zostaje przypięte na granatowym tle,
+  rząd chipów zwija się w pierwszych ~72 px scrolla (wysokość, przezroczystość, lekki ruch w górę), zdjęcie w tle ma paralaksę, po zwinięciu pasek dostaje cień. Pozycja scrolla jest pamiętana między zakładkami.
+- **TabBar** stoi zawsze na dole (safe area na telefonie), przełącza zakładki bez animacji push (crossfade), aktywna ikona „podskakuje”. Zakładki Start / Wyniki to zaślepki
+  (nie ma ich masterów w tym module), Koszyk pokazuje dodane pozycje. „Do koszyka” podbija badge na zakładce Koszyk i pokazuje snackbar.
+- **Wyszukiwarka** (klik w pole na hero → ekran „Wyszukiwarka • Start” 1177:15512): pole aktywne (border 2 `Outline/borderActive`, caret, Clear, „Anuluj”), chipy w wersji solid,
+  trzy stany 1:1 z Figmy i specyfikacją P03 z inventory: **< 3 znaki → „Najczęściej szukane”**, **≥ 3 znaki → podpowiedzi** (licznik „N podpowiedzi”, fraza z podświetleniem,
+  sekcje Pakiety badań / Badania / Kategorie z dividerami), **brak wyników → ikona + „Brak wyników dla „…”” + „Sprawdź pisownię lub wyszukaj inną frazę” + Najczęściej szukane**.
+  Wyszukiwanie ignoruje diakrytyki. Klik w podpowiedź = snackbar (lista wyników to kolejny etap).
 
 ## Ruch i gesty
 
@@ -82,6 +96,8 @@ Poprawny PESEL testowy: `44051401359`.
   scrim + arkusz kraju z filtrem. To interpretacja flow, nie decyzje z Figmy.
 
 ## Rozjazdy z leksykonem UX writing (copy 1:1 z Figmy, celowo nie poprawione)
+
+- Sklep: ceny bez groszy („68 zł”, „85 zł”, „39 zł”) → leksykon: zawsze `149,00 zł`; badge „Niższa cena z ALAB **Club**” → `club` z małej.
 
 - „Zarejestruj się do konta pacjenta” → leksykon: **Konto Pacjenta** (wielkie litery).
 - „Chcę informację o promocjach i nowościach” → leksykon zakazuje słowa **promocja**.

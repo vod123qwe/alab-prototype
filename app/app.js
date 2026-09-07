@@ -88,7 +88,7 @@
     track.classList.remove('is-dragging'); track.style.transform = `translateX(${-(i - 1) * (100 / 3)}%)`;
     const dots = $('#onb-dots'); if (dots && +dots.dataset.step !== i) { dots.dataset.step = i; dots.innerHTML = DS.StepsIndicator({ steps: 3, current: i, text: false }); }
     $('#screen .onb')?.setAttribute('data-step', i);
-    $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current()));
+    $$$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current()));
   }
   const onbGoto = (i) => { if (i < 1) i = 1; if (i > 3) return go('start'); location.replace('#/onboarding/' + i); };
 
@@ -238,10 +238,9 @@
   };
 
   // ---- Dashboard (istniejący prototyp sklepu w ramie telefonu) ----
-  SCREENS.dashboard = () => {
-    setTimeout(() => { if (S.guest) return; snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 96); }, 400);
-    return `<div class="screen dash"><iframe src="../index.html" title="Sklep • Strona główna"></iframe></div>`;
-  };
+  SCREENS.dashboard = () => `<div class="screen dash"><iframe src="../index.html" title="Sklep • Strona główna"></iframe></div>`; // nadpisywane w app.shop.js
+  // powitanie po rejestracji/logowaniu (raz)
+  window.addEventListener('hashchange', () => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
 
   // ---------------- router ----------------
   const ROUTES = [
@@ -286,6 +285,7 @@
       stagger(next);
     }
     DS.enhance(next);
+    (window.APP?.afterRender || []).forEach(f => { try { f(route, next); } catch (err) { console.error(err); } });
     $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === route));
     if (route === 'register/2') setTimeout(() => $('#otp .ds-InputCode__hidden')?.focus(), T_MS);
     if (route === 'reset') setTimeout(() => $('#r-email')?.focus(), T_MS);
@@ -457,12 +457,16 @@
     'reset-resend': () => { snack('Wysłaliśmy link ponownie', 'success', 120); render_(); },
   };
 
+  // ---------------- API dla modułów (app.shop.js) ----------------
+  window.APP = { SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav };
+
   // ---------------- panel deweloperski ----------------
+  function renderNav() { $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="#/${r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join(''); $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current())); }
   $('#dev-logo').innerHTML = DS.ICONS['alabek'];
-  $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="#/${r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join('');
+  renderNav();
   $('#dev-reset').addEventListener('click', () => { S = initial(); history = []; lastRoute = ''; if (current() === 'splash') render_('fade'); else go('splash'); });
   if (matchMedia('(max-width: 900px)').matches) document.body.classList.add('is-mobile');
 
   window.addEventListener('hashchange', route);
-  if (!location.hash) location.hash = '#/splash'; else route();
+  document.addEventListener('DOMContentLoaded', () => { if (!location.hash) location.hash = '#/splash'; else route(); });
 })();

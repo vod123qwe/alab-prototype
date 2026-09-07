@@ -37,6 +37,7 @@
   --outline-border-controls: #8f8f8f;
   --outline-border-alpha-dark: rgba(0, 0, 0, 0.08);
   --outline-border-alpha-light: rgba(255, 255, 255, 0.2);
+  --outline-border-active: #04387c;
 
   /* --- Functional --- */
   --functional-success: #228738;
@@ -44,6 +45,9 @@
 
   /* --- Brand gradient (ALAB club) --- */
   --gradient-brand: linear-gradient(0deg, #461ba6 0%, #7512c3 100%);
+  --gradient-success: linear-gradient(180deg, #63a407 0%, #016016 80%);
+  --elevation-code-badge: inset 0 -4px 4px rgba(145, 208, 77, 0.4), 0 1px 4px rgba(90, 149, 50, 0.7);
+  --elevation-premium-badge: inset 0 -4px 4px rgba(144, 65, 210, 0.9), 0 1px 4px rgba(113, 19, 193, 0.5);
 
   /* --- Odstępy (space/*) --- */
   --space-xs: 2px;
@@ -55,6 +59,7 @@
   --space-4xl: 20px;
   --space-5xl: 24px;
   --space-6xl: 32px;
+  --space-9xl: 40px;
   --global-margin: 20px;
   --screen-margin: 24px;
 
@@ -64,6 +69,7 @@
   --radius-medium: 12px;
   --radius-large: 16px;
   --radius-xlarge: 24px;
+  --radius-extralarge: 28px;   /* karty produktów (SurfaceSlot) */
   --radius-screen: 36px;
   --radius-pill: 999px;
   --button-button-icon: 999px;

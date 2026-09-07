@@ -164,10 +164,10 @@
   };
 
   // ---------------- RENDER ----------------
-  const NAV = [['Fundamenty', Object.entries(FOUNDATIONS)], ['Komponenty', Object.entries(COMPONENTS)]];
   const state = {};
 
   function renderNav(current) {
+    const NAV = [['Fundamenty', Object.entries(FOUNDATIONS)], ['Komponenty', Object.entries(COMPONENTS)]];
     $('#sb-nav').innerHTML = NAV.map(([g, items]) => `<div class="sb-group">${g}</div>` + items.map(([id, s]) => `<a class="sb-link ${id === current ? 'active' : ''}" href="#/${id}">${esc(s.title)}</a>`).join('')).join('');
   }
 
@@ -230,6 +230,7 @@
     window.scrollTo(0, 0);
   }
   $('#sb-logo').innerHTML = DS.ICONS['alabek'];
+  window.SB = { COMPONENTS, FOUNDATIONS, route, sel, bool, text, cell };
   window.addEventListener('hashchange', route);
-  route();
+  document.addEventListener('DOMContentLoaded', route);
 })();
