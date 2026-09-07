@@ -31,7 +31,7 @@
 
 /* ---------- ResultSummary ---------- */
 .ds-ResultSummary { position: relative; height: 212px; width: 100%; padding: 32px; border-radius: var(--radius-xlarge); overflow: hidden; color: var(--content-on-primary); background: linear-gradient(59deg, var(--main-primary) 3%, var(--main-accent) 99%); }
-.ds-ResultSummary__art { position: absolute; height: 256px; left: 42.39%; right: -26.27%; top: calc(50% + 9px); transform: translateY(-50%); opacity: .9; }
+.ds-ResultSummary__art { position: absolute; height: 256px; left: 42.39%; right: -26.27%; top: calc(50% + 9px); transform: translate(var(--art-x, 0px), calc(-50% + var(--art-y, 0px))); opacity: .9; }
 .ds-ResultSummary__label { position: relative; font: 700 var(--headline-large-font-size)/var(--headline-large-line-height) var(--font-family-primary); letter-spacing: -0.01em; }
 .ds-ResultSummary__value { position: relative; display: flex; align-items: center; gap: var(--space-5xl); margin-top: 20px; }
 /* pierścień w wrapperze, żeby maska pierścienia nie obcinała odznaki „wszystko w normie” */

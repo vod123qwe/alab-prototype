@@ -339,3 +339,12 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    Na ekranach bez zakładek (wyszukiwarka, webview, dodatkowe informacje, rejestracja) zjeżdża w dół. */
 .phone__tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; transition: transform .3s cubic-bezier(.32,.72,0,1), opacity .2s ease; }
 .phone__tabbar.is-off { transform: translateY(100%); opacity: 0; pointer-events: none; }
+
+/* Szczegóły wyniku: karta podsumowania zwija się do belki. Karta jedzie wolniej niż treść, maleje i gaśnie,
+   a druga linia belki („11 z 14 w normie”) wjeżdża w tym samym ruchu. Treść listy zawsze nad kartą. */
+.result .ds-ResultSummary { transform-origin: 50% 0; will-change: transform, opacity;
+  /* --py/--sc: zwijanie przy scrollu, --tx/--ty: przechył za ruchem telefonu */
+  transform: translateY(var(--py, 0px)) scale(var(--sc, 1)) translate3d(var(--tx, 0px), var(--ty, 0px), 0); }
+.result .ds-SwitchableTabRow, .result .result__groups, .result .result__more, .result .ds-ToastMessage { position: relative; z-index: 1; }
+.result .screen__top .ds-TopBar__subtitle { opacity: 0; max-height: 0; overflow: hidden; transform: translateY(-4px); transition: opacity .22s ease, max-height .28s cubic-bezier(.32,.72,0,1), transform .28s cubic-bezier(.32,.72,0,1); }
+.result .screen__top.is-summary .ds-TopBar__subtitle { opacity: 1; max-height: 20px; transform: none; }

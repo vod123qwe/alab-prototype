@@ -58,8 +58,9 @@
       : s.qual ? [{ label: 'Ujemne', value: s.ok }, { label: 'Dodatnie', value: s.abnormal }]
       : [{ label: 'W normie', value: s.ok }, { label: 'Poza normą', value: s.abnormal }];
     const note = s.qual ? plural(s.ok, 'wynik ujemny', 'wyniki ujemne', 'wyników ujemnych') : plural(s.ok, 'wynik w normie', 'wyniki w normie', 'wyników w normie');
+    const barNote = `${s.ok} z ${s.total} ${s.qual ? 'ujemnych' : 'w normie'}`;   // druga linia belki po zwinięciu karty
     return `<div class="screen shop result" data-tab="results">
-      <div class="screen__top">${DS.TopBar({ title: 'Szczegóły badania', trailing: { icon: 'info-circle', label: 'Dodatkowe informacje', attrs: { 'data-action': 'result-info', 'data-id': r.id } } })}</div>
+      <div class="screen__top">${DS.TopBar({ title: 'Szczegóły badania', subtitle: barNote, trailing: { icon: 'info-circle', label: 'Dodatkowe informacje', attrs: { 'data-action': 'result-info', 'data-id': r.id } } })}</div>
       <div class="screen__body result__body" id="res-scroll">
         <h1 class="result__title">${esc(r.title)}</h1>
         <p class="result__person">${DS.icon('user-01', 16)}<span>${esc(r.person)} • ${esc(r.date)}</span></p>
@@ -103,6 +104,40 @@
       ${DS.HomeIndicator()}
     </div>`;
   };
+
+  // ---------------- przechył karty za ruchem telefonu ----------------
+  // Karta reaguje na trzymanie telefonu (żyroskop): przechył lewo-prawo i przód-tył przesuwa ją o kilka pikseli,
+  // a grafika w tle idzie mocniej, co daje głębię. Ruch wygładzamy filtrem, żeby nie drgał przy każdym odczycie.
+  // iOS wymaga zgody na czujniki po gestcie użytkownika (DeviceOrientationEvent.requestPermission od iOS 13).
+  let tiltEl = null, tiltLoop = 0, tiltStarted = false;
+  const tilt = { gx: 0, gy: 0, x: 0, y: 0 };
+  function tiltFrame() {
+    if (!tiltEl || !document.contains(tiltEl)) { tiltLoop = 0; tiltEl = null; return; }
+    tilt.x += (tilt.gx - tilt.x) * 0.12; tilt.y += (tilt.gy - tilt.y) * 0.12;
+    tiltEl.style.setProperty('--tx', tilt.x.toFixed(2) + 'px');
+    tiltEl.style.setProperty('--ty', tilt.y.toFixed(2) + 'px');
+    tiltEl.style.setProperty('--art-x', (tilt.x * 3.4).toFixed(2) + 'px');
+    tiltEl.style.setProperty('--art-y', (tilt.y * 2.2).toFixed(2) + 'px');
+    tiltLoop = requestAnimationFrame(tiltFrame);
+  }
+  function onOrientation(e) {
+    const clamp = (v, m) => Math.max(-m, Math.min(m, v || 0));
+    tilt.gx = clamp(e.gamma, 24) * 0.25;          // lewo-prawo, maks. ok. 6 px
+    tilt.gy = clamp((e.beta || 0) - 45, 24) * 0.14; // przód-tył, telefon trzymany ok. 45°
+  }
+  function setupTilt(el) {
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || !window.DeviceOrientationEvent) return;
+    tiltEl = el;
+    if (!tiltLoop) tiltLoop = requestAnimationFrame(tiltFrame);
+    if (tiltStarted) return;
+    tiltStarted = true;
+    const start = () => window.addEventListener('deviceorientation', onOrientation);
+    if (typeof DeviceOrientationEvent.requestPermission !== 'function') start();
+    else document.addEventListener('click', () => {
+      DeviceOrientationEvent.requestPermission().then(state => { if (state === 'granted') start(); }).catch(() => { /* odmowa: karta stoi */ });
+    }, { once: true });
+  }
+  APP.setupTilt = setupTilt;
 
   // ---------------- arkusz FAQ ----------------
   function faqSheet() {
@@ -166,7 +201,28 @@
     if (top && body) {
       const pad = () => { body.style.paddingTop = (top.offsetHeight + 32) + 'px'; };
       pad(); window.addEventListener('resize', pad, { passive: true });
-      body.addEventListener('scroll', () => { top.classList.toggle('is-scrolled', body.scrollTop > 8); }, { passive: true });
+      // Karta „Aktualny wynik” zwija się do belki (wzorzec dużego tytułu z HIG i zwijanego paska Material 3):
+      // przesuwa się wolniej niż treść, delikatnie maleje i gaśnie, a jej liczba pojawia się jako druga linia belki.
+      const card = $('.ds-ResultSummary', root);
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const D = card ? Math.max(120, card.offsetHeight) : 200;   // droga zwinięcia = wysokość karty
+      let raf = 0;
+      const onScroll = () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0; const y = body.scrollTop, p = Math.max(0, Math.min(1, y / D));
+          top.classList.toggle('is-scrolled', y > 8);
+          top.classList.toggle('is-summary', p > 0.55);
+          if (card && !reduce) {
+            // transform składany w CSS ze zmiennych: --py/--sc od scrolla, --tx/--ty od żyroskopu
+            card.style.setProperty('--py', (y * 0.25).toFixed(1) + 'px');
+            card.style.setProperty('--sc', (1 - 0.04 * p).toFixed(3));
+            card.style.opacity = String(Math.max(0, 1 - p * 1.15));
+          }
+        });
+      };
+      body.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+      setupTilt(card);
     }
     const sc = $('#res-list, #res-scroll', root);
     if (sc) { if (route === 'tab/results') sc.scrollTop = st().scroll[route] || 0; sc.addEventListener('scroll', () => { st().scroll[route] = sc.scrollTop; }, { passive: true }); }
