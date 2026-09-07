@@ -43,11 +43,12 @@
 
   // ---------- ButtonTiny ----------
   // variant: primary | secondary | tertiary | link
-  DS.ButtonTiny = ({ label = 'Sprawdź', variant = 'primary', leadingIcon, trailingIcon, attrs: a } = {}) =>
-    `<button type="button" class="${cls('ds', 'ds-ButtonTiny', 'ds-ButtonTiny--' + variant)}" ${attrs(a)}>` +
+  DS.ButtonTiny = ({ label = 'Sprawdź', variant = 'primary', leadingIcon, trailingIcon, attrs: a } = {}) => {
+    const { class: extra, ...rest } = a || {}; // klasa z attrs dokleja się do klasy komponentu
+    return `<button type="button" class="${cls('ds', 'ds-ButtonTiny', 'ds-ButtonTiny--' + variant, extra)}" ${attrs(rest)}>` +
     (leadingIcon ? DS.icon(leadingIcon, 16) : '') +
     `<span class="ds-ButtonTiny__label">${esc(label)}</span>` +
-    (trailingIcon ? DS.icon(trailingIcon, 16) : '') + `</button>`;
+    (trailingIcon ? DS.icon(trailingIcon, 16) : '') + `</button>`; };
 
   // ---------- NumberIndicator ----------
   DS.NumberIndicator = ({ value = 1 } = {}) => {

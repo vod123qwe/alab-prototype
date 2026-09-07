@@ -88,12 +88,17 @@
   DS.CellInfo = ({ icon = 'timer', label = '', value = '', bullets, attrs: a } = {}) =>
     `<div class="ds ds-CellInfo" ${attrs(a)}>${DS.icon(icon, 24)}<div class="ds-CellInfo__text"><p class="ds-CellInfo__label">${esc(label)}</p>` +
     (bullets ? `<ul class="ds-CellInfo__bullets">${bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : `<p class="ds-CellInfo__value">${esc(value)}</p>`) + `</div></div>`;
-  // ClubBannerLarge: „Twój klub na całe życie” — zdjęcie + 3 benefity + Sprawdź
+  // ClubBannerLarge („AlabBannerLarge” 574:1900): granat, padding 32, radius 28; zdjęcie rodziny u góry po prawej
+  // (top -16.36%, bottom 45.23%, środek 50%+71.5px), dwa fioletowe bloby, gradient granat → przezroczysty fiolet (70%);
+  // treść: tytuł 20/24, logo 98×21, lista (ikona 16, tytuł 14/20, opis 12/18), ButtonTiny tertiary „Sprawdź”.
   DS.ClubBannerLarge = ({ attrs: a } = {}) =>
-    `<section class="ds ds-ClubBanner" ${attrs(a)}><img class="ds-ClubBanner__img" src="${DS.ASSETS}img_club_banner.jpg" alt=""><div class="ds-ClubBanner__content">` +
-    `<h2 class="ds-ClubBanner__title">Twój klub<br>na całe życie</h2><img class="ds-ClubBanner__logo" src="${DS.ASSETS}il_club_logo_banner.svg" alt="ALAB club">` +
-    `<ul class="ds-ClubBanner__list">${[['5% dodatkowej zniżki', 'na całą ofertę ALAB laboratoria'], ['Voucher 20%', 'w prezencie, do wykorzystania na kolejne zakupy po wykonaniu badań'], ['Oferty tylko dla klubowiczów', 'Promocje, oferta urodzinowa i inne niespodzianki w ciągu roku']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 20)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul>` +
-    `<button type="button" class="ds-ClubBanner__cta" data-action="club-promo">Sprawdź ${DS.icon('chevron-right', 16)}</button></div></section>`;
+    `<section class="ds ds-ClubBanner" ${attrs(a)}><div class="ds-ClubBanner__bg" aria-hidden="true">` +
+    `<img class="ds-ClubBanner__img" src="${DS.ASSETS}img_club_banner.jpg" alt="">` +
+    `<img class="ds-ClubBanner__blob ds-ClubBanner__blob--1" src="${DS.ASSETS}il_club_blob_1.svg" alt=""><img class="ds-ClubBanner__blob ds-ClubBanner__blob--2" src="${DS.ASSETS}il_club_blob_2.svg" alt="">` +
+    `<div class="ds-ClubBanner__grad"></div></div>` +
+    `<div class="ds-ClubBanner__content"><h2 class="ds-ClubBanner__title">Twój klub<br>na całe życie</h2><img class="ds-ClubBanner__logo" src="${DS.ASSETS}il_club_logo_banner.svg" alt="ALAB club">` +
+    `<ul class="ds-ClubBanner__list">${[['5% dodatkowej zniżki', 'na całą ofertę ALAB laboratoria'], ['Voucher 20%', 'w prezencie, do wykorzystania na kolejne zakupy po wykonaniu badań'], ['Oferty tylko dla klubowiczów', 'Promocje, oferta urodzinowa i inne niespodzianki w ciągu roku']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 16)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul></div>` +
+    DS.ButtonTiny({ label: 'Sprawdź', variant: 'tertiary', trailingIcon: 'chevron-right', attrs: { 'data-action': 'club-promo', class: 'ds-ClubBanner__cta' } }) + `</section>`;
   // ChipDropdown: chip z chevronem otwierający wybór (Listing: „Badania i pakiety ⌵”)
   DS.ChipDropdown = ({ label = 'Badania i pakiety', attrs: a } = {}) =>
     `<button type="button" class="ds ds-FilterChip ds-ChipDropdown" ${attrs(a)}>${esc(label)}${DS.icon('chevron-right', 16, 'ds-ChipDropdown__chevron')}</button>`;
