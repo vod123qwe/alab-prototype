@@ -186,6 +186,9 @@ Zachowania dodane w tym etapie:
 - **Pasek akcji chowa się przy przewijaniu w dół** i wraca po lekkim ruchu w górę (karta wyniku i przyklejone CTA
   na karcie produktu). Na samej górze i przy dole listy pasek jest zawsze widoczny.
 - **Assety stanów ekranu** mają blob w tle (`il_blob.svg`) i są większe niż wcześniej — wzorzec PlaceholderAsset 349:293.
+- **Akordeony rozwijają się łagodnie** (`DS.slideToggle`: wysokość + wygaszenie, easing jak w przejściach ekranów,
+  chevron obraca się o 180°). Przy włączonym „Ogranicz ruch” w systemie stan przełącza się bez animacji.
+- Odstęp między pierścieniem a liczbą w karcie „Aktualny wynik” to 24 px (w Figmie 16 px — na telefonie było za ciasno).
 
 Nowe komponenty DS (w storybooku): `CellTestResult`, `BadgeStatus`, `YearRule`, `ResultSummary`, `SwitchableTabRow`,
 `AccordionGroup`, `AccordionCell`, `ParamRow`, `StatusLabel`, `RangeSlider`, `ToastMessage`, `CellContent`.

@@ -111,9 +111,10 @@
     sheet.wrap.addEventListener('click', (e) => {
       const t = e.target.closest('[data-faq-toggle]'); if (!t) return;
       const cell = t.closest('[data-faq]'); const id = cell.dataset.faq;
-      open[id] = !open[id];
-      const tmp = document.createElement('div'); tmp.innerHTML = DS.AccordionCell({ id, question: FAQ.find(f => f.id === id).q, answer: FAQ.find(f => f.id === id).a, open: !!open[id] });
-      cell.replaceWith(tmp.firstElementChild); DS.enhance(sheet.wrap);
+      open[id] = !cell.classList.contains('is-open');
+      cell.classList.toggle('is-open', open[id]);
+      t.setAttribute('aria-expanded', String(open[id]));
+      DS.slideToggle(cell.querySelector('.ds-AccordionCell__answer'), open[id]);
     });
   }
 
@@ -140,8 +141,7 @@
       st().open[key] = !openNow;
       sec.classList.toggle('is-open', !openNow);
       acc.setAttribute('aria-expanded', String(!openNow));
-      const content = sec.querySelector('.ds-AccordionGroup__content'); if (content) content.hidden = openNow;
-      const ic = sec.querySelector('.ds-AccordionGroup__icon'); if (ic) ic.innerHTML = DS.icon(openNow ? 'chevron-down' : 'chevron-up', 20);
+      DS.slideToggle(sec.querySelector('.ds-AccordionGroup__content'), !openNow);
       return;
     }
     // segmenty Wszystkie / Poza normą

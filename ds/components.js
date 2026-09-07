@@ -169,6 +169,35 @@
     return `<div class="${cls('ds', 'ds-BottomActionsBar', layout === 'horizontal' && 'ds-BottomActionsBar--horizontal', extra)}" ${attrs(rest)}>` +
     `<div class="ds-BottomActionsBar__buttons">${buttons.join('')}</div>` + (homeIndicator ? DS.HomeIndicator() : '') + `</div>`; };
 
+  // ---------- slideToggle: łagodne rozwijanie i zwijanie treści ----------
+  // Animujemy wysokość od/do zmierzonej wysokości treści, z tym samym easingiem co przejścia ekranów (iOS-owy „gentle”).
+  // Szanujemy „Ogranicz ruch” w systemie — wtedy przełączamy stan bez animacji.
+  DS.slideToggle = (el, open, { duration = 340 } = {}) => {
+    if (!el) return;
+    const gentle = 'cubic-bezier(.32,.72,0,1)';
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (el._slide) { el._slide(); }                       // przerwij poprzednią animację
+    if (reduce) { el.hidden = !open; return; }
+    el.hidden = false;
+    const target = el.scrollHeight;
+    const from = open ? 0 : target, to = open ? target : 0;
+    el.style.overflow = 'hidden';
+    el.style.height = from + 'px';
+    el.style.opacity = open ? '0' : '1';
+    const finish = () => {
+      el.style.transition = ''; el.style.height = ''; el.style.overflow = ''; el.style.opacity = '';
+      el.hidden = !open; el._slide = null;
+    };
+    el._slide = finish;
+    requestAnimationFrame(() => {
+      if (el._slide !== finish) return;
+      el.style.transition = `height ${duration}ms ${gentle}, opacity ${Math.round(duration * 0.7)}ms ease`;
+      el.style.height = to + 'px';
+      el.style.opacity = open ? '1' : '0';
+      setTimeout(() => { if (el._slide === finish) finish(); }, duration + 40);
+    });
+  };
+
   // ---------- presentSheet: arkusz w #overlay z gestem zamykania jak w iOS (UISheetPresentationController) ----------
   // Ciągnięcie w dół przesuwa arkusz 1:1 za palcem i rozjaśnia scrim, odsłaniając ekran pod spodem. Puszczenie poniżej progu
   // (30% wysokości albo szybki ruch) zamyka arkusz, inaczej wraca sprężyście. Z treści przewijalnej gest startuje tylko na jej górze.

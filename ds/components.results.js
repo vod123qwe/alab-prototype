@@ -58,7 +58,7 @@
     `<section class="${cls('ds', 'ds-AccordionGroup', open && 'is-open')}" ${attrs(a)} ${id ? `data-accordion="${esc(id)}"` : ''}>` +
     `<button type="button" class="ds-AccordionGroup__header" aria-expanded="${open}" data-accordion-toggle>` +
     `<span class="ds-AccordionGroup__title">${esc(title)}${count != null ? `<span class="ds-AccordionGroup__count"> • ${esc(String(count))}</span>` : ''}</span>` +
-    `<span class="ds-AccordionGroup__icon">${DS.icon(open ? 'chevron-up' : 'chevron-down', 20)}</span></button>` +
+    `<span class="ds-AccordionGroup__icon">${DS.icon('chevron-down', 20)}</span></button>` +
     `<div class="ds-AccordionGroup__content" ${open ? '' : 'hidden'}>${content}</div></section>`;
 
   // ---------- AccordionCell (wiersz FAQ: ikona pytania + pytanie + odpowiedź) ----------
@@ -67,7 +67,7 @@
     `<button type="button" class="ds-AccordionCell__header" aria-expanded="${open}" data-faq-toggle>` +
     DS.icon('question-square', 20, 'ds-AccordionCell__mark') +
     `<span class="ds-AccordionCell__question">${esc(question)}</span>` +
-    `<span class="ds-AccordionCell__icon">${DS.icon(open ? 'chevron-up' : 'chevron-down', 20)}</span></button>` +
+    `<span class="ds-AccordionCell__icon">${DS.icon('chevron-down', 20)}</span></button>` +
     `<p class="ds-AccordionCell__answer" ${open ? '' : 'hidden'}>${esc(answer)}</p></section>`;
 
   // ---------- StatusLabel (status parametru: ikona + etykieta, bez tła) ----------
