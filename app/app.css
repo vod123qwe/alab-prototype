@@ -252,13 +252,14 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    ------------------------------------------------------------ */
 .product__head { position: absolute; top: 0; left: 0; right: 0; z-index: 5; color: var(--content-on-scrim); transition: background-color .2s ease, box-shadow .2s ease, color .2s ease; }
 .product__head.is-scrolled { background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px); box-shadow: 0 0 12px rgba(0,0,0,.04); color: var(--content-on-surface); }
+.product__head .ds-TopBar { color: inherit; } /* .ds ustawia onSurface — tytuł ma dziedziczyć biel z nagłówka, a po scrollu onSurface */
 .product__head .ds-IconButton--onscrim { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
 .product__head.is-scrolled .ds-IconButton--onscrim { background: transparent; border-color: transparent; color: var(--content-on-surface); }
 .product__head.is-scrolled .ds-StatusBar--light { color: var(--content-on-surface); }
 .product__scroll { background: var(--background-surface-secondary); }
 .product__hero { position: relative; flex: 0 0 468px; height: 468px; background: var(--main-primary); overflow: hidden; }
-.product__hero img { position: absolute; width: 840.74px; height: 840.74px; left: calc(50% + 251.34px); top: calc(50% - 20.16px); transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(50px); }
-.product__heroOverlay { position: absolute; inset: 0 0 -5px; background: linear-gradient(182.4deg, rgba(4,56,125,.3) 1.6%, var(--background-surface-secondary) 82.4%); }
+/* tło = eksport frame'u ProductBackground z Figmy (375×468, blob + gradient do surfaceSecondary) — 1:1 z designem */
+.product__hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
 .product__main { gap: 24px; padding: 36px 24px 36px; /* +12 dp góra/dół vs pozostałe karty */ border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
 .product__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; margin: 0; color: var(--content-on-surface); }

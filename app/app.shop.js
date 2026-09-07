@@ -198,7 +198,7 @@
     return `<div class="screen shop product" data-tab="shop">
       <header class="product__head" id="prod-head">${DS.TopBar({ transparent: true, light: true, title: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania' })}</header>
       <div class="screen__body shop__scroll product__scroll" id="prod-scroll">
-        <div class="product__hero"><img src="${A}img_shop_bg.png" alt=""><div class="product__heroOverlay"></div></div>
+        <div class="product__hero"><img src="${A}img_product_bg.png" alt=""></div>
         <div class="product__content">
           <div class="ds ds-Surface product__main">
             <h1 class="product__title">${esc(p.title)}</h1>
