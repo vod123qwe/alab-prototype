@@ -22,12 +22,13 @@
   };
 
   // ---------- BottomTabBar ----------
-  DS.BottomTabBar = ({ items = [], active = 'shop', attrs: a } = {}) =>
-    `<nav class="ds ds-BottomTabBar" aria-label="Nawigacja dolna" ${attrs(a)}>${DS.Divider()}<div class="ds-BottomTabBar__items">` +
+  DS.BottomTabBar = ({ items = [], active = 'shop', attrs: a } = {}) => {
+    const { class: extra, ...rest } = a || {}; // klasa z attrs dokleja się do klasy komponentu (drugi atrybut class byłby zignorowany)
+    return `<nav class="${cls('ds', 'ds-BottomTabBar', extra)}" aria-label="Nawigacja dolna" ${attrs(rest)}>${DS.Divider()}<div class="ds-BottomTabBar__items">` +
     items.map(it => `<button type="button" class="${cls('ds-BottomTabItem', it.id === active && 'is-active')}" data-tab="${esc(it.id)}" aria-current="${it.id === active ? 'page' : 'false'}">` +
       `<span class="ds-BottomTabItem__icon">${DS.icon(it.id === active && it.iconActive ? it.iconActive : it.icon, 24)}${it.badge ? `<span class="ds-BottomTabItem__badge">${DS.NumberIndicator({ value: it.badge })}</span>` : ''}</span>` +
       `<span class="ds-BottomTabItem__label">${esc(it.label)}</span></button>`).join('') +
-    `</div>${DS.HomeIndicator({ attrs: { class: 'ds-BottomTabBar__home' } })}</nav>`;
+    `</div>${DS.HomeIndicator({ attrs: { class: 'ds-BottomTabBar__home' } })}</nav>`; };
 
   // ---------- CategoryTile (Variant: Default | All) ----------
   DS.CategoryTile = ({ icon = 'test-tube', label = 'Kategoria', all = false, attrs: a } = {}) =>

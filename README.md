@@ -153,3 +153,11 @@ Ceny formatujemy zawsze z groszami (leksykon), choć część masterów pokazuje
 - Decisions-log X.C: scope sprzedany ma 2 sposoby realizacji w filtrze katalogu (Punkt / dom), wysyłka jako typ produktu.
   Prototyp trzyma 3 chipy zgodnie z masterami Figmy (wariant idealny, oflagowany do odbicia ze stakeholderami).
 - Ikona „Zestaw wysyłkowy” w Figmie nazywa się `ic_home-pin` (dom z pinem); użyta 1:1.
+
+### Poprawki PDP (2026-09-07, wersje -11…-13)
+
+- Hero karty produktu 1:1 z ProductBackground (583:22109): 468 px, blob 840,74 px / 75°, gradient do surfaceSecondary; strona pod kartami ma tło surfaceSecondary; karta zaczyna się 142 px od góry, z paddingiem 36 px (o 12 dp większym niż pozostałe karty).
+- TopBar na PDP: na górze „Transparent - light”, po scrollu „On scroll” wg dokumentacji DS (surface 82% + blur 32 + cień 0 0 12 rgba(0,0,0,.04), tekst i ikony onSurface). Razem z paskiem zmienia się `theme-color` (granat ↔ biel), bo od niego zależy kolor tekstu systemowego status bara w PWA na iOS.
+- Przyklejone CTA siedzi dokładnie na tab barze (wysokość liczona w JS, bo zależy od safe-area telefonu).
+- Dodanie do koszyka nie zmienia przycisku (można dodać kolejną sztukę): potwierdzeniem jest snackbar, licznik na zakładce Koszyk (z ilością w koszyku) i lekka haptyka `DS.haptic()` — Android przez `navigator.vibrate`, iOS przez przełącznik `<input type="checkbox" switch>` klikany programowo (workaround z iOS 18, do sprawdzenia na telefonie).
+- Naprawione: `BottomTabBar` ignorował klasę z `attrs` (drugi atrybut class), przez co `.shop__tabbar` nie istniał w DOM.

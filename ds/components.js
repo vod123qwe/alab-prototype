@@ -215,6 +215,17 @@
     return { wrap, sheet, close };
   };
 
+  // ---------- haptic: lekka wibracja potwierdzenia ----------
+  // Android/Chrome: navigator.vibrate. iOS Safari nie ma Vibration API — od iOS 18 haptyk systemowy wyzwala przełącznik
+  // <input type="checkbox" switch> klikany przez label (workaround, do zweryfikowania na telefonie).
+  DS.haptic = (kind = 'light') => {
+    const ms = kind === 'medium' ? 20 : kind === 'success' ? [10, 40, 10] : 10;
+    if (navigator.vibrate) { try { navigator.vibrate(ms); return; } catch (_) { /* brak wsparcia */ } }
+    let l = document.getElementById('ds-haptic');
+    if (!l) { l = document.createElement('label'); l.id = 'ds-haptic'; l.setAttribute('aria-hidden', 'true'); l.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none'; l.innerHTML = '<input type="checkbox" switch tabindex="-1">'; document.body.appendChild(l); }
+    try { l.click(); } catch (_) { /* ignoruj */ }
+  };
+
   // ---------- Snackbar ----------
   DS.Snackbar = ({ text = 'Message text', type = 'success', icon, attrs: a } = {}) =>
     `<div class="${cls('ds', 'ds-Snackbar', 'ds-Snackbar--' + type)}" role="status" ${attrs(a)}>${DS.icon(icon || (type === 'success' ? 'check-circle' : 'info-square'), 20)}<p>${esc(text)}</p></div>`;

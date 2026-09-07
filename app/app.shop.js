@@ -42,11 +42,11 @@
   };
   const badgeVM = (p, t = type()) => p.unavailableAt === t ? { basic: 'Niedostępne w wybranym punkcie' } : p.code ? { code: { discount: p.code.discount, text: `z kodem ${p.code.code}` } } : p.premium ? { premium: 'Niższa cena z ALAB Club' } : null;
   const card = (p) => {
-    const un = p.unavailableAt === type(), added = !!st().added[p.id];
+    const un = p.unavailableAt === type();
     return DS.ProductCard({ id: p.id, kind: p.kind, meta: p.kind === 'package' ? `Liczba badań: ${p.components.length}` : `Materiał: ${p.material}`, title: p.title,
-      badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : (added ? 'Dodano' : 'Do koszyka'), ctaVariant: un ? 'secondary' : 'primary',
+      badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : 'Do koszyka', ctaVariant: un ? 'secondary' : 'primary',
       footer: p.kind === 'package' ? { label: 'Zobacz składowe pakietu', count: p.components.length } : null,
-      attrs: { class: added ? 'is-added' : '', 'data-open': p.id } });
+      attrs: { 'data-open': p.id } });
   };
 
   // ---------------- wspólne kawałki UI ----------------
@@ -108,7 +108,7 @@
   SCREENS['tab/cart'] = () => `<div class="screen shop" data-tab="cart">
       <div class="screen__top">${DS.TopBar({ leading: false, title: 'Koszyk', subtitle: st().cart ? plural(st().cart, 'pozycja', 'pozycje', 'pozycji') : null })}</div>
       <div class="screen__body shop__scroll" style="padding-bottom:120px">${st().cart
-        ? `<div class="stack-12">${Object.keys(st().added).map(id => { const p = byId(id); return DS.Cell({ icon: p.kind === 'package' ? 'file-check' : 'test-tube', title: p.title, subtitle: zl(p.price), attrs: { 'data-open': p.id } }); }).join('')}</div>`
+        ? `<div class="stack-12">${Object.entries(st().added).map(([id, n]) => { const p = byId(id); return DS.Cell({ icon: p.kind === 'package' ? 'file-check' : 'test-tube', title: p.title, subtitle: `${zl(p.price)}${n > 1 ? ` • ${n} szt.` : ''}`, attrs: { 'data-open': p.id } }); }).join('')}</div>`
         : DS.ScreenState({ asset: A + 'il_mail_sent.png', title: 'Koszyk jest pusty', body: 'Dodaj badania lub pakiety w zakładce Sklep.', buttons: [DS.Button({ label: 'Przejdź do sklepu', block: true, attrs: { 'data-tab': 'shop' } })] })}</div>${tabBar('cart')}</div>`;
 
   // ---------------- Wyszukiwarka (Start / Podpowiedzi / Brak wyników) ----------------
@@ -186,7 +186,7 @@
   // ---------------- Karta produktu (badanie / pakiet) ----------------
   SCREENS['product/:id'] = (id) => {
     const p = byId(id); if (!p) return SCREENS.dashboard();
-    const isPkg = p.kind === 'package', un = p.unavailableAt === type(), added = !!st().added[p.id], club = !!S().clubJoined;
+    const isPkg = p.kind === 'package', un = p.unavailableAt === type(), club = !!S().clubJoined;
     const price = priceVM(p);
     const where = TYPES.filter(t => p.types.includes(t)).map(t => DELIVERY[t].label).join(', ');
     const comps = isPkg ? p.components.map(byId).filter(Boolean) : [];
@@ -205,7 +205,7 @@
             ${price ? DS.PriceBlock({ label: isPkg ? 'Cena za pakiet' : 'Cena za badanie', ...price, lowest: price.lowest && type() !== 'wysylka' ? price.lowest + ' dla wybranego Punktu Pobrań' : price.lowest })
               : `<div class="product__unavailable">${DS.BadgeBasic({ text: 'Niedostępne w wybranym punkcie' })}<p class="product__unavailableHint">Zmień Punkt Pobrań lub sposób realizacji, żeby zobaczyć cenę.</p></div>`}
             ${(p.code || !club) ? `<div class="ds-PromoStack">${p.code ? DS.CodeBox({ discount: p.code.discount, code: p.code.code }) : ''}${!club ? DS.ClubPromo() : ''}</div>` : ''}
-            ${DS.Button({ label: un ? 'Zmień punkt' : (added ? 'Dodano do koszyka' : buyLabel), type: un ? 'secondary' : 'primary', block: true, attrs: { id: 'prod-buy', class: added ? 'is-added' : '', ...buyAttrs } })}
+            ${DS.Button({ label: un ? 'Zmień punkt' : buyLabel, type: un ? 'secondary' : 'primary', block: true, attrs: { id: 'prod-buy', ...buyAttrs } })}
           </div>
           ${DS.Surface({ label: isPkg ? 'Opis pakietu' : 'Opis badania', content: DS.Cell({ icon: 'file-doc', title: p.desc, attrs: { 'data-action': 'full-desc', class: 'ds-Cell--clamp' } }) })}
           ${isPkg ? DS.SectionHeader({ title: 'Składowe pakietu' }) + DS.Surface({ label: 'Składowe pakietu', content: `<div class="ds-Surface__list">${comps.map(c => DS.Cell({ icon: null, title: c.title, attrs: { 'data-open': c.id } })).join('')}</div>` }) : ''}
@@ -217,7 +217,7 @@
           ${related.length ? `<section class="shop__section">${DS.SectionHeader({ title: isPkg ? 'Pakiety powiązane' : 'Badania powiązane' })}<div class="shop__cards">${related.map(card).join('')}</div></section>` : ''}
         </div>
       </div>
-      ${price && !un ? `<div class="product__cta" id="prod-cta">${DS.Button({ label: added ? 'Dodano do koszyka' : `${buyLabel} • ${price.current}`, block: true, attrs: { class: added ? 'is-added' : '', ...buyAttrs } })}</div>` : ''}
+      ${price && !un ? `<div class="product__cta" id="prod-cta">${DS.Button({ label: `${buyLabel} • ${price.current}`, block: true, attrs: buyAttrs })}</div>` : ''}
       ${tabBar('shop')}
     </div>`;
   };
@@ -246,9 +246,13 @@
   }
   // karta produktu: pasek nawigacji wypełnia się granatem po zjechaniu z hero; przyklejone CTA pojawia się, gdy główny przycisk znika z ekranu
   function setupProductScroll(root, route) {
-    const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root);
+    const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root), bar = $('.shop__tabbar', root);
     if (!head || !scroll) return;
-    const onScroll = () => { head.classList.toggle('is-scrolled', scroll.scrollTop > 8); st().scroll[route] = scroll.scrollTop; };
+    // przyklejone CTA siedzi dokładnie na tab barze (jego wysokość zależy od safe-area telefonu)
+    const placeCta = () => { if (cta && bar) cta.style.bottom = bar.offsetHeight + 'px'; };
+    placeCta(); window.addEventListener('resize', placeCta, { passive: true });
+    const onScroll = () => { const sc = scroll.scrollTop > 8; head.classList.toggle('is-scrolled', sc); APP.setThemeColor(sc ? '#ffffff' : '#04387c'); st().scroll[route] = scroll.scrollTop; };
+    onScroll();
     scroll.addEventListener('scroll', onScroll, { passive: true });
     if (cta && buy && 'IntersectionObserver' in window) { new IntersectionObserver(([e]) => cta.classList.toggle('is-visible', !e.isIntersecting && e.boundingClientRect.top < 0), { root: scroll, threshold: 0 }).observe(buy); }
     // karta produktu otwiera się zawsze od góry (jak nowy ekran w iOS) — pozycji nie przywracamy
@@ -302,11 +306,9 @@
     'open-product': (el) => openProduct(el.dataset.open),
     'add-to-cart': (el) => {
       const id = el.dataset.product || el.closest('.ds-ProductCard')?.dataset.product; const p = byId(id); if (!p) return;
-      if (st().added[id]) return info('To badanie jest już w koszyku');
-      st().added[id] = true; st().cart++;
-      $$(`[data-product="${id}"]`).forEach(c => { c.classList.add('is-added'); const l = c.querySelector('.ds-ButtonTiny__label'); if (l) l.textContent = 'Dodano'; });
-      $$('#prod-buy, #prod-cta .ds-Button').forEach(b => { b.classList.add('is-added'); const l = b.querySelector('.ds-Button__label') || b; l.textContent = 'Dodano do koszyka'; });
-      refreshCartBadge(); snack(`Dodano do koszyka: ${p.title}`, 'success', 110);
+      // można dodać kolejną sztukę — przycisk nie zmienia stanu; potwierdzeniem jest snackbar, haptyka i licznik na zakładce Koszyk
+      st().added[id] = (+st().added[id] || 0) + 1; st().cart++;
+      refreshCartBadge(); DS.haptic('light'); snack(`Dodano do koszyka: ${p.title}`, 'success', 110);
     },
     'change-point': () => info('Wybór Punktu Pobrań — Moduł 4, poza zakresem tego prototypu'),
     'open-category': (el) => go('category/' + el.dataset.cat),

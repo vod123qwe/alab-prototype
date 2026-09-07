@@ -260,16 +260,14 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .product__hero img { position: absolute; width: 840.74px; height: 840.74px; left: calc(50% + 251.34px); top: calc(50% - 20.16px); transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(50px); }
 .product__heroOverlay { position: absolute; inset: 0 0 -5px; background: linear-gradient(182.4deg, rgba(4,56,125,.3) 1.6%, var(--background-surface-secondary) 82.4%); }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
-.product__main { gap: 24px; padding: 24px; border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
+.product__main { gap: 24px; padding: 36px 24px 36px; /* +12 dp góra/dół vs pozostałe karty */ border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
 .product__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; margin: 0; color: var(--content-on-surface); }
 .product__unavailable { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .product__unavailableHint { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
-.product__cta { position: absolute; left: 0; right: 0; bottom: 84px; z-index: 6; padding: 12px 20px; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 40%); transform: translateY(24px); opacity: 0; pointer-events: none; transition: transform .28s cubic-bezier(.32,.72,0,1), opacity .2s ease; }
+.product__cta { position: absolute; left: 0; right: 0; bottom: 84px; /* bottom nadpisuje JS = wysokość tab bara */ z-index: 6; padding: 12px 20px; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 40%); transform: translateY(24px); opacity: 0; pointer-events: none; transition: transform .28s cubic-bezier(.32,.72,0,1), opacity .2s ease; }
 .product__cta.is-visible { transform: none; opacity: 1; pointer-events: auto; }
-.product .ds-Button.is-added, .product .ds-Button.is-added:active { background: var(--functional-success); border-color: var(--functional-success); }
 @media (max-width: 900px) {
   .product__head { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); }
-  .product__cta { bottom: calc(64px + max(20px, env(safe-area-inset-bottom))); }
   .product__content { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
 }
 

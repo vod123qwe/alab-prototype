@@ -97,7 +97,7 @@
 .ds-ProductCard__footer { display: flex; align-items: center; justify-content: center; gap: var(--space-md); padding: 20px; width: 100%; font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); border-radius: 0 0 var(--radius-extralarge) var(--radius-extralarge); transition: background-color .14s ease; }
 .ds-ProductCard__footer:active { background: var(--background-surface-secondary); }
 .ds-ProductCard__footer .ds-icon { width: 16px; height: 16px; }
-.ds-ProductCard.is-added .ds-ProductCard__cta { background: var(--functional-success); }
+
 
 /* ---------- SearchEmpty ---------- */
 .ds-SearchEmpty { display: flex; flex-direction: column; align-items: center; gap: var(--space-xl); width: 100%; text-align: center; padding: 24px 20px 0; }

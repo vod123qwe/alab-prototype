@@ -231,12 +231,14 @@
   window.addEventListener('hashchange', () => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
 
   // Kolor tła dokumentu i theme-color = kolor dolnej krawędzi ekranu (pas poza oknem PWA na iOS maluje html)
+  // Dwa niezależne kolory: tło dokumentu (iOS maluje nim pas pod oknem PWA na dole) i theme-color (od niego zależy kolor
+  // tekstu systemowego status bara przy black-translucent: granat → biały tekst, biel → czarny).
   const DARK_ROUTES = new Set(['splash', 'start']);
+  const NAVY_TOP = (r) => DARK_ROUTES.has(r) || r === 'dashboard' || r === 'results' || /^(category|list|product)\//.test(r);
+  const setThemeColor = (color) => { let m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement('meta'); m.name = 'theme-color'; document.head.appendChild(m); } if (m.content !== color) m.content = color; };
   function updateChrome(route) {
-    const dark = DARK_ROUTES.has(route);
-    const color = dark ? '#04387c' : '#ffffff';
-    if (matchMedia('(max-width: 900px)').matches) document.documentElement.style.backgroundColor = color;
-    let m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement('meta'); m.name = 'theme-color'; document.head.appendChild(m); } m.content = color;
+    if (matchMedia('(max-width: 900px)').matches) document.documentElement.style.backgroundColor = DARK_ROUTES.has(route) ? '#04387c' : '#ffffff';
+    setThemeColor(NAVY_TOP(route) ? '#04387c' : '#ffffff');
   }
 
   // ---------------- router ----------------
@@ -458,7 +460,7 @@
   };
 
   // ---------------- API dla modułów (app.shop.js) ----------------
-  window.APP = { SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav };
+  window.APP = { setThemeColor, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav };
 
   // ---------------- panel deweloperski ----------------
   function renderNav() { $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="#/${r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join(''); $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current())); }
