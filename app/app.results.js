@@ -53,7 +53,11 @@
   SCREENS['result/:id'] = (id) => {
     const r = byId(id); if (!r) return SCREENS['tab/results']();
     const s = summary(r);
-    const chips = s.qual ? [{ label: 'Ujemne', value: s.ok }, { label: 'Dodatnie', value: s.abnormal }]
+    // wszystko w normie → nie ma czego filtrować ani czego liczyć „poza normą”: bez segmentów i bez drugiego pill-a
+    const allOk = s.abnormal === 0;
+    if (allOk) st().filter = 'all';
+    const chips = allOk ? [{ label: s.qual ? 'Ujemne' : 'W normie', value: s.ok }]
+      : s.qual ? [{ label: 'Ujemne', value: s.ok }, { label: 'Dodatnie', value: s.abnormal }]
       : [{ label: 'W normie', value: s.ok }, { label: 'Poza normą', value: s.abnormal }];
     const note = s.qual ? plural(s.ok, 'wynik ujemny', 'wyniki ujemne', 'wyników ujemnych') : plural(s.ok, 'wynik w normie', 'wyniki w normie', 'wyników w normie');
     return `<div class="screen shop result" data-tab="results">
@@ -62,7 +66,7 @@
         <h1 class="result__title">${esc(r.title)}</h1>
         <p class="result__person">${DS.icon('user-01', 16)}<span>${esc(r.person)} • ${esc(r.date)}</span></p>
         ${DS.ResultSummary({ ok: s.ok, total: s.total, note, chips })}
-        ${DS.SwitchableTabRow({ items: [{ id: 'all', label: 'Wszystkie' }, { id: 'abn', label: s.qual ? 'Dodatnie' : 'Poza normą' }], active: st().filter })}
+        ${allOk ? '' : DS.SwitchableTabRow({ items: [{ id: 'all', label: 'Wszystkie' }, { id: 'abn', label: s.qual ? 'Dodatnie' : 'Poza normą' }], active: st().filter })}
         <div class="result__groups" id="res-groups">${groupsHtml(r) || DS.SearchEmpty({ icon: 'check-circle-outline', title: s.qual ? 'Brak wyników dodatnich' : 'Wszystkie parametry w normie', hint: 'Przełącz na „Wszystkie”, żeby zobaczyć pełną listę' })}</div>
         <div class="result__more">${DS.Divider()}${DS.Cell({ icon: 'file-text', title: 'Dodatkowe informacje', attrs: { 'data-action': 'result-info', 'data-id': r.id } })}${DS.Divider()}</div>
         ${DS.ToastMessage({ title: 'Wyniki skonsultuj z lekarzem', body: 'Aplikacja nie stawia diagnozy, wynik zawsze interpretuje lekarz' })}
@@ -157,8 +161,16 @@
   // przyklejony pasek akcji siedzi dokładnie na tab barze (jego wysokość zależy od safe-area telefonu)
   APP.afterRender.push((route, root) => {
     const bar = $('.shop__tabbar', root), actions = $('.result__actions', root);
+    if (bar) { const setH = () => root.style.setProperty('--tabbar-h', bar.offsetHeight + 'px'); setH(); window.addEventListener('resize', setH, { passive: true }); }
     if (bar && actions) { const place = () => { actions.style.bottom = bar.offsetHeight + 'px'; }; place(); window.addEventListener('resize', place, { passive: true });
       APP.hideOnScrollDown($('#res-scroll', root), actions); }
+    // TopBar przechodzi w wariant „On scroll” (surface 82% + blur 32), treść przewija się pod belką
+    const top = $('.screen__top', root), body = $('.result__body, .rinfo__body', root);
+    if (top && body) {
+      const pad = () => { body.style.paddingTop = (top.offsetHeight + 32) + 'px'; };
+      pad(); window.addEventListener('resize', pad, { passive: true });
+      body.addEventListener('scroll', () => { top.classList.toggle('is-scrolled', body.scrollTop > 8); }, { passive: true });
+    }
     const sc = $('#res-list, #res-scroll', root);
     if (sc) { if (route === 'tab/results') sc.scrollTop = st().scroll[route] || 0; sc.addEventListener('scroll', () => { st().scroll[route] = sc.scrollTop; }, { passive: true }); }
   });

@@ -41,7 +41,8 @@
     return `<section class="ds ds-ResultSummary">` +
       `<img class="ds-ResultSummary__art" src="${DS.ASSETS}il_alabek_hero.svg" alt="">` +
       `<p class="ds-ResultSummary__label">${esc(label)}</p>` +
-      `<div class="ds-ResultSummary__value"><span class="ds-ResultSummary__ring" style="--p:${p}%"></span>` +
+      `<div class="ds-ResultSummary__value"><span class="ds-ResultSummary__ringWrap"><span class="ds-ResultSummary__ring" style="--p:${p}%"></span>` +
+      (total && ok === total ? `<span class="ds-ResultSummary__done" aria-label="Wszystko w normie">${DS.icon('check-circle-fill', 16)}</span>` : '') + `</span>` +
       `<span class="ds-ResultSummary__num">${esc(String(ok))}</span><span class="ds-ResultSummary__total">/ ${esc(String(total))}</span></div>` +
       `<p class="ds-ResultSummary__note">${esc(note)}</p>` +
       (chips.length ? `<div class="ds-ResultSummary__chips">${chips.map(c => DS.BadgeStatus({ label: c.label, value: c.value, icon: null, status: 'neutral', style: 'oncolor' })).join('')}</div>` : '') +
@@ -59,7 +60,7 @@
     `<button type="button" class="ds-AccordionGroup__header" aria-expanded="${open}" data-accordion-toggle>` +
     `<span class="ds-AccordionGroup__title">${esc(title)}${count != null ? `<span class="ds-AccordionGroup__count"> • ${esc(String(count))}</span>` : ''}</span>` +
     `<span class="ds-AccordionGroup__icon">${DS.icon('chevron-down', 20)}</span></button>` +
-    `<div class="ds-AccordionGroup__content" ${open ? '' : 'hidden'}>${content}</div></section>`;
+    `<div class="ds-AccordionGroup__content" ${open ? '' : 'hidden'}><div class="ds-AccordionGroup__inner">${content}</div></div></section>`;
 
   // ---------- AccordionCell (wiersz FAQ: ikona pytania + pytanie + odpowiedź) ----------
   DS.AccordionCell = ({ id, question = '', answer = '', open = false, attrs: a } = {}) =>
@@ -68,7 +69,7 @@
     DS.icon('question-square', 20, 'ds-AccordionCell__mark') +
     `<span class="ds-AccordionCell__question">${esc(question)}</span>` +
     `<span class="ds-AccordionCell__icon">${DS.icon('chevron-down', 20)}</span></button>` +
-    `<p class="ds-AccordionCell__answer" ${open ? '' : 'hidden'}>${esc(answer)}</p></section>`;
+    `<div class="ds-AccordionCell__answerWrap" ${open ? '' : 'hidden'}><p class="ds-AccordionCell__answer">${esc(answer)}</p></div></section>`;
 
   // ---------- StatusLabel (status parametru: ikona + etykieta, bez tła) ----------
   // ok / negative → check; above / below → chevron; positive → trójkąt ostrzegawczy (konwencja z DS: StatusLabel 2483:41802)

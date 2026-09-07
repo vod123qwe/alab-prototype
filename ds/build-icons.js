@@ -89,13 +89,18 @@ function clean(svg) {
     .trim();
 }
 
+// Ikony statusów są dwukolorowe (kolorowe tło + biały znak). Podmiana fill na currentColor spłaszczyłaby je
+// do jednolitej plamy, więc dla nich zostawiamy oryginalne kolory z Figmy.
+const KEEP_COLORS = new Set(['check-circle-fill', 'badge-warning', 'check-fill', 'warning-fill', 'chevron-up-single']);
+
 const out = {};
 // Lupa: eksport z Figmy zwrócił placeholder slotu (ramka skanu), więc glif lupy jest narysowany ręcznie wg ic_outline_search_lg (założenie do potwierdzenia).
 out.search = '<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.167 3.333a5.833 5.833 0 1 0 0 11.667 5.833 5.833 0 0 0 0-11.667Zm-7.5 5.834a7.5 7.5 0 1 1 13.37 4.69l2.97 2.97a.833.833 0 1 1-1.179 1.179l-2.97-2.97A7.5 7.5 0 0 1 1.667 9.167Z" fill="currentColor"/></svg>';
 for (const [name, file] of Object.entries(ICONS)) {
   const p = path.join(ASSETS, file);
   if (!fs.existsSync(p)) { console.warn('brak', file); continue; }
-  out[name] = clean(fs.readFileSync(p, 'utf8'));
+  const raw = fs.readFileSync(p, 'utf8');
+  out[name] = KEEP_COLORS.has(name) ? raw.replace(/\sid="[^"]*"/g, '').replace(/\n\s*/g, '').trim() : clean(raw);
 }
 
 const body = '// Wygenerowane przez ds/build-icons.js — nie edytuj ręcznie.\n' +

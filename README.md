@@ -189,6 +189,15 @@ Zachowania dodane w tym etapie:
 - **Akordeony rozwijają się łagodnie** (`DS.slideToggle`: wysokość + wygaszenie, easing jak w przejściach ekranów,
   chevron obraca się o 180°). Przy włączonym „Ogranicz ruch” w systemie stan przełącza się bez animacji.
 - Odstęp między pierścieniem a liczbą w karcie „Aktualny wynik” to 24 px (w Figmie 16 px — na telefonie było za ciasno).
+- **Ikony statusów zachowują własne kolory** (zielone kółko z tickiem, pomarańczowy trójkąt) — dla nich `build-icons.js`
+  nie podmienia wypełnień na `currentColor`, bo spłaszczyłoby dwukolorowy glif do jednolitej plamy.
+- **TopBar na szczegółach wyniku i dodatkowych informacjach** unosi się nad treścią i po przewinięciu przechodzi
+  w wariant „On scroll” (Background/surface 82% + blur 32 + cień), tak jak na karcie produktu.
+- **Karuzela** („Kupując w pakiecie, oszczędzasz”) trzyma margines ekranu także po przewinięciu (`scroll-padding-inline`).
+- **Karta „Aktualny wynik”**: gdy wszystkie parametry są w normie, pierścień dostaje zieloną odznakę z tickiem,
+  a ekran nie pokazuje segmentów Wszystkie / Poza normą ani pill-a „Poza normą” — nie ma czego filtrować.
+- Stany puste centrują ilustrację, tekst i przycisk jako jedną grupę w polu **nad** dolną nawigacją
+  (wysokość paska podaje JS w zmiennej `--tabbar-h`).
 
 Nowe komponenty DS (w storybooku): `CellTestResult`, `BadgeStatus`, `YearRule`, `ResultSummary`, `SwitchableTabRow`,
 `AccordionGroup`, `AccordionCell`, `ParamRow`, `StatusLabel`, `RangeSlider`, `ToastMessage`, `CellContent`.

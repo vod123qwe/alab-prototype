@@ -316,3 +316,9 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 
 /* puste stany w listingach: wyśrodkowane w dostępnej wysokości kontenera */
 .shop__listing > .ds-SearchEmpty, .result__groups > .ds-SearchEmpty { min-height: 45vh; justify-content: center; }
+
+/* TopBar w wariancie „On scroll” (dokumentacja DS 890:14) na szczegółach wyniku i dodatkowych informacjach:
+   belka unosi się nad treścią, po przewinięciu dostaje Background/surface 82%, blur 32 i delikatny cień. */
+.result .screen__top, .rinfo .screen__top { position: absolute; top: 0; left: 0; right: 0; z-index: 5; background: transparent; transition: background-color .2s ease, box-shadow .2s ease; }
+.result .screen__top .ds-TopBar, .rinfo .screen__top .ds-TopBar { background: transparent; }
+.result .screen__top.is-scrolled, .rinfo .screen__top.is-scrolled { background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px); box-shadow: 0 0 12px rgba(0,0,0,.04); }

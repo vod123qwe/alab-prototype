@@ -34,6 +34,10 @@
 .ds-ResultSummary__art { position: absolute; height: 256px; left: 42.39%; right: -26.27%; top: calc(50% + 9px); transform: translateY(-50%); opacity: .9; }
 .ds-ResultSummary__label { position: relative; font: 700 var(--headline-large-font-size)/var(--headline-large-line-height) var(--font-family-primary); letter-spacing: -0.01em; }
 .ds-ResultSummary__value { position: relative; display: flex; align-items: center; gap: var(--space-5xl); margin-top: 20px; }
+/* pierścień w wrapperze, żeby maska pierścienia nie obcinała odznaki „wszystko w normie” */
+.ds-ResultSummary__ringWrap { position: relative; width: 28px; height: 28px; flex: 0 0 auto; }
+.ds-ResultSummary__done { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; }
+.ds-ResultSummary__done .ds-icon { display: block; width: 16px; height: 16px; }
 .ds-ResultSummary__ring { width: 28px; height: 28px; flex: 0 0 auto; border-radius: 50%; background: conic-gradient(#fff 0 var(--p, 0%), rgba(255, 255, 255, .3) var(--p, 0%) 100%); -webkit-mask: radial-gradient(circle, transparent 9px, #000 10px); mask: radial-gradient(circle, transparent 9px, #000 10px); }
 .ds-ResultSummary__num { font: 700 var(--display-large-font-size)/var(--display-large-line-height) var(--font-family-primary); letter-spacing: -0.02em; }
 .ds-ResultSummary__total { align-self: flex-end; padding-bottom: 4px; font: 700 var(--headline-large-font-size)/var(--headline-large-line-height) var(--font-family-primary); letter-spacing: -0.01em; color: var(--content-on-scrim-secondary); }
@@ -54,8 +58,10 @@
 .ds-AccordionGroup__header:active .ds-AccordionGroup__icon { background: var(--background-surface-secondary); }
 .ds-AccordionGroup__icon .ds-icon { width: 20px; height: 20px; transition: transform .34s cubic-bezier(.32,.72,0,1); }
 .ds-AccordionGroup.is-open .ds-AccordionGroup__icon .ds-icon { transform: rotate(180deg); }
-.ds-AccordionGroup__content { display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
-.ds-AccordionGroup__content > .ds-Divider { margin: 0; }
+/* zwijany kontener animuje samą wysokość; odstępy siedzą w wrapperze, żeby nic nie „przeskakiwało” na końcu animacji */
+.ds-AccordionGroup__content { overflow: hidden; contain: paint; }
+.ds-AccordionGroup__inner { display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
+.ds-AccordionGroup__inner > .ds-Divider { margin: 0; }
 
 /* ---------- AccordionCell (FAQ) ---------- */
 .ds-AccordionCell { display: flex; flex-direction: column; width: 100%; padding: 20px 24px; background: var(--background-surface); border: 1px solid var(--outline-border-secondary, #f1f1f1); border-radius: var(--radius-xlarge); box-shadow: 0 3px 5px rgba(0, 0, 0, .05); }
@@ -65,6 +71,7 @@
 .ds-AccordionCell__icon { width: 20px; height: 20px; flex: 0 0 auto; color: var(--content-on-surface-secondary); }
 .ds-AccordionCell__icon .ds-icon { width: 20px; height: 20px; transition: transform .34s cubic-bezier(.32,.72,0,1); }
 .ds-AccordionCell.is-open .ds-AccordionCell__icon .ds-icon { transform: rotate(180deg); }
+.ds-AccordionCell__answerWrap { overflow: hidden; contain: paint; }
 .ds-AccordionCell__answer { padding-top: 12px; font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
 
 /* ---------- StatusLabel ---------- */
@@ -107,5 +114,7 @@
 .ds-CellContent__label { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
 .ds-CellContent__value { font: 700 var(--label-large-font-size)/var(--label-large-line-height) var(--font-family-primary); color: var(--content-on-surface); }
 
-/* ---------- ScreenState: empty state wypełnia dostępną wysokość i centruje treść ---------- */
-.screen__body > .ds-ScreenState, .ds-ScreenState--fill { flex: 1 1 auto; justify-content: center; }
+/* ---------- ScreenState: empty state wypełnia dostępną wysokość i centruje ilustrację z tekstem jako jedność ---------- */
+/* --tabbar-h ustawia JS na ekranach z dolną nawigacją, żeby środek liczył się nad paskiem, a nie pod nim */
+.screen__body > .ds-ScreenState, .ds-ScreenState--fill { flex: 1 1 auto; justify-content: center; padding-bottom: calc(var(--space-4xl) + var(--tabbar-h, 0px)); }
+.screen__body > .ds-ScreenState .ds-ScreenState__content, .ds-ScreenState--fill .ds-ScreenState__content { padding-bottom: 0; }

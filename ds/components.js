@@ -172,30 +172,19 @@
   // ---------- slideToggle: łagodne rozwijanie i zwijanie treści ----------
   // Animujemy wysokość od/do zmierzonej wysokości treści, z tym samym easingiem co przejścia ekranów (iOS-owy „gentle”).
   // Szanujemy „Ogranicz ruch” w systemie — wtedy przełączamy stan bez animacji.
-  DS.slideToggle = (el, open, { duration = 340 } = {}) => {
+  DS.slideToggle = (el, open, { duration = 320 } = {}) => {
     if (!el) return;
-    const gentle = 'cubic-bezier(.32,.72,0,1)';
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (el._slide) { el._slide(); }                       // przerwij poprzednią animację
-    if (reduce) { el.hidden = !open; return; }
+    if (el._anim) { el._anim.cancel(); el._anim = null; }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !el.animate) { el.hidden = !open; return; }
     el.hidden = false;
-    const target = el.scrollHeight;
+    const target = el.scrollHeight;                       // pełna wysokość treści (odstępy są w wrapperze)
     const from = open ? 0 : target, to = open ? target : 0;
-    el.style.overflow = 'hidden';
-    el.style.height = from + 'px';
-    el.style.opacity = open ? '0' : '1';
-    const finish = () => {
-      el.style.transition = ''; el.style.height = ''; el.style.overflow = ''; el.style.opacity = '';
-      el.hidden = !open; el._slide = null;
-    };
-    el._slide = finish;
-    requestAnimationFrame(() => {
-      if (el._slide !== finish) return;
-      el.style.transition = `height ${duration}ms ${gentle}, opacity ${Math.round(duration * 0.7)}ms ease`;
-      el.style.height = to + 'px';
-      el.style.opacity = open ? '1' : '0';
-      setTimeout(() => { if (el._slide === finish) finish(); }, duration + 40);
-    });
+    el.style.willChange = 'height';
+    const anim = el.animate([{ height: from + 'px' }, { height: to + 'px' }],
+      { duration, easing: 'cubic-bezier(.32,.72,0,1)', fill: 'both' });
+    el._anim = anim;
+    const done = () => { if (el._anim !== anim) return; el._anim = null; anim.cancel(); el.style.willChange = ''; el.hidden = !open; };
+    anim.onfinish = done; anim.oncancel = () => { el.style.willChange = ''; };
   };
 
   // ---------- presentSheet: arkusz w #overlay z gestem zamykania jak w iOS (UISheetPresentationController) ----------

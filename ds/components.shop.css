@@ -171,7 +171,8 @@
 .ds-ChipDropdown { display: inline-flex; align-items: center; gap: var(--space-sm); }
 .ds-ChipDropdown__chevron { width: 16px; height: 16px; transform: rotate(90deg); }
 
-.ds-Carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -20px; padding: 0 20px; -webkit-overflow-scrolling: touch; }
+/* karuzela wychodzi na pełną szerokość ekranu, ale karty trzymają margines ekranu także po przewinięciu (scroll-padding) */
+.ds-Carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--global-margin); scroll-snap-stop: always; scrollbar-width: none; margin: 0 calc(-1 * var(--global-margin)); padding: 0 var(--global-margin); -webkit-overflow-scrolling: touch; }
 .ds-Carousel::-webkit-scrollbar { display: none; }
 .ds-Carousel > * { flex: 0 0 calc(100% - 24px); scroll-snap-align: start; }
 
