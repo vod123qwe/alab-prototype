@@ -8,7 +8,6 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = DS.esc;
   const R = window.RESULTS_DATA; const { RESULTS, FAQ, WEBVIEWS, allParams, summary, isOk } = R;
-  const tabBar = (active) => APP.shop.tabBar(active);
 
   const plural = (n, one, few, many) => `${n} ${n === 1 ? one : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many)}`;
 
@@ -35,7 +34,6 @@
       <div class="screen__body results__body" id="res-list">
         ${empty ? emptyState() : `<h1 class="results__title">Wyniki badań</h1><div class="results__groups">${yearGroups()}</div>`}
       </div>
-      ${tabBar('results')}
     </div>`;
   SCREENS['tab/results'] = () => resultsScreen(!RESULTS.length);
   SCREENS['results-empty'] = () => resultsScreen(true);   // stan pusty do podglądu z panelu prototypu
@@ -74,7 +72,6 @@
       ${DS.BottomActionsBar({ layout: 'horizontal', homeIndicator: false, attrs: { class: 'result__actions' }, buttons: [
         DS.Button({ label: 'Udostępnij', type: 'secondary', attrs: { 'data-action': 'result-share' } }),
         DS.Button({ label: 'Pobierz PDF', attrs: { 'data-action': 'result-pdf' } })] })}
-      ${tabBar('results')}
     </div>`;
   };
 
@@ -160,7 +157,7 @@
 
   // przyklejony pasek akcji siedzi dokładnie na tab barze (jego wysokość zależy od safe-area telefonu)
   APP.afterRender.push((route, root) => {
-    const bar = $('.shop__tabbar', root), actions = $('.result__actions', root);
+    const bar = $('#tabbar'), actions = $('.result__actions', root);
     if (bar) { const setH = () => root.style.setProperty('--tabbar-h', bar.offsetHeight + 'px'); setH(); window.addEventListener('resize', setH, { passive: true }); }
     if (bar && actions) { const place = () => { actions.style.bottom = bar.offsetHeight + 'px'; }; place(); window.addEventListener('resize', place, { passive: true });
       APP.hideOnScrollDown($('#res-scroll', root), actions); }

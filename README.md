@@ -201,6 +201,12 @@ Zachowania dodane w tym etapie:
   przypięta, a chipy zwijają się proporcjonalnie do ruchu palca, jak dotąd.
 - **Ikony dolnej nawigacji parami z DS** (BottomTabBar 156:1388): nieaktywna zakładka ma ikonę outline w kolorze
   Content/onSurfaceTertiary, aktywna wypełnioną w Main/accent.
+- **Dolna nawigacja jest trwałym elementem ramki telefonu** (`#tabbar`), a nie częścią ekranów — przy zmianie
+  podstrony nie bierze udziału w przejściu, tak jak UITabBar w iOS. Przerysowuje się tylko wtedy, gdy zmienia się
+  aktywna zakładka albo licznik. Na ekranach pełnoekranowych (wyszukiwarka, webview, dodatkowe informacje,
+  rejestracja) zjeżdża w dół.
+- **Chipy sposobu realizacji gasną szybciej, niż zwija się ich pas** — nie widać obcięcia od dołu i nie wchodzą
+  pod wyszukiwarkę.
 - **Karta produktu ma jednolite tło** Background/surfaceSecondary — ta sama szarość, którą kończy się gradient hero.
 - **Karta „Aktualny wynik”**: gdy wszystkie parametry są w normie, pierścień dostaje zieloną odznakę z tickiem,
   a ekran nie pokazuje segmentów Wszystkie / Poza normą ani pill-a „Poza normą” — nie ma czego filtrować.

@@ -59,7 +59,7 @@
   ];
   TABS.forEach(t => FADE_ROUTES.add(t.route)); FADE_ROUTES.add('search');
   // badge: Koszyk = liczba pozycji, Wyniki = liczba nowych wyników (app.results.js)
-  const tabBar = (active) => DS.BottomTabBar({ active, items: TABS.map(t => ({ ...t, badge: t.id === 'cart' ? (st().cart || null) : (t.id === 'results' ? ((APP.results && APP.results.newCount()) || null) : null) })), attrs: { class: 'shop__tabbar' } });
+  const tabBar = (active) => DS.BottomTabBar({ active, items: TABS.map(t => ({ ...t, badge: t.id === 'cart' ? (st().cart || null) : (t.id === 'results' ? ((APP.results && APP.results.newCount()) || null) : null) })), });
   const chips = (style) => TYPES.map(id => DS.FilterChip({ label: DELIVERY[id].label, selected: type() === id, style, attrs: { 'data-delivery': id } })).join('');
   const locCell = () => { const c = DELIVERY[type()].cell; return DS.CellOrderTypeStatus({ icon: c.icon, title: c.title, status: c.status, attrs: c.action ? { 'data-action': c.action } : { tabindex: '-1' } }); };
   const HOME_TILES = 6; // siatka: > 6 kategorii → 5 + „Wszystkie kategorie”, ≤ 6 → wszystkie
@@ -98,19 +98,18 @@
           <div id="shop-popular" class="shop__swap shop__popular">${popularSections()}</div>
         </div>
       </div>
-      ${tabBar('shop')}
     </div>`;
 
   // Zakładki bez własnych ekranów w Figmie → lekkie placeholdery na tym samym tab barze
   const tabPlaceholder = (id, title, body, asset) => `<div class="screen shop" data-tab="${id}">
       <div class="screen__top">${DS.TopBar({ leading: false, title })}</div>
-      <div class="screen__body shop__scroll" style="padding-bottom:120px">${DS.ScreenState({ asset: A + asset, title, body })}</div>${tabBar(id)}</div>`;
+      <div class="screen__body shop__scroll" style="padding-bottom:120px">${DS.ScreenState({ asset: A + asset, title, body })}</div></div>`;
   SCREENS['tab/start'] = () => tabPlaceholder('start', 'Dzień dobry', 'Ekran Start (dashboard) powstanie na bazie Modułu 2. W prototypie pokazujemy tu ścieżkę zakupową w zakładce Sklep.', 'il_phone_tick.png');
   SCREENS['tab/cart'] = () => `<div class="screen shop" data-tab="cart">
       <div class="screen__top">${DS.TopBar({ leading: false, title: 'Koszyk', subtitle: st().cart ? plural(st().cart, 'pozycja', 'pozycje', 'pozycji') : null })}</div>
       <div class="screen__body shop__scroll" style="padding-bottom:120px">${st().cart
         ? `<div class="stack-12">${Object.entries(st().added).map(([id, n]) => { const p = byId(id); return DS.Cell({ icon: p.kind === 'package' ? 'file-check' : 'test-tube', title: p.title, subtitle: `${zl(p.price)}${n > 1 ? ` • ${n} szt.` : ''}`, attrs: { 'data-open': p.id } }); }).join('')}</div>`
-        : DS.ScreenState({ asset: A + 'il_mail_sent.png', title: 'Koszyk jest pusty', body: 'Dodaj badania lub pakiety w zakładce Sklep.', buttons: [DS.Button({ label: 'Przejdź do sklepu', block: true, attrs: { 'data-tab': 'shop' } })] })}</div>${tabBar('cart')}</div>`;
+        : DS.ScreenState({ asset: A + 'il_mail_sent.png', title: 'Koszyk jest pusty', body: 'Dodaj badania lub pakiety w zakładce Sklep.', buttons: [DS.Button({ label: 'Przejdź do sklepu', block: true, attrs: { 'data-tab': 'shop' } })] })}</div></div>`;
 
   // ---------------- Wyszukiwarka (Start / Podpowiedzi / Brak wyników) ----------------
   const highlight = (title, q) => { const i = norm(title).indexOf(norm(q)); if (i < 0) return esc(title); return esc(title.slice(0, i)) + `<span class="match">${esc(title.slice(i, i + q.length))}</span>` + esc(title.slice(i + q.length)); };
@@ -170,7 +169,6 @@
           <div id="listing-body" class="shop__listing shop__swap">${listingBody(ctx)}</div>
         </div>
       </div>
-      ${tabBar('shop')}
     </div>`;
   const listingCtx = (route) => {
     const [kind, id] = route.split('/');
@@ -220,7 +218,6 @@
         </div>
       </div>
       ${price && !un ? `<div class="product__cta" id="prod-cta">${DS.Button({ label: `${buyLabel} • ${price.current}`, block: true, attrs: buyAttrs })}</div>` : ''}
-      ${tabBar('shop')}
     </div>`;
   };
 
@@ -258,7 +255,8 @@
         } else {
           const p = Math.max(0, Math.min(1, y / COLLAPSE));
           const ch = +head.dataset.chips;
-          chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(1 - p); chipsWrap.style.transform = `translateY(${-10 * p}px)`;
+          // chipy gasną szybciej niż zwija się ich pas, więc nie widać obcięcia i nie wchodzą pod wyszukiwarkę
+          chipsWrap.style.height = (ch * (1 - p)) + 'px'; chipsWrap.style.opacity = String(Math.max(0, 1 - p * 1.8));
           // po zwinięciu: 28 px od pola do dolnej krawędzi granatu; boczne zaokrąglenia zostają, treść prześwituje między nimi
           wrap.style.paddingBottom = (24 + 4 * p) + 'px'; wrap.style.gap = (16 * (1 - p)) + 'px';
           head.classList.toggle('is-collapsed', p >= 1);
@@ -272,7 +270,7 @@
 
   // karta produktu: pasek nawigacji wypełnia się granatem po zjechaniu z hero; przyklejone CTA pojawia się, gdy główny przycisk znika z ekranu
   function setupProductScroll(root, route) {
-    const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root), bar = $('.shop__tabbar', root), bg = $('#prod-bg', root);
+    const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root), bar = $('#tabbar'), bg = $('#prod-bg', root);
     if (!head || !scroll) return;
     // przyklejone CTA siedzi dokładnie na tab barze (jego wysokość zależy od safe-area telefonu)
     const placeCta = () => { if (cta && bar) cta.style.bottom = bar.offsetHeight + 'px'; };
@@ -286,6 +284,7 @@
     // karta produktu otwiera się zawsze od góry (jak nowy ekran w iOS) — pozycji nie przywracamy
   }
   APP.afterRender.push((route, root) => {
+    syncTabBar(route);
     if (route === 'dashboard' || isListing(route)) setupShopScroll(root, route);
     if (route.startsWith('product/')) setupProductScroll(root, route);
     if (route === 'search') { const i = $('#search-input', root); setTimeout(() => i?.focus({ preventScroll: true }), 60); }
@@ -318,10 +317,26 @@
     else if (isListing(r)) { st().sub = {}; refreshListing(); }
     else if (r === 'search') { const res = $('#search-results'); if (res) res.innerHTML = searchResults(st().query); }
   }
-  function refreshCartBadge() {
-    const tab = $('[data-tab="cart"] .ds-BottomTabItem__icon'); if (!tab) return;
-    let b = tab.querySelector('.ds-BottomTabItem__badge'); if (!b) { b = document.createElement('span'); b.className = 'ds-BottomTabItem__badge'; tab.appendChild(b); } b.innerHTML = DS.NumberIndicator({ value: st().cart });
+  const refreshCartBadge = () => syncTabBar(current());
+
+  // ---------------- trwała dolna nawigacja ----------------
+  // Pasek żyje poza przewijanymi ekranami (#tabbar w ramce telefonu), więc nie jedzie razem z przejściem ekranu —
+  // tak jak UITabBar w iOS i NavigationBar w Androidzie. Przerysowujemy go tylko wtedy, gdy zmienia się aktywna
+  // zakładka albo licznik, a na ekranach pełnoekranowych (wyszukiwarka, webview, dodatkowe informacje) zjeżdża w dół.
+  const BAR_ROUTES = (r) => r === 'dashboard' || r === 'results' || r === 'results-empty' || r.startsWith('tab/') || /^(category|list|product|result)\//.test(r);
+  const activeTabFor = (r) => r === 'tab/start' ? 'start' : r === 'tab/cart' ? 'cart'
+    : (r === 'tab/results' || r === 'results-empty' || /^(result|rinfo)\//.test(r)) ? 'results' : 'shop';
+  function syncTabBar(route) {
+    const host = $('#tabbar'); if (!host) return;
+    const show = BAR_ROUTES(route);
+    host.classList.toggle('is-off', !show);
+    if (!show) return;
+    const active = activeTabFor(route);
+    const key = [active, st().cart, (APP.results && APP.results.newCount()) || 0].join('|');
+    if (host.dataset.key === key) return;
+    host.dataset.key = key; host.innerHTML = tabBar(active); DS.enhance(host);
   }
+  APP.syncTabBar = syncTabBar;
 
   // ---------------- akcje ----------------
   const info = (t) => snack(t, 'info', 110);
