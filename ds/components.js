@@ -131,9 +131,9 @@
     `</div></div>`;
 
   // ---------- FilterChip ----------
-  DS.FilterChip = ({ label = 'Chip', selected = false, fill = false, style, attrs: a } = {}) => {
+  DS.FilterChip = ({ label = 'Chip', selected = false, fill = false, style, count, attrs: a } = {}) => {
     const { class: extra, ...rest } = a || {};
-    return `<button type="button" class="${cls('ds', 'ds-FilterChip', style === 'oncolor' && 'ds-FilterChip--oncolor', selected && 'is-selected', fill && 'ds-FilterChip--fill', extra)}" aria-pressed="${selected}" ${attrs(rest)}>${esc(label)}</button>`;
+    return `<button type="button" class="${cls('ds', 'ds-FilterChip', style === 'oncolor' && 'ds-FilterChip--oncolor', selected && 'is-selected', fill && 'ds-FilterChip--fill', extra)}" aria-pressed="${selected}" ${attrs(rest)}>${esc(label)}${count != null ? `<span class="ds-FilterChip__count">• ${count}</span>` : ''}</button>`;
   };
 
   // ---------- StepsIndicator ----------
@@ -166,6 +166,54 @@
   DS.BottomActionsBar = ({ buttons = [], layout = 'vertical', homeIndicator = true, attrs: a } = {}) =>
     `<div class="${cls('ds', 'ds-BottomActionsBar', layout === 'horizontal' && 'ds-BottomActionsBar--horizontal')}" ${attrs(a)}>` +
     `<div class="ds-BottomActionsBar__buttons">${buttons.join('')}</div>` + (homeIndicator ? DS.HomeIndicator() : '') + `</div>`;
+
+  // ---------- presentSheet: arkusz w #overlay z gestem zamykania jak w iOS (UISheetPresentationController) ----------
+  // Ciągnięcie w dół przesuwa arkusz 1:1 za palcem i rozjaśnia scrim, odsłaniając ekran pod spodem. Puszczenie poniżej progu
+  // (30% wysokości albo szybki ruch) zamyka arkusz, inaczej wraca sprężyście. Z treści przewijalnej gest startuje tylko na jej górze.
+  DS.presentSheet = ({ title, subtitle, content = '', closeAttrs, height, onClose, className } = {}) => {
+    const host = document.getElementById('overlay') || document.body;
+    const wrap = document.createElement('div'); wrap.className = cls('ds', 'ds-SheetLayer', className); wrap.style.cssText = (host === document.body ? 'position:fixed;' : 'position:absolute;') + 'inset:0;z-index:20';
+    const closeSel = Object.entries(closeAttrs || { 'data-action': 'sheet-close' }).map(([k, v]) => `[${k}="${v}"]`).join('');
+    wrap.innerHTML = `<div class="ds-Scrim" data-sheet="scrim"></div>` + DS.BottomSheet({ title, subtitle, content, closeAttrs: closeAttrs || { 'data-action': 'sheet-close' }, attrs: { style: height ? `height:${height}` : '' } });
+    const sheet = wrap.querySelector('.ds-BottomSheet'), scrim = wrap.querySelector('.ds-Scrim');
+    let closed = false, swallow = false;
+    const close = (animate = true) => {
+      if (closed) return; closed = true;
+      if (!animate) { wrap.remove(); onClose && onClose(); return; }
+      sheet.style.animation = 'none'; scrim.style.animation = 'none'; void sheet.offsetWidth;
+      sheet.classList.add('is-closing'); sheet.style.transform = 'translateY(105%)'; scrim.style.opacity = '0';
+      setTimeout(() => { wrap.remove(); onClose && onClose(); }, 320);
+    };
+    wrap.addEventListener('click', (e) => { if (swallow) { swallow = false; e.stopPropagation(); e.preventDefault(); return; } if (e.target === scrim || e.target.closest(closeSel)) close(); }, true);
+    let drag = null;
+    const start = (y, target) => { const sc = sheet.querySelector('.ds-BottomSheet__scroll'); drag = { y0: y, y, t0: performance.now(), h: sheet.offsetHeight, sc: sc && sc.contains(target) ? sc : null, active: false, ignore: false }; };
+    const move = (y, ev) => {
+      if (!drag || drag.ignore) return;
+      const dy = y - drag.y0; drag.y = y;
+      if (!drag.active) {
+        if (Math.abs(dy) < 4) return;
+        if (dy < 0 || (drag.sc && drag.sc.scrollTop > 0)) { drag.ignore = true; return; }
+        drag.active = true; sheet.style.animation = 'none'; scrim.style.animation = 'none'; sheet.classList.add('is-dragging'); scrim.classList.add('is-dragging');
+      }
+      if (ev && ev.cancelable) ev.preventDefault();
+      const off = Math.max(0, dy); sheet.style.transform = `translateY(${off}px)`; scrim.style.opacity = String(Math.max(0, 1 - off / drag.h));
+    };
+    const end = () => {
+      if (!drag) return; const d = drag; drag = null; if (!d.active) return;
+      swallow = true; setTimeout(() => { swallow = false; }, 50);
+      const off = Math.max(0, d.y - d.y0), v = off / Math.max(1, performance.now() - d.t0);
+      sheet.classList.remove('is-dragging'); scrim.classList.remove('is-dragging');
+      if (off > d.h * 0.3 || v > 0.6) return close();
+      sheet.classList.add('is-closing'); sheet.style.transform = ''; scrim.style.opacity = '';
+      setTimeout(() => sheet.classList.remove('is-closing'), 320);
+    };
+    sheet.addEventListener('touchstart', (e) => start(e.touches[0].clientY, e.target), { passive: true });
+    sheet.addEventListener('touchmove', (e) => move(e.touches[0].clientY, e), { passive: false });
+    sheet.addEventListener('touchend', end); sheet.addEventListener('touchcancel', end);
+    sheet.addEventListener('mousedown', (e) => { if (e.button !== 0 || e.target.closest('input, textarea')) return; start(e.clientY, e.target); const mv = (ev) => move(ev.clientY, ev), up = () => { end(); window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up); }; window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up); });
+    host.appendChild(wrap); DS.enhance(wrap);
+    return { wrap, sheet, close };
+  };
 
   // ---------- Snackbar ----------
   DS.Snackbar = ({ text = 'Message text', type = 'success', icon, attrs: a } = {}) =>

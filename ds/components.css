@@ -370,3 +370,15 @@
 @keyframes ds-sheet { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes ds-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .ds *, .ds { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* FilterChip: licznik „Tarczyca • 2” (Listing • Kategoria) */
+.ds-FilterChip__count { margin-left: 6px; color: var(--content-on-surface-secondary); font-weight: 600; }
+.ds-FilterChip.is-selected .ds-FilterChip__count { color: inherit; opacity: .8; }
+
+/* presentSheet: gest zamykania jak w iOS */
+.ds-SheetLayer .ds-BottomSheet { touch-action: none; will-change: transform; }
+.ds-SheetLayer .ds-BottomSheet__scroll { touch-action: pan-y; overscroll-behavior: contain; }
+.ds-SheetLayer .ds-Scrim { transition: opacity .32s ease; }
+.ds-BottomSheet.is-dragging, .ds-Scrim.is-dragging { transition: none !important; animation: none !important; }
+.ds-BottomSheet.is-closing { transition: transform .32s cubic-bezier(.32,.72,0,1); animation: none; }
+.ds-SheetLayer .ds-Cell.is-selected { background: var(--background-surface-secondary); }

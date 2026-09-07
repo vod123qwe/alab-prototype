@@ -49,6 +49,18 @@ const ICONS = {
   'clear': 'ic_clear.svg',
   'file-check': 'ic_line_file_check.svg',
   'view-list': 'ic_line_view_list.svg',
+  'info-circle': 'ic_outline_info_circle.svg',
+  'file-doc': 'ic_outline_file_doc.svg',
+  'file-text': 'ic_outline_file_text.svg',
+  'file-check-doc': 'ic_outline_file_check_doc.svg',
+  'timer': 'ic_outline_timer.svg',
+  'lab-tube': 'ic_outline_lab_tube.svg',
+  'pin': 'ic_outline_pin.svg',
+  'faq': 'ic_outline_faq.svg',
+  'copy': 'ic_outline_copy_02.svg',
+  'check-circle-outline': 'ic_outline_check_circle.svg',
+  'home-pin': 'ic_home_pin.svg',
+  'settings': 'ic_outline_settings_04.svg',
 };
 
 function clean(svg) {

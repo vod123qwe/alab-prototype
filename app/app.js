@@ -131,28 +131,16 @@
   };
 
   function countrySheet() {
-    const ov = $('#overlay');
-    const render = (q = '') => {
-      const list = COUNTRIES.filter(([n]) => n.toLowerCase().includes(q.toLowerCase()));
-      return DS.BottomSheet({ title: 'Wybierz kraj', attrs: { style: 'height:750px' }, content:
-        DS.TextField({ id: 'f-country', label: 'Wpisz kraj...', value: q, leading: { icon: 'search' } }) +
-        `<div class="ds-BottomSheet__scroll">${list.length ? list.map(([n, c, f], i) => (i === 1 ? DS.Divider() : '') + DS.CellSelectCountry({ name: n, code: c, flag: f, checked: S.prefix.code === c, attrs: { 'data-country': c } })).join('')
-          : `<div class="ds-ScreenState" style="padding-top:48px"><div class="ds-ScreenState__text"><p class="ds-ScreenState__title" style="font-size:20px;line-height:24px">Brak wyników</p><p class="ds-ScreenState__body">Spróbuj wpisać nazwę kraju inaczej.</p></div></div>`}</div>` });
-    };
-    const wrap = document.createElement('div'); wrap.className = 'ds'; wrap.style.cssText = 'position:absolute;inset:0';
-    wrap.innerHTML = `<div class="ds-Scrim" data-action="sheet-close"></div>` + render();
-    ov.appendChild(wrap); DS.enhance(wrap);
-    const close = () => wrap.remove();
-    wrap.addEventListener('click', (e) => {
-      if (e.target.closest('[data-action="sheet-close"]')) return close();
+    const list = (q = '') => { const l = COUNTRIES.filter(([n]) => n.toLowerCase().includes(q.toLowerCase())); return l.length
+      ? l.map(([n, c, f], i) => (i === 1 ? DS.Divider() : '') + DS.CellSelectCountry({ name: n, code: c, flag: f, checked: S.prefix.code === c, attrs: { 'data-country': c } })).join('')
+      : `<div class="ds-ScreenState" style="padding-top:48px"><div class="ds-ScreenState__text"><p class="ds-ScreenState__title" style="font-size:20px;line-height:24px">Brak wyników</p><p class="ds-ScreenState__body">Spróbuj wpisać nazwę kraju inaczej.</p></div></div>`; };
+    const sheet = DS.presentSheet({ title: 'Wybierz kraj', height: '750px', content: DS.TextField({ id: 'f-country', label: 'Wpisz kraj...', leading: { icon: 'search' } }) + `<div class="ds-BottomSheet__scroll">${list()}</div>` });
+    sheet.wrap.addEventListener('click', (e) => {
       const c = e.target.closest('[data-country]');
-      if (c) { const found = COUNTRIES.find(x => x[1] === c.dataset.country); S.prefix = { name: found[0], code: found[1], flag: found[2] }; close(); render_(); }
+      if (c) { const found = COUNTRIES.find(x => x[1] === c.dataset.country); S.prefix = { name: found[0], code: found[1], flag: found[2] }; sheet.close(false); render_(); }
     });
-    wrap.addEventListener('ds:input', (e) => {
-      const q = e.detail.value; const sheet = wrap.querySelector('.ds-BottomSheet'); const scroll = sheet.querySelector('.ds-BottomSheet__scroll');
-      const tmp = document.createElement('div'); tmp.innerHTML = render(q); scroll.innerHTML = tmp.querySelector('.ds-BottomSheet__scroll').innerHTML;
-    });
-    setTimeout(() => wrap.querySelector('#f-country')?.focus(), 50);
+    sheet.wrap.addEventListener('ds:input', (e) => { sheet.wrap.querySelector('.ds-BottomSheet__scroll').innerHTML = list(e.detail.value); });
+    setTimeout(() => sheet.wrap.querySelector('#f-country')?.focus(), 50);
   }
 
   // ---- Rejestracja krok 2 (SMS) ----
@@ -261,6 +249,7 @@
   const current = () => location.hash.replace(/^#\/?/, '') || 'splash';
   function resolve(route) {
     if (SCREENS[route]) return SCREENS[route]();
+    const i = route.indexOf('/'); if (i > 0 && SCREENS[route.slice(0, i) + '/:id']) return SCREENS[route.slice(0, i) + '/:id'](decodeURIComponent(route.slice(i + 1)));
     const m = route.match(/^onboarding\/(\d)$/); if (m) return SCREENS['onboarding/:n'](m[1]);
     return SCREENS.start();
   }
@@ -306,7 +295,8 @@
     if (onbIndex(r) && onbIndex(lastRoute) && $('#onb-track')) { history[history.length - 1] = r; lastRoute = r; onbSync(); return; }
     const isBack = history.length >= 2 && history[history.length - 2] === r;
     if (isBack) history.pop(); else history.push(r);
-    const dir = isBack ? 'back' : ((FADE_ROUTES.has(r) || FADE_ROUTES.has(lastRoute) || !lastRoute) ? 'fade' : 'fwd');
+    // fade: do tras „korzeniowych” (splash, start, dashboard, zakładki, wyszukiwarka) oraz ze splasha/onboardingu; z korzenia w głąb = push jak w iOS
+    const dir = isBack ? 'back' : ((FADE_ROUTES.has(r) || lastRoute === 'splash' || onbIndex(lastRoute) || !lastRoute) ? 'fade' : 'fwd');
     lastRoute = r; render_(dir);
   }
 

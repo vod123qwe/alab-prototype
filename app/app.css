@@ -227,3 +227,46 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .shop__tiles { transition: opacity .12s ease; }
 .shop__tiles.is-swapping { opacity: 0; }
 .shop__tiles > .ds-CategoryTile { animation: rise .3s cubic-bezier(.2,.8,.2,1) both; }
+
+/* ------------------------------------------------------------
+   Listing (kategoria / wyniki / wszystkie) — ten sam granatowy nagłówek co strona główna + TopBar z tytułem
+   ------------------------------------------------------------ */
+.shop__nav--bar .ds-TopBar__wrapper { height: 56px; }
+.shop__nav--bar .ds-TopBar__header { color: var(--content-on-scrim); }
+.shop__searchRow { display: flex; align-items: center; gap: 8px; }
+.shop__searchRow > .ds-SearchField { flex: 1 1 0; min-width: 0; }
+.shop__searchRow .ds-IconButton { flex: 0 0 auto; }
+.ds-SearchField.has-query .ds-SearchField__placeholder { color: var(--content-on-scrim); }
+.shop__section--filters { gap: 16px; }
+.shop__listing { display: flex; flex-direction: column; gap: var(--space-9xl); }
+.shop__swap { transition: opacity .12s ease; }
+.shop__swap.is-swapping { opacity: 0; }
+@media (max-width: 900px) { .shop__nav--bar { height: auto; padding-top: calc(env(safe-area-inset-top, 0px) + 20px); } }
+
+/* ------------------------------------------------------------
+   Karta produktu — hero z granatem i blobem, biała karta nachodzi na hero, pasek nawigacji wypełnia się po scrollu
+   ------------------------------------------------------------ */
+.product__head { position: absolute; top: 0; left: 0; right: 0; z-index: 5; color: #fff; transition: background-color .2s ease, box-shadow .2s ease; }
+.product__head.is-scrolled { background: var(--main-primary); box-shadow: 0 6px 14px rgba(4,56,124,.22); }
+.product__scroll { background: var(--background-surface); }
+.product__hero { position: relative; height: 300px; background: var(--main-primary); overflow: hidden; }
+.product__hero img { position: absolute; width: 640px; height: 640px; left: calc(50% + 110px); top: 20px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(40px); opacity: .9; }
+.product__heroOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 30%, #04387c 98%); }
+.product__content { position: relative; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: -160px; }
+.product__main { gap: 24px; padding: 24px; border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.10); }
+.product__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; margin: 0; color: var(--content-on-surface); }
+.product__unavailable { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.product__unavailableHint { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.product__cta { position: absolute; left: 0; right: 0; bottom: 84px; z-index: 6; padding: 12px 20px; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 40%); transform: translateY(24px); opacity: 0; pointer-events: none; transition: transform .28s cubic-bezier(.32,.72,0,1), opacity .2s ease; }
+.product__cta.is-visible { transform: none; opacity: 1; pointer-events: auto; }
+.product .ds-Button.is-added, .product .ds-Button.is-added:active { background: var(--functional-success); border-color: var(--functional-success); }
+@media (max-width: 900px) {
+  .product__head { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); }
+  .product__cta { bottom: calc(64px + max(20px, env(safe-area-inset-bottom))); }
+  .product__content { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+}
+
+.shop__popular { display: flex; flex-direction: column; gap: var(--space-9xl); }
+
+/* rząd filtrów listingu: bleed do krawędzi ekranu (reszta stylu w DS: .ds-FilterRow) */
+.shop__filters { margin: 0 -20px; padding: 0 20px; }

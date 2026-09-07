@@ -34,12 +34,12 @@
     `<button type="button" class="${cls('ds', 'ds-CategoryTile', all && 'ds-CategoryTile--all')}" ${attrs(a)}>${DS.icon(icon, 24)}<span class="ds-CategoryTile__label">${esc(label)}</span></button>`;
 
   // ---------- SectionHeader ----------
-  DS.SectionHeader = ({ title = '', action, actionAttrs } = {}) =>
-    `<div class="ds ds-SectionHeader"><p class="ds-SectionHeader__title">${esc(title)}</p>${action ? `<button type="button" class="ds-SectionHeader__action" ${attrs(actionAttrs)}>${esc(action)}</button>` : ''}</div>`;
+  DS.SectionHeader = ({ title = '', count, action, actionAttrs } = {}) =>
+    `<div class="ds ds-SectionHeader"><p class="ds-SectionHeader__title">${esc(title)}${count != null ? `<span class="ds-SectionHeader__count"> • ${count}</span>` : ''}</p>${action ? `<button type="button" class="ds-SectionHeader__action" ${attrs(actionAttrs)}>${esc(action)}</button>` : ''}</div>`;
 
   // ---------- CellOrderTypeStatus (lokalizacja punktu) ----------
   DS.CellOrderTypeStatus = ({ icon = 'location-check', title = 'Puławska 10, Warszawa', status = 'Dziś otwarte 7:00 - 11:00', attrs: a } = {}) =>
-    `<button type="button" class="ds ds-CellOrderTypeStatus" ${attrs(a)}>${DS.icon(icon, 24)}<span class="ds-CellOrderTypeStatus__text"><span class="ds-CellOrderTypeStatus__title">${esc(title)}</span><span class="ds-CellOrderTypeStatus__status">${esc(status)}${DS.icon('chevron-right', 16)}</span></span></button>`;
+    `<button type="button" class="${cls('ds', 'ds-CellOrderTypeStatus', !status && 'ds-CellOrderTypeStatus--single')}" ${attrs(a)}>${DS.icon(icon, 24)}<span class="ds-CellOrderTypeStatus__text"><span class="ds-CellOrderTypeStatus__title">${esc(title)}</span>${status ? `<span class="ds-CellOrderTypeStatus__status">${esc(status)}${DS.icon('chevron-right', 16)}</span>` : ''}</span></button>`;
 
   // ---------- Cell (wiersz listy: ikona 24 + tytuł + podtytuł + chevron) ----------
   // titleHtml pozwala podać gotowe HTML (np. podświetlenie frazy w podpowiedziach)
@@ -65,6 +65,37 @@
       `<button type="button" class="${cls('ds-ButtonTiny', 'ds-ButtonTiny--' + ctaVariant, 'ds-ProductCard__cta')}" data-action="${ctaVariant === 'primary' ? 'add-to-cart' : 'change-point'}" data-title="${esc(title)}"><span class="ds-ButtonTiny__label">${esc(cta)}</span></button></div>` +
       (footer ? `<button type="button" class="ds-ProductCard__footer" data-action="package-details"><span>${esc(footer.label)}</span><span class="ds-ProductCard__footerCount">&nbsp;• ${esc(footer.count)}</span>${DS.icon('chevron-right', 16)}</button>` : '') + `</article>`;
   };
+
+  // ---------- Karta produktu („Produkt • Badanie / Pakiet” 1183:19461-19462) ----------
+  // Surface: biała karta z obrysem (radius 24) grupująca wiersze; label 12/16 secondary u góry
+  DS.Surface = ({ label, content = '', attrs: a } = {}) =>
+    `<section class="ds ds-Surface" ${attrs(a)}>${label ? `<p class="ds-Surface__label">${esc(label)}</p>` : ''}${content}</section>`;
+  // PriceBlock: „Cena za badanie” + cena (zielona) + przekreślona + cena klubowa + Omnibus + „+ opłata za pobranie ⓘ”
+  DS.PriceBlock = ({ label = 'Cena za badanie', current = '', old, club, lowest, note } = {}) =>
+    `<div class="ds ds-PriceBlock"><p class="ds-PriceBlock__label">${esc(label)}</p>` +
+    `<div class="ds-PriceBlock__row"><span class="ds-PriceBlock__current">${esc(current)}</span>${old ? `<s class="ds-PriceBlock__old">${esc(old)}</s>` : ''}</div>` +
+    (club ? `<p class="ds-PriceBlock__club">${esc(club)}</p>` : '') +
+    ((lowest || note) ? `<div class="ds-PriceBlock__notes">${lowest ? `<p>${esc(lowest)}</p>` : ''}${note ? `<p class="ds-PriceBlock__note">${esc(note)}${DS.icon('info-circle', 16)}</p>` : ''}</div>` : '') + `</div>`;
+  // CodeBox: kod rabatowy z przyciskiem kopiowania
+  DS.CodeBox = ({ discount = '-20%', code = 'B26SIER' } = {}) =>
+    `<div class="ds ds-CodeBox">${DS.BadgePrice({ label: discount })}<span class="ds-CodeBox__text">z kodem: <b>${esc(code)}</b></span>` +
+    `<button type="button" class="ds-CodeBox__copy" aria-label="Kopiuj kod ${esc(code)}" data-action="copy-code" data-code="${esc(code)}">${DS.icon('copy', 24)}</button></div>`;
+  // ClubPromo: fioletowa zachęta „Dołącz do ALAB club / zyskaj dodatkowe zniżki”
+  DS.ClubPromo = ({ title = 'Dołącz do ALAB club', subtitle = 'zyskaj dodatkowe zniżki', attrs: a } = {}) =>
+    `<button type="button" class="ds ds-ClubPromo" ${attrs(a || { 'data-action': 'club-promo' })}>${DS.icon('alabek', 24)}<span class="ds-ClubPromo__text"><span class="ds-ClubPromo__title">${esc(title)}</span><span class="ds-ClubPromo__subtitle">${esc(subtitle)}</span></span>${DS.icon('chevron-right', 16)}</button>`;
+  // CellInfo: ikona + etykieta + wartość (albo lista punktów) — wiersze „Oczekiwanie na wynik”, „Pobierany materiał”, „Przygotowanie do badania”
+  DS.CellInfo = ({ icon = 'timer', label = '', value = '', bullets, attrs: a } = {}) =>
+    `<div class="ds ds-CellInfo" ${attrs(a)}>${DS.icon(icon, 24)}<div class="ds-CellInfo__text"><p class="ds-CellInfo__label">${esc(label)}</p>` +
+    (bullets ? `<ul class="ds-CellInfo__bullets">${bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : `<p class="ds-CellInfo__value">${esc(value)}</p>`) + `</div></div>`;
+  // ClubBannerLarge: „Twój klub na całe życie” — zdjęcie + 3 benefity + Sprawdź
+  DS.ClubBannerLarge = ({ attrs: a } = {}) =>
+    `<section class="ds ds-ClubBanner" ${attrs(a)}><img class="ds-ClubBanner__img" src="${DS.ASSETS}img_club_banner.jpg" alt=""><div class="ds-ClubBanner__content">` +
+    `<h2 class="ds-ClubBanner__title">Twój klub<br>na całe życie</h2><img class="ds-ClubBanner__logo" src="${DS.ASSETS}il_club_logo_banner.svg" alt="ALAB club">` +
+    `<ul class="ds-ClubBanner__list">${[['5% dodatkowej zniżki', 'na całą ofertę ALAB laboratoria'], ['Voucher 20%', 'w prezencie, do wykorzystania na kolejne zakupy po wykonaniu badań'], ['Oferty tylko dla klubowiczów', 'Promocje, oferta urodzinowa i inne niespodzianki w ciągu roku']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 20)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul>` +
+    `<button type="button" class="ds-ClubBanner__cta" data-action="club-promo">Sprawdź ${DS.icon('chevron-right', 16)}</button></div></section>`;
+  // ChipDropdown: chip z chevronem otwierający wybór (Listing: „Badania i pakiety ⌵”)
+  DS.ChipDropdown = ({ label = 'Badania i pakiety', attrs: a } = {}) =>
+    `<button type="button" class="ds ds-FilterChip ds-ChipDropdown" ${attrs(a)}>${esc(label)}${DS.icon('chevron-right', 16, 'ds-ChipDropdown__chevron')}</button>`;
 
   // ---------- EmptyState (wyszukiwarka: brak wyników) ----------
   DS.SearchEmpty = ({ icon = 'heart-rate', title = '', hint = '' } = {}) =>

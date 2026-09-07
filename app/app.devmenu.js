@@ -14,17 +14,14 @@
   let open = false;
   function openMenu() {
     if (open) return; open = true;
-    const ov = $('#overlay');
-    const wrap = document.createElement('div'); wrap.className = 'ds devmenu'; wrap.style.cssText = 'position:absolute;inset:0';
-    wrap.innerHTML = `<div class="ds-Scrim" data-menu="close"></div>` + DS.BottomSheet({ title: 'Prototyp ALAB', closeAttrs: { 'data-menu': 'close' }, content:
+    const sheet = DS.presentSheet({ title: 'Prototyp ALAB', className: 'devmenu', closeAttrs: { 'data-menu': 'close' }, onClose: () => { open = false; }, content:
       `<div class="devmenu__list">
         ${DS.Cell({ icon: 'view-list', title: 'Storybook — design system', subtitle: 'Tokeny, komponenty, warianty', attrs: { 'data-menu': 'storybook' } })}
         ${DS.Cell({ icon: 'home', title: 'Zacznij od nowa', subtitle: 'Czyści dane i wraca do splasha', attrs: { 'data-menu': 'reset' } })}
         ${DS.Cell({ icon: 'loading', title: 'Sprawdź aktualizacje', subtitle: 'Wersja ' + DS.esc(VERSION), attrs: { 'data-menu': 'update', id: 'menu-update' } })}
       </div>
-      <p class="devmenu__foot">Prototyp Future Mind dla ALAB laboratoria. Dane testowe: telefon 600 000 000, kod 000000, e-mail zajety@alab.pl, hasła „blokada” i „zle12345”.</p>` });
-    ov.appendChild(wrap); DS.enhance(wrap);
-    const close = () => { wrap.remove(); open = false; };
+      <p class="devmenu__foot">Prototyp Future Mind dla ALAB laboratoria. Dane testowe: telefon 600 000 000, kod 000000, e-mail zajety@alab.pl, hasła „blokada” i „zle12345”. Katalog badań i ceny są przykładowe.</p>` });
+    const wrap = sheet.wrap; const close = () => sheet.close();
     wrap.addEventListener('click', async (e) => {
       const t = e.target.closest('[data-menu]'); if (!t) return;
       const k = t.dataset.menu;

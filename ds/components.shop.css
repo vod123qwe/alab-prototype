@@ -105,3 +105,85 @@
 .ds-SearchEmpty__text { display: flex; flex-direction: column; gap: var(--space-xl); }
 .ds-SearchEmpty__title { font: 700 var(--headline-large-font-size)/var(--headline-large-line-height) var(--font-family-primary); letter-spacing: -0.01em; color: var(--content-on-surface); overflow-wrap: anywhere; }
 .ds-SearchEmpty__hint { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+
+/* CellOrderTypeStatus: wariant jednowierszowy (Zestaw wysyłkowy — „Samodzielne pobranie próbki”) */
+.ds-CellOrderTypeStatus--single { cursor: default; }
+.ds-SectionHeader__count { color: var(--content-on-surface-secondary); }
+
+/* ------------------------------------------------------------
+   Karta produktu: Surface, PriceBlock, CodeBox, ClubPromo, CellInfo, ClubBanner, ChipDropdown, Carousel
+   ------------------------------------------------------------ */
+.ds-Surface { display: flex; flex-direction: column; gap: var(--space-2xl); width: 100%; padding: 20px 24px; background: var(--background-surface); border: 1px solid var(--outline-border); border-radius: var(--radius-xlarge); }
+.ds-Surface__label { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.ds-Surface > .ds-Cell { padding: 0; min-height: 0; }
+.ds-Surface > .ds-Divider { margin: 0; }
+.ds-Cell--clamp .ds-Cell__title { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; font: 700 var(--label-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); }
+
+.ds-PriceBlock { display: flex; flex-direction: column; gap: var(--space-sm); width: 100%; }
+.ds-PriceBlock__label { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); margin-bottom: 4px; }
+.ds-PriceBlock__row { display: flex; align-items: baseline; gap: var(--space-md); flex-wrap: wrap; }
+.ds-PriceBlock__current { font: 700 28px/32px var(--font-family-primary); letter-spacing: -0.02em; color: var(--functional-success); }
+.ds-PriceBlock__old { font: 700 var(--label-large-font-size)/var(--label-large-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); }
+.ds-PriceBlock__club { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--main-accent-loyalty); }
+.ds-PriceBlock__notes { display: flex; flex-direction: column; gap: var(--space-md); margin-top: var(--space-md); font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.ds-PriceBlock__note { display: inline-flex; align-items: center; gap: var(--space-sm); }
+.ds-PriceBlock__note .ds-icon { width: 16px; height: 16px; }
+
+.ds-PromoStack { display: flex; flex-direction: column; width: 100%; border-radius: var(--radius-medium); overflow: hidden; }
+.ds-CodeBox { display: flex; align-items: center; gap: var(--space-2xl); padding: 12px 12px 12px 16px; background: var(--background-surface-secondary); }
+.ds-CodeBox__text { flex: 1 1 0; font: 600 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+.ds-CodeBox__copy { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--radius-medium); color: var(--content-on-surface); }
+.ds-CodeBox__copy:active { background: var(--background-surface-tertiary); }
+.ds-CodeBox__copy .ds-icon { width: 24px; height: 24px; }
+.ds-ClubPromo { display: flex; align-items: center; gap: var(--space-xl); width: 100%; padding: 12px 16px; background: var(--main-accent-loyalty); color: var(--content-on-scrim); text-align: left; }
+.ds-ClubPromo:active { filter: brightness(.94); }
+.ds-ClubPromo > .ds-icon { width: 24px; height: 24px; flex: 0 0 auto; }
+.ds-ClubPromo__text { flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; }
+.ds-ClubPromo__title { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.ds-ClubPromo__subtitle { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); opacity: .92; }
+
+.ds-CellInfo { display: flex; align-items: flex-start; gap: var(--space-2xl); width: 100%; }
+.ds-CellInfo > .ds-icon { width: 24px; height: 24px; flex: 0 0 auto; color: var(--main-accent); }
+.ds-CellInfo__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ds-CellInfo__label { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.ds-CellInfo__value { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+.ds-CellInfo__bullets { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+
+.ds-ClubBanner { position: relative; width: 100%; min-height: 380px; border-radius: var(--radius-xlarge); overflow: hidden; background: #2b0a5a; color: var(--content-on-scrim); }
+.ds-ClubBanner__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 80% 20%; }
+.ds-ClubBanner__content { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2xl); padding: 32px 24px 24px; background: linear-gradient(180deg, rgba(60,0,120,.25) 0%, rgba(40,10,90,.9) 45%, #1d0b4e 100%); min-height: 380px; }
+.ds-ClubBanner__title { font: 700 24px/28px var(--font-family-primary); letter-spacing: -0.01em; margin: 0; }
+.ds-ClubBanner__logo { height: 21px; width: auto; }
+.ds-ClubBanner__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-xl); }
+.ds-ClubBanner__list li { display: flex; align-items: flex-start; gap: var(--space-md); }
+.ds-ClubBanner__list li > .ds-icon { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; }
+.ds-ClubBanner__list li > span { display: flex; flex-direction: column; gap: 2px; }
+.ds-ClubBanner__list b { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.ds-ClubBanner__list li > span > span { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); opacity: .92; }
+.ds-ClubBanner__cta { display: inline-flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-md); padding: 12px 20px; border-radius: 100px; background: var(--background-surface); color: var(--main-primary); font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.ds-ClubBanner__cta .ds-icon { width: 16px; height: 16px; }
+
+.ds-ChipDropdown { display: inline-flex; align-items: center; gap: var(--space-sm); }
+.ds-ChipDropdown__chevron { width: 16px; height: 16px; transform: rotate(90deg); }
+
+.ds-Carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -20px; padding: 0 20px; -webkit-overflow-scrolling: touch; }
+.ds-Carousel::-webkit-scrollbar { display: none; }
+.ds-Carousel > * { flex: 0 0 calc(100% - 24px); scroll-snap-align: start; }
+
+/* Surface: grupy wierszy (CellInfo z separatorami), lista linków (Cell), metadane pod listą */
+.ds-Surface__rows { display: flex; flex-direction: column; }
+.ds-Surface__rows > .ds-CellInfo { padding: 16px 0; }
+.ds-Surface__rows > .ds-CellInfo + .ds-CellInfo { border-top: 1px solid var(--outline-border); }
+.ds-Surface__rows > .ds-CellInfo:first-child { padding-top: 4px; }
+.ds-Surface__rows > .ds-CellInfo:last-child { padding-bottom: 4px; }
+.ds-Surface__list { display: flex; flex-direction: column; }
+.ds-Surface__list > .ds-Cell { padding: 12px 0; min-height: 48px; border-radius: 0; }
+.ds-Surface__list > .ds-Cell + .ds-Cell { border-top: 1px solid var(--outline-border); }
+.ds-Surface__list > .ds-Cell:active { background: transparent; }
+.ds-Surface__meta { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); padding-top: 4px; }
+
+/* FilterRow: chip rozwijany + separator + chipy podkategorii, przewijany poziomo */
+.ds-FilterRow { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.ds-FilterRow::-webkit-scrollbar { display: none; }
+.ds-FilterRow > * { flex: 0 0 auto; }
+.ds-FilterRow__sep { width: 1px; height: 24px; background: var(--outline-border); margin: 0 8px; }
