@@ -248,7 +248,7 @@
   function setupProductScroll(root, route) {
     const head = $('#prod-head', root), scroll = $('#prod-scroll', root), cta = $('#prod-cta', root), buy = $('#prod-buy', root);
     if (!head || !scroll) return;
-    const onScroll = () => { head.classList.toggle('is-scrolled', scroll.scrollTop > 40); st().scroll[route] = scroll.scrollTop; };
+    const onScroll = () => { head.classList.toggle('is-scrolled', scroll.scrollTop > 8); st().scroll[route] = scroll.scrollTop; };
     scroll.addEventListener('scroll', onScroll, { passive: true });
     if (cta && buy && 'IntersectionObserver' in window) { new IntersectionObserver(([e]) => cta.classList.toggle('is-visible', !e.isIntersecting && e.boundingClientRect.top < 0), { root: scroll, threshold: 0 }).observe(buy); }
     // karta produktu otwiera się zawsze od góry (jak nowy ekran w iOS) — pozycji nie przywracamy

@@ -244,17 +244,23 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 @media (max-width: 900px) { .shop__nav--bar { height: auto; padding-top: calc(env(safe-area-inset-top, 0px) + 20px); } }
 
 /* ------------------------------------------------------------
-   Karta produktu — hero z granatem i blobem, biała karta nachodzi na hero, pasek nawigacji wypełnia się po scrollu
+   Karta produktu — ProductBackground 1:1 z Figmy (583:22109): 468 px granatu, blob 840.74 px obrócony 75°,
+   „Content Background” = gradient 182.4° od rgba(4,56,125,.3) do Background/surfaceSecondary (#f6f7f8) na 82%.
+   Blur 50 z Figmy nakładamy na sam obraz (zamiast backdrop-filter — lżej dla telefonu, ten sam efekt).
+   TopBar: na górze „Transparent - light” (biały tekst, brak tła); po scrollu wariant „On scroll” z dokumentacji DS:
+   Background/surface 82% + background blur 32 + cień 0 0 12 rgba(0,0,0,.04); tekst i ikony Content/onSurface. Nic się nie przesuwa.
    ------------------------------------------------------------ */
-.product__head { position: absolute; top: 0; left: 0; right: 0; z-index: 5; color: #fff; transition: background-color .2s ease, box-shadow .2s ease; }
-.product__head.is-scrolled { background: var(--main-primary); box-shadow: 0 6px 14px rgba(4,56,124,.22); }
-.product__scroll { background: var(--background-surface); }
-/* hero i treść to dzieci flex-kolumny .screen__body — bez flex-shrink:0 hero kurczy się do zera i karta wjeżdża pod pasek */
-.product__hero { position: relative; flex: 0 0 300px; height: 300px; background: var(--main-primary); overflow: hidden; }
-.product__hero img { position: absolute; width: 640px; height: 640px; left: calc(50% + 110px); top: 20px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(40px); opacity: .9; }
-.product__heroOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 30%, #04387c 98%); }
-.product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: -160px; }
-.product__main { gap: 24px; padding: 24px; border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.10); }
+.product__head { position: absolute; top: 0; left: 0; right: 0; z-index: 5; color: var(--content-on-scrim); transition: background-color .2s ease, box-shadow .2s ease, color .2s ease; }
+.product__head.is-scrolled { background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px); box-shadow: 0 0 12px rgba(0,0,0,.04); color: var(--content-on-surface); }
+.product__head .ds-IconButton--onscrim { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
+.product__head.is-scrolled .ds-IconButton--onscrim { background: transparent; border-color: transparent; color: var(--content-on-surface); }
+.product__head.is-scrolled .ds-StatusBar--light { color: var(--content-on-surface); }
+.product__scroll { background: var(--background-surface-secondary); }
+.product__hero { position: relative; flex: 0 0 468px; height: 468px; background: var(--main-primary); overflow: hidden; }
+.product__hero img { position: absolute; width: 840.74px; height: 840.74px; left: calc(50% + 251.34px); top: calc(50% - 20.16px); transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(50px); }
+.product__heroOverlay { position: absolute; inset: 0 0 -5px; background: linear-gradient(182.4deg, rgba(4,56,125,.3) 1.6%, var(--background-surface-secondary) 82.4%); }
+.product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
+.product__main { gap: 24px; padding: 24px; border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
 .product__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; margin: 0; color: var(--content-on-surface); }
 .product__unavailable { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .product__unavailableHint { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
