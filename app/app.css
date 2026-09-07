@@ -222,3 +222,8 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 @media (max-width: 900px) { .devzone { height: calc(env(safe-area-inset-top, 0px) + 20px); } }
 .devmenu__list { display: flex; flex-direction: column; gap: 4px; }
 .devmenu__foot { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); padding-bottom: 8px; }
+
+/* siatka kategorii: krótki fade przy zmianie typu realizacji */
+.shop__tiles { transition: opacity .12s ease; }
+.shop__tiles.is-swapping { opacity: 0; }
+.shop__tiles > .ds-CategoryTile { animation: rise .3s cubic-bezier(.2,.8,.2,1) both; }

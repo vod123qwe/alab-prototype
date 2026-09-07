@@ -174,11 +174,11 @@
   DS.Divider = () => `<div class="ds ds-Divider" role="separator"></div>`;
 
   // ---------- BottomSheet ----------
-  DS.BottomSheet = ({ title = '', content = '', closeAttrs, attrs: a } = {}) =>
+  DS.BottomSheet = ({ title = '', subtitle, content = '', closeAttrs, attrs: a } = {}) =>
     `<div class="ds ds-BottomSheet" role="dialog" aria-modal="true" ${attrs(a)}><span class="ds-BottomSheet__handle"></span>` +
-    `<div class="ds-BottomSheet__slot"><div class="ds-BottomSheet__header"><p class="ds-BottomSheet__title">${esc(title)}</p>` +
+    `<div class="ds-BottomSheet__slot"><div class="ds-BottomSheet__head"><div class="ds-BottomSheet__header"><p class="ds-BottomSheet__title">${esc(title)}</p>` +
     DS.IconButton({ icon: 'x', variant: 'withbg', size: 'small', label: 'Zamknij', attrs: closeAttrs || { 'data-action': 'sheet-close' } }) +
-    `</div>${content}</div>${DS.HomeIndicator()}</div>`;
+    `</div>${subtitle ? `<p class="ds-BottomSheet__subtitle">${esc(subtitle)}</p>` : ''}</div>${content}</div>${DS.HomeIndicator()}</div>`;
 
   // ---------- CellSelectCountry ----------
   DS.CellSelectCountry = ({ name = 'Polska', code = '+ 48', flag = 'pl', checked = false, attrs: a } = {}) =>

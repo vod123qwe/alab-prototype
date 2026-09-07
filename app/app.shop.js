@@ -10,13 +10,30 @@
   const S = () => APP.S;
 
   // ---------------- dane (treść 1:1 z masterów) ----------------
+  // 12 kategorii ALAB (lista i ikony ustalone w POC, 2026-08-11). Dostępność per typ realizacji = ZAŁOŻENIE prototypu
+  // (brak takiej tabeli w Figmie i inventory): Punkt Pobrań = wszystko, ALAB w domu = badania z krwi, Zestaw wysyłkowy = próbki do wysyłki.
   const CATEGORIES = [
-    { id: 'ogolne', icon: 'test-tube', label: 'Badania i pakiety ogólne', count: 9 },
-    { id: 'hormony', icon: 'medicine-bottle', label: 'Hormony', count: 2 },
-    { id: 'alergie', icon: 'fork-knife', label: 'Alergie i nietolerancje pokarmowe', count: 1 },
-    { id: 'pokarmowy', icon: 'bubbles', label: 'Układ pokarmowy', count: 2 },
-    { id: 'krazenie', icon: 'heart-rate', label: 'Układ krążenia i Hematologia', count: 4 },
+    { id: 'ogolne', icon: 'test-tube', label: 'Badania i pakiety ogólne', count: 9, types: ['punkt', 'dom'] },
+    { id: 'hormony', icon: 'medicine-bottle', label: 'Hormony', count: 2, types: ['punkt', 'dom'] },
+    { id: 'alergie', icon: 'fork-knife', label: 'Alergie i nietolerancje pokarmowe', count: 1, types: ['punkt', 'dom', 'wysylka'] },
+    { id: 'pokarmowy', icon: 'bubbles', label: 'Układ pokarmowy', count: 2, types: ['punkt', 'wysylka'] },
+    { id: 'krazenie', icon: 'heart-rate', label: 'Układ krążenia i Hematologia', count: 4, types: ['punkt', 'dom'] },
+    { id: 'cukrzyca', icon: 'syringe', label: 'Cukrzyca i Otyłość', count: 1, types: ['punkt', 'dom'] },
+    { id: 'ciaza', icon: 'heart', label: 'Ciąża, Zdrowie intymne i Układ moczowy', count: 2, types: ['punkt', 'dom'] },
+    { id: 'genetyka', icon: 'dna', label: 'Genetyka i Nowotwory', count: null, types: ['punkt', 'wysylka'] },
+    { id: 'infekcje', icon: 'virus', label: 'Infekcje i choroby zakaźne', count: 3, types: ['punkt', 'dom', 'wysylka'] },
+    { id: 'lifestyle', icon: 'mirror', label: 'Lifestylowe i Uroda', count: 2, types: ['punkt', 'wysylka'] },
+    { id: 'psychika', icon: 'user', label: 'Zdrowie psychiczne', count: null, types: ['punkt', 'wysylka'] },
+    { id: 'reuma', icon: 'tube', label: 'Reumatologia i Dermatologia', count: null, types: ['punkt', 'dom'] },
   ];
+  const HOME_TILES = 6; // siatka na stronie głównej: > 6 kategorii → 5 + „Wszystkie kategorie”, ≤ 6 → wszystkie
+  const catsFor = (type) => CATEGORIES.filter(c => c.types.includes(type));
+  const tilesHtml = (type) => {
+    const cats = catsFor(type);
+    const shown = cats.length > HOME_TILES ? cats.slice(0, HOME_TILES - 1) : cats;
+    return shown.map(c => DS.CategoryTile({ icon: c.icon, label: c.label, attrs: { 'data-action': 'open-category', 'data-title': c.label } })).join('') +
+      (cats.length > HOME_TILES ? DS.CategoryTile({ icon: 'plus-square', label: 'Wszystkie kategorie', all: true, attrs: { 'data-action': 'all-categories' } }) : '');
+  };
   const PACKAGES = [
     { id: 'p1', kind: 'package', meta: 'Liczba badań: 4', title: 'Pakiet tarczycowy podstawowy', badge: { code: { discount: '-20%', text: 'z kodem JESIEN20' } }, price: { current: '68 zł', old: '85 zł', club: '64,60 zł ekstra -5% w klubie', lowest: 'Najniższa cena z 30 dni: 85 zł', note: '+ opłata za pobranie' }, footer: { label: 'Zobacz składowe pakietu', count: 4 }, search: { sub: '4 badania • 68,00 zł' } },
     { id: 'p2', kind: 'package', meta: 'Liczba badań: 8', title: 'Pakiet Zdrowie podstawowy', price: { current: '199 zł', club: '189,05 zł ekstra -5% w klubie', note: '+ opłata za pobranie' }, footer: { label: 'Zobacz składowe pakietu', count: 8 }, search: { sub: '8 badań • 199,00 zł' } },
@@ -69,7 +86,7 @@
         <div class="shop__content">
           <section class="shop__section shop__section--loc">
             ${DS.CellOrderTypeStatus({ attrs: { 'data-action': 'change-point' } })}
-            <div class="shop__tiles">${CATEGORIES.map(c => DS.CategoryTile({ icon: c.icon, label: c.label, attrs: { 'data-action': 'open-category', 'data-title': c.label } })).join('')}${DS.CategoryTile({ icon: 'plus-square', label: 'Wszystkie kategorie', all: true, attrs: { 'data-action': 'all-categories' } })}</div>
+            <div class="shop__tiles" id="shop-tiles">${tilesHtml(st().delivery)}</div>
           </section>
           <section class="shop__section">
             ${DS.SectionHeader({ title: 'Popularne pakiety', action: 'Pokaż wszystkie', actionAttrs: { 'data-action': 'show-all', 'data-title': 'Pakiety' } })}
@@ -148,6 +165,16 @@
     if (route === 'tab/results' || route === 'tab/start' || route === 'tab/cart') { const sc = $('.shop__scroll', root); if (sc) sc.scrollTop = st().scroll[route] || 0; }
   });
 
+  function categorySheet() {
+    const ov = $('#overlay');
+    const cats = catsFor(st().delivery);
+    const wrap = document.createElement('div'); wrap.className = 'ds'; wrap.style.cssText = 'position:absolute;inset:0';
+    wrap.innerHTML = `<div class="ds-Scrim" data-action="sheet-close"></div>` + DS.BottomSheet({ title: 'Kategorie', subtitle: 'Wybierz kategorię badań, która Cię interesuje', attrs: { style: 'height:750px;max-height:92%' },
+      content: `<div class="ds-BottomSheet__scroll" style="gap:8px">${cats.map(c => DS.Cell({ icon: c.icon, title: c.label, subtitle: c.count ? plural(c.count, 'podkategoria', 'podkategorie', 'podkategorii') : null, attrs: { 'data-action': 'open-category', 'data-title': c.label } })).join('')}</div>` });
+    ov.appendChild(wrap); DS.enhance(wrap);
+    wrap.addEventListener('click', (e) => { if (e.target.closest('[data-action="sheet-close"], [data-action="open-category"]')) setTimeout(() => wrap.remove(), e.target.closest('[data-action="open-category"]') ? 150 : 0); });
+  }
+
   // ---------------- akcje ----------------
   const info = (t) => snack(t, 'info', 110);
   Object.assign(ACTIONS, {
@@ -163,13 +190,14 @@
     },
     'change-point': () => info('Wybór Punktu Pobrań — Moduł 4, poza zakresem tego prototypu'),
     'open-category': (el) => info(`Kategoria „${el.dataset.title}” — lista w kolejnym etapie`),
-    'all-categories': () => info('Arkusz „Wszystkie kategorie” — w kolejnym etapie'),
+    'all-categories': () => categorySheet(),
     'show-all': (el) => info(`${el.dataset.title}: pełna lista w kolejnym etapie`),
     'package-details': () => info('Składowe pakietu — w kolejnym etapie'),
   });
   document.addEventListener('click', (e) => {
     const tab = e.target.closest('[data-tab]'); if (tab && !tab.classList.contains('screen')) { const t = TABS.find(x => x.id === tab.dataset.tab); if (t) { const sc = $('#screen .shop__scroll'); if (sc) st().scroll[current()] = sc.scrollTop; if (current() !== t.route) go(t.route); } return; }
-    const chip = e.target.closest('[data-delivery]'); if (chip) { st().delivery = chip.dataset.delivery; $$('[data-delivery]').forEach(c => { const on = c.dataset.delivery === st().delivery; c.classList.toggle('is-selected', on); c.setAttribute('aria-pressed', on); }); }
+    const chip = e.target.closest('[data-delivery]'); if (chip) { st().delivery = chip.dataset.delivery; $$('[data-delivery]').forEach(c => { const on = c.dataset.delivery === st().delivery; c.classList.toggle('is-selected', on); c.setAttribute('aria-pressed', on); });
+      const tiles = $('#shop-tiles'); if (tiles) { tiles.classList.add('is-swapping'); setTimeout(() => { tiles.innerHTML = tilesHtml(st().delivery); tiles.classList.remove('is-swapping'); }, 120); } }
   });
   document.addEventListener('ds:search', (e) => { st().query = e.detail.value; const r = $('#search-results'); if (r) r.innerHTML = searchResults(e.detail.value); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'search-input') { e.target.blur(); const q = e.target.value.trim(); if (q) info(`Wyniki dla „${q}” — ekran listy w kolejnym etapie`); } });

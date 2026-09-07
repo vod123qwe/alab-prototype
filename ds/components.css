@@ -284,7 +284,9 @@
 .ds-BottomSheet { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-2xl); padding-top: var(--space-md); background: var(--background-surface); border-radius: var(--radius-large) var(--radius-large) 0 0; max-height: 92%; }
 .ds-BottomSheet__handle { width: 40px; height: 5px; border-radius: 100px; background: var(--background-surface-tertiary); flex: 0 0 auto; }
 .ds-BottomSheet__slot { flex: 1 1 auto; min-height: 0; width: 100%; padding: var(--space-xl) var(--screen-margin) 0; display: flex; flex-direction: column; gap: var(--space-5xl); overflow: hidden; }
+.ds-BottomSheet__head { display: flex; flex-direction: column; gap: var(--space-md); }
 .ds-BottomSheet__header { display: flex; align-items: center; gap: var(--space-2xl); }
+.ds-BottomSheet__subtitle { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
 .ds-BottomSheet__title { flex: 1 1 0; font: 700 20px/24px var(--font-family-primary); letter-spacing: -0.01em; }
 .ds-BottomSheet__scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-md); }
 
