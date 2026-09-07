@@ -24,7 +24,8 @@
   },
   "links": {
     "figma": "https://www.figma.com/design/Qsc72CoT02rxWM4jF7aIxw/Alab-%E2%80%A2-Design?node-id=1416-56513",
-    "figmaDs": "https://www.figma.com/design/xnsgOdaVVKCkzjyStSOdVv/Alab-%E2%80%A2-Design-system"
+    "figmaDs": "https://www.figma.com/design/xnsgOdaVVKCkzjyStSOdVv/Alab-%E2%80%A2-Design-system",
+    "repo": "https://github.com/vod123qwe/alab-prototype"
   },
   "icon": "smartphone",
   "accent": "#096BCD",
