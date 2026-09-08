@@ -13,10 +13,10 @@
   // karta szkieletu: biały kontener z obwódką (jak CellTestResult / SurfaceSlot) i klockami w środku
   const skCard = (inner, r = 28) => `<div class="stub__cardSkel" style="border-radius:${r}px">${inner}</div>`;
 
-  const notice = (title) => `<div class="stub__notice"><div class="stub__card">` +
+  const notice = (title, second = 'Przejdź do innej zakładki.') => `<div class="stub__notice"><div class="stub__card">` +
     DS.ButtonTiny({ label: 'Niedostępne w badaniu', variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
     `<div class="stub__text"><p class="stub__title">${esc(title)}</p>` +
-    `<p class="stub__desc"><span>Ta część aplikacji jest w przygotowaniu.</span><span class="stub__descStrong">Przejdź do innej zakładki.</span></p>` +
+    `<p class="stub__desc"><span>Ta część aplikacji jest w przygotowaniu.</span><span class="stub__descStrong">${esc(second)}</span></p>` +
     `</div></div></div>`;
 
   const stub = (tab, title, skeleton) => `<div class="screen shop stub" data-tab="${tab}">
@@ -56,7 +56,20 @@
   SCREENS['tab/results'] = () => stub('results', 'Wyniki badań', resultsSkeleton);
   SCREENS['tab/cart'] = () => stub('cart', 'Koszyk', cartSkeleton);
 
+  // Punkt Pobrań — wchodzimy z komórki adresu w sklepie i z CTA „Zmień punkt” na karcie produktu
+  const pointSkeleton = `${sk('100%', 56, 28)}
+      <div class="stub__gap stub__gap--sm"></div>
+      ${sk('100%', 180, 16)}
+      <div class="stub__gap stub__gap--sm"></div>
+      <div class="stub__col" style="gap:12px">${sk('100%', 72, 16)}${sk('100%', 72, 16)}${sk('100%', 72, 16)}</div>`;
+  SCREENS['punkt-pobran'] = () => `<div class="screen stub">
+      <div class="screen__top">${DS.TopBar({ leading: 'x-close', title: 'Punkt Pobrań' })}</div>
+      <div class="screen__body stub__body">${pointSkeleton}</div>
+      ${notice('Punkt Pobrań', 'Wróć do poprzedniego ekranu.')}
+      ${DS.HomeIndicator()}
+    </div>`;
+
   const i = APP.ROUTES.findIndex(r => r[1] === 'tab/results');
-  if (i >= 0) APP.ROUTES.splice(i + 1, 0, ['Wyniki · pełne (poza badaniem)', 'results-full']);
+  if (i >= 0) APP.ROUTES.splice(i + 1, 0, ['Wyniki · pełne (poza badaniem)', 'results-full'], ['Punkt Pobrań · zaślepka', 'punkt-pobran']);
   APP.renderNav();
 })();

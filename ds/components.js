@@ -148,10 +148,15 @@
 
   // ---------- StatusBar / HomeIndicator / TopBar ----------
   const LEVELS = '<svg viewBox="0 0 86 13" fill="none"><rect x="0" y="9" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="7" width="3" height="6" rx="1" fill="currentColor"/><rect x="10" y="4" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="1" width="3" height="12" rx="1" fill="currentColor"/><path d="M31.5 3.2a9 9 0 0 1 11 0l-1.3 1.6a7 7 0 0 0-8.4 0L31.5 3.2Zm2.3 2.9a5.8 5.8 0 0 1 6.4 0l-1.3 1.6a3.7 3.7 0 0 0-3.8 0l-1.3-1.6Zm2.3 2.9a2.5 2.5 0 0 1 1.9 0L37 11l-.9-2Z" fill="currentColor"/><rect x="58" y="0.5" width="24" height="12" rx="3.5" stroke="currentColor" stroke-opacity=".35"/><rect x="60" y="2.5" width="20" height="8" rx="2" fill="currentColor"/><path d="M83.5 4.5v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity=".4"/></svg>';
+  // DS.SYSTEM_UI = false → pasek trzyma tylko wysokość, bez zegara, sygnału i baterii.
+  // Prototyp do badań ustawia to na false (założenie z tablicy), storybook pokazuje komponent w pełnej wersji.
+  DS.SYSTEM_UI = DS.SYSTEM_UI !== false;
   DS.StatusBar = ({ light = false, time = '9:41' } = {}) =>
-    `<div class="${cls('ds', 'ds-StatusBar', light && 'ds-StatusBar--light')}"><div class="ds-StatusBar__time">${esc(time)}</div><div class="ds-StatusBar__island"></div><div class="ds-StatusBar__levels">${LEVELS}</div></div>`;
+    DS.SYSTEM_UI
+      ? `<div class="${cls('ds', 'ds-StatusBar', light && 'ds-StatusBar--light')}"><div class="ds-StatusBar__time">${esc(time)}</div><div class="ds-StatusBar__island"></div><div class="ds-StatusBar__levels">${LEVELS}</div></div>`
+      : `<div class="${cls('ds', 'ds-StatusBar', 'ds-StatusBar--blank', light && 'ds-StatusBar--light')}"></div>`;
   DS.HomeIndicator = ({ light = false } = {}) =>
-    `<div class="${cls('ds', 'ds-HomeIndicator', light && 'ds-HomeIndicator--light')}"><span class="ds-HomeIndicator__bar"></span></div>`;
+    `<div class="${cls('ds', 'ds-HomeIndicator', light && 'ds-HomeIndicator--light')}">${DS.SYSTEM_UI ? '<span class="ds-HomeIndicator__bar"></span>' : ''}</div>`;
 
   // leading: icon name | false ; trailing: {icon, attrs} | false
   DS.TopBar = ({ leading = 'chevron-left', leadingAttrs, trailing = false, title, subtitle, statusBar = true, transparent = false, light = false } = {}) =>

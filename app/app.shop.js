@@ -358,7 +358,7 @@
       st().added[id] = (+st().added[id] || 0) + 1; st().cart++;
       refreshCartBadge(); DS.haptic('light'); snack(`Dodano do koszyka: ${p.title}`, 'success', 110);
     },
-    'change-point': () => info('Wybór Punktu Pobrań — Moduł 4, poza zakresem tego prototypu'),
+    'change-point': () => go('punkt-pobran'),
     'open-category': (el) => go('category/' + el.dataset.cat),
     'all-categories': () => categorySheet(),
     'show-all': (el) => go('list/' + el.dataset.kind),

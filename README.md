@@ -290,3 +290,13 @@ bo wzór był tylko dla Startu.
 Pełny moduł Wyników nie został usunięty — jest pod trasą `#/results-full` (poza ścieżką badania,
 wejście z panelu prototypu). Kod: `app/app.stubs.js`.
 
+### Elementy UI systemu i Punkt Pobrań (etap 1 domknięty)
+
+W prototypie nie ma zegara, sygnału, baterii ani kreski gestu — `app/app.js` ustawia `DS.SYSTEM_UI = false`,
+a pasek statusu trzyma wtedy tylko wysokość (odstęp pod notch zostaje). Storybook pokazuje komponenty
+w pełnej wersji, bo tam dokumentujemy design system, nie prototyp badawczy.
+
+Tapnięcie w komórkę adresu na ekranie sklepu (oraz CTA „Zmień punkt” na karcie niedostępnego badania)
+otwiera zaślepkę Punktu Pobrań pod adresem `#/punkt-pobran`: belka z krzyżykiem, szkielet listy punktów
+i karta z komunikatem, w której drugie zdanie brzmi „Wróć do poprzedniego ekranu.” Wcześniej był tam snackbar.
+

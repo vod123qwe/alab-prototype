@@ -2,6 +2,8 @@
    + logowanie i reset hasła. Ekrany 1:1 z pliku „Alab • Design” (strona „Logowanie i rejestracja”),
    komponenty wyłącznie z ds/components.js. Bez buildu. */
 (function () {
+  DS.SYSTEM_UI = false;   // prototyp bez elementów UI systemu (zegar, sygnał, bateria, kreska gestu) — założenie testu
+
   DS.ASSETS = '../ds/assets/';
   const A = DS.ASSETS;
   const $ = (s, r = document) => r.querySelector(s);

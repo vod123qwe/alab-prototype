@@ -370,3 +370,7 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 
 /* karta szkieletu: odwzorowuje realny kontener (białe tło + obwódka), żeby lista nie była jednolitą szarą plamą */
 .stub__cardSkel { display: flex; flex-direction: column; gap: 24px; padding: 24px 24px 20px; background: var(--background-surface); border: 1px solid var(--outline-border); }
+
+/* Prototyp bez elementów UI systemu: pasek statusu trzyma wysokość, kreska gestu jest ukryta również na desktopie */
+.ds-StatusBar--blank { justify-content: flex-start; }
+.phone .ds-HomeIndicator__bar { display: none; }
