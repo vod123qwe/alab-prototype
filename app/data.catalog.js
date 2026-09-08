@@ -33,7 +33,8 @@
   const BLOOD = ['punkt', 'dom'];
   const KIT = ['punkt', 'wysylka'];
 
-  // t(id, title, cat, sub, price, opcje) — badanie; opcje: old, code, premium, unavailableAt, material, types, tat, symbol, icd, desc, prep, popular
+  // t(id, title, cat, sub, price, opcje) — badanie; opcje: old, code, premium, unavailableAt, material, types, tat, symbol, icd, desc, prep, popular, keywords
+  // keywords = dodatkowe frazy, po których badanie ma się znaleźć w wyszukiwarce (potoczne nazwy, skróty, materiał)
   const t = (id, title, cat, sub, price, o = {}) => ({
     id, kind: 'test', title, cat, sub, price, material: 'Krew', types: BLOOD, tat: '1 dzień roboczy', symbol: id.replace('t-', '').toUpperCase(),
     desc: `${title} to badanie laboratoryjne wykonywane z materiału: ${(o.material || 'krew').toLowerCase()}. Wynik pomaga ocenić stan zdrowia i wspiera diagnostykę zgodnie z zaleceniem lekarza.`,
@@ -48,13 +49,15 @@
 
   const PRODUCTS = [
     // ---- Badania i pakiety ogólne ----
-    t('t-morf-roz', 'Morfologia krwi obwodowej z rozmazem', 'ogolne', 'Krew', 24.80, { old: 31.00, code: CODE, popular: true, symbol: 'MORFR', icd: 'C55',
+    t('t-morf-roz', 'Morfologia krwi obwodowej z rozmazem', 'ogolne', 'Krew', 24.80, { old: 31.00, code: CODE, symbol: 'MORFR', icd: 'C55',
+      keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'rozmaz', 'cbc', 'hematologia', 'mrf'],
       desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi, a rozmaz pozwala ocenić ich wygląd pod mikroskopem.' }),
     t('t-morf', 'Morfologia krwi', 'ogolne', 'Krew', 21.70, { symbol: 'MORF', icd: 'C55',
+      keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
       desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi.' }),
     t('t-ob', 'Odczyn Biernackiego (OB)', 'ogolne', 'Krew', 14.00, { icd: 'C59' }),
-    t('t-crp', 'CRP – białko C-reaktywne', 'ogolne', 'Krew', 28.00, { popular: true, icd: 'I81', desc: 'CRP to białko ostrej fazy, którego stężenie rośnie w stanach zapalnych i infekcjach. Badanie pomaga ocenić nasilenie zapalenia i skuteczność leczenia.' }),
-    t('t-glu', 'Glukoza na czczo w surowicy', 'ogolne', 'Krew', 15.00, { popular: true, icd: 'L43', desc: 'Podstawowe badanie w kierunku cukrzycy i zaburzeń gospodarki węglowodanowej. Wykonuj rano, na czczo, po 8-12 godzinach od ostatniego posiłku.' }),
+    t('t-crp', 'CRP – białko C-reaktywne', 'ogolne', 'Krew', 28.00, { popular: true, icd: 'I81', keywords: ['crp', 'stan zapalny', 'zapalenie', 'badanie krwi', 'krew'], desc: 'CRP to białko ostrej fazy, którego stężenie rośnie w stanach zapalnych i infekcjach. Badanie pomaga ocenić nasilenie zapalenia i skuteczność leczenia.' }),
+    t('t-glu', 'Glukoza na czczo w surowicy', 'ogolne', 'Krew', 15.00, { popular: true, icd: 'L43', keywords: ['glukoza', 'cukier', 'cukrzyca', 'badanie krwi', 'krew'], desc: 'Podstawowe badanie w kierunku cukrzycy i zaburzeń gospodarki węglowodanowej. Wykonuj rano, na czczo, po 8-12 godzinach od ostatniego posiłku.' }),
     t('t-krea', 'Kreatynina', 'ogolne', 'Krew', 18.00, { icd: 'M37' }),
     t('t-alt', 'ALT – aminotransferaza alaninowa', 'ogolne', 'Krew', 16.00, { icd: 'I17' }),
     t('t-mocz', 'Badanie ogólne moczu', 'ogolne', 'Mocz', 15.00, { material: 'Mocz', types: ['punkt'], icd: 'A01' }),
@@ -70,7 +73,7 @@
     p('p-kobiet', 'Pakiet dla kobiet', 'ogolne', 'Pakiety', 540.90, ['t-morf', 't-tsh', 't-ferr', 't-witd', 't-prl', 't-e2', 't-glu', 't-lip']),
 
     // ---- Hormony ----
-    t('t-tsh', 'TSH – tyreotropina III generacji', 'hormony', 'Tarczyca', 29.68, { old: 37.10, code: CODE, popular: true, symbol: 'TSH', icd: 'L69',
+    t('t-tsh', 'TSH – tyreotropina III generacji', 'hormony', 'Tarczyca', 29.68, { old: 37.10, code: CODE, popular: true, symbol: 'TSH', icd: 'L69', keywords: ['tsh', 'tarczyca', 'tyreotropina', 'hormony', 'badanie krwi', 'krew'],
       desc: 'TSH to hormon przysadki sterujący pracą tarczycy. Jest badaniem pierwszego wyboru przy podejrzeniu niedoczynności lub nadczynności tarczycy.', prep: ['Na czczo, rano - TSH wykazuje rytm dobowy', 'Leki na tarczycę przyjmij po pobraniu'] }),
     t('t-ft4', 'FT4 – wolna tyroksyna', 'hormony', 'Tarczyca', 39.20, { icd: 'O69' }),
     t('t-ft3', 'FT3 – wolna trijodotyronina', 'hormony', 'Tarczyca', 39.20, { icd: 'O55' }),
@@ -100,7 +103,7 @@
     t('t-lip', 'Lipidogram', 'krazenie', 'Krążenie', 35.00, { popular: false, icd: 'I99', desc: 'Lipidogram ocenia cholesterol całkowity, frakcje HDL i LDL oraz trójglicerydy. To podstawa oceny ryzyka chorób sercowo-naczyniowych.' }),
     t('t-chol', 'Cholesterol całkowity', 'krazenie', 'Krążenie', 21.60, { old: 27.00, code: CODE, icd: 'I99' }),
     t('t-hcy', 'Homocysteina', 'krazenie', 'Krążenie', 59.00, { icd: 'K99' }),
-    t('t-ferr', 'Ferrytyna – ocena zapasów żelaza', 'krazenie', 'Hematologia', 49.00, { premium: true, popular: true, symbol: 'FERR', icd: 'L05',
+    t('t-ferr', 'Ferrytyna – ocena zapasów żelaza', 'krazenie', 'Hematologia', 49.00, { premium: true, popular: true, symbol: 'FERR', icd: 'L05', keywords: ['ferrytyna', 'zelazo', 'anemia', 'niedokrwistosc', 'badanie krwi', 'krew'],
       desc: 'Ferrytyna odzwierciedla zapasy żelaza w organizmie. Niski poziom wyprzedza niedokrwistość, wysoki może wskazywać na stan zapalny.' }),
     t('t-fe', 'Żelazo w surowicy', 'krazenie', 'Hematologia', 22.40, { icd: 'O95' }),
     t('t-ret', 'Oznaczanie odsetka retikulocytów', 'krazenie', 'Hematologia', 21.00, { premium: true, icd: 'C69' }),

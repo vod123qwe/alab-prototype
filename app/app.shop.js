@@ -113,16 +113,30 @@
 
   // ---------------- Wyszukiwarka (Start / Podpowiedzi / Brak wyników) ----------------
   const highlight = (title, q) => { const i = norm(title).indexOf(norm(q)); if (i < 0) return esc(title); return esc(title.slice(0, i)) + `<span class="match">${esc(title.slice(i, i + q.length))}</span>` + esc(title.slice(i + q.length)); };
-  const MOST_SEARCHED = ['Morfologia', 'CRP', 'Witamina D', 'TSH', 'Ferrytyna'];
+  // UWAGA (badania z użytkownikami): „Morfologia” świadomie NIE jest podpowiedzią — zadaniem jest ją znaleźć,
+  // a gotowa podpowiedź w jednym tapnięciu zaburzyłaby wynik.
+  const MOST_SEARCHED = ['CRP', 'Witamina D', 'TSH', 'Ferrytyna', 'Lipidogram'];
   const mostSearched = () => `<div class="search__group"><p class="search__label">Najczęściej szukane</p><div class="search__list search__list--tight">${MOST_SEARCHED.map(t => DS.Cell({ icon: 'file-note-search', title: t, attrs: { 'data-action': 'search-pick', 'data-q': t } })).join('')}</div></div>`;
-  const matches = (q) => { const nq = norm(q.trim()); const items = forType(); return { pk: items.filter(p => p.kind === 'package' && norm(p.title).includes(nq)), ts: items.filter(p => p.kind === 'test' && norm(p.title).includes(nq)), cats: catsFor().filter(c => norm(c.label).includes(nq)) }; };
+  // Pole wyszukiwania produktu: nazwa + podkategoria + materiał + potoczne frazy (keywords) + symbol.
+  const haystack = (p) => norm([p.title, p.sub, p.material, p.symbol, ...(p.keywords || [])].filter(Boolean).join(' '));
+  // Dopasowanie po SŁOWACH, nie po całej frazie — „badania krwi morfologii” trafia w „Morfologia krwi…”.
+  // Lekki „stemming”: ucinamy końcówkę fleksyjną, żeby „morfologii”, „badania”, „krwi” trafiały w te same wpisy.
+  const stem = (w) => w.length >= 7 ? w.slice(0, -2) : w.length >= 5 ? w.slice(0, -1) : w;
+  const hits = (text, q) => norm(q).split(/\s+/).filter(w => w.length > 1).every(w => text.includes(w) || text.includes(stem(w)));
+  const matches = (q) => { const items = forType(); return {
+    pk: items.filter(p => p.kind === 'package' && hits(haystack(p), q)),
+    ts: items.filter(p => p.kind === 'test' && hits(haystack(p), q)),
+    cats: catsFor().filter(c => hits(norm(c.label), q)) }; };
   function searchResults(q) {
     if (q.trim().length < 3) return mostSearched();
     const { pk, ts, cats } = matches(q); const nq = norm(q.trim());
     const total = pk.length + ts.length + cats.length;
     if (!total) return DS.SearchEmpty({ title: `Brak wyników dla „${q.trim()}”`, hint: 'Sprawdź pisownię lub wyszukaj inną frazę' }) + DS.Divider() + mostSearched();
     const first = ts[0] || pk[0];
-    const phrase = first ? DS.Cell({ icon: 'file-note-search', titleHtml: '„' + `<span class="match">${esc(q.trim())}</span>` + esc(first.title.slice(norm(first.title).indexOf(nq) + nq.length).split(/[\s–,]/)[0]) + '”', subtitle: `${plural(pk.length, 'pakiet', 'pakiety', 'pakietów')} i ${plural(ts.length, 'badanie', 'badania', 'badań')}`, attrs: { 'data-action': 'search-submit', 'data-q': q.trim() } }) : '';
+    // dopowiedzenie reszty słowa tylko wtedy, gdy fraza faktycznie występuje w nazwie (przy trafieniu po synonimie pokazujemy samą frazę)
+    const at = first ? norm(first.title).indexOf(nq) : -1;
+    const tail = at >= 0 ? first.title.slice(at + nq.length).split(/[\s–,]/)[0] : '';
+    const phrase = first ? DS.Cell({ icon: 'file-note-search', titleHtml: '„' + `<span class="match">${esc(q.trim())}</span>` + esc(tail) + '”', subtitle: `${plural(pk.length, 'pakiet', 'pakiety', 'pakietów')} i ${plural(ts.length, 'badanie', 'badania', 'badań')}`, attrs: { 'data-action': 'search-submit', 'data-q': q.trim() } }) : '';
     const sec = (label, items, icon, mapSub, action, key) => items.length ? `<div class="search__group"><p class="search__label">${label}</p><div class="search__list">${items.map(it => DS.Cell({ icon, titleHtml: highlight(it.title || it.label, q.trim()), subtitle: mapSub(it), attrs: { 'data-action': action, [key]: it.id } })).join('')}</div></div>` : '';
     return `<p class="search__count">${total + (first ? 1 : 0)} podpowiedzi</p>${phrase}` +
       [sec('Pakiety badań', pk, 'file-check', p => `${plural(p.components.length, 'badanie', 'badania', 'badań')} • ${zl(p.price)}`, 'open-product', 'data-open'),
@@ -138,7 +152,7 @@
   function listingItems(ctx) {
     let items = forType();
     if (ctx.cat) items = items.filter(p => p.cat === ctx.cat.id);
-    if (ctx.query) { const nq = norm(ctx.query); items = items.filter(p => norm(p.title).includes(nq)); }
+    if (ctx.query) items = items.filter(p => hits(haystack(p), ctx.query));
     if (ctx.cat && st().sub[ctx.cat.id]) items = items.filter(p => p.sub === st().sub[ctx.cat.id]);
     return items;
   }

@@ -252,3 +252,23 @@ po wyborze („Włącz Face ID” albo „Nie teraz”) logowanie prowadzi prost
 na zgodach ALAB club i od razu wchodzi na dashboard z powitalnym snackbarem (przy okazji poprawione:
 rejestracja ustawia teraz stan zalogowania, wcześniej po rejestracji Pacjent formalnie nie był zalogowany).
 
+## Pod badania z użytkownikami (2026-09-07)
+
+Zadanie testowe: **znajdź badanie morfologii krwi**. Prototyp jest ułożony tak, żeby zadanie było wykonalne
+kilkoma drogami, ale odpowiedź nie leżała na wierzchu:
+
+- **Ekranu głównego sklepu nie zdradza nic** — morfologia nie jest w „Popularnych badaniach” ani w „Popularnych
+  pakietach” (dla żadnego sposobu realizacji). Sprawdzone: tekst ekranu nie zawiera słowa „morfolog”.
+- **„Morfologia” nie jest podpowiedzią** w „Najczęściej szukane” (byłoby to znalezienie zadania w jednym tapnięciu).
+  Podpowiedzi: CRP, Witamina D, TSH, Ferrytyna, Lipidogram.
+- **Wyszukiwarka** znajduje morfologię po nazwie, skrócie i potocznej frazie. Dopasowanie działa po SŁOWACH
+  (nie po całej frazie), na nazwie, podkategorii, materiale, symbolu i polu `keywords`, z lekką normalizacją
+  końcówek. Sprawdzone frazy: „morfologia”, „morfo”, „morfologia krwi”, „badania krwi morfologii”, „badanie krwi”,
+  „krew”, „cbc”, „mrf”. Fraza bez sensu („xyzqwe”) daje pusty stan, więc ścieżka błędu też jest do przetestowania.
+- **Przez kategorie**: kafel „Badania i pakiety ogólne” → listing z oboma badaniami morfologii.
+- **Przez ALAB w domu**: oba badania są dostępne w tym sposobie realizacji (chip „ALAB w domu” na listingu i w sklepie).
+- **Przez „Pokaż wszystkie badania”** na ekranie głównym również prowadzi do listingu z morfologią.
+
+W katalogu są dwa badania morfologii: „Morfologia krwi obwodowej z rozmazem” (24,80 zł, z kodem rabatowym)
+i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zauważa różnicę i którą wersję wybiera.
+
