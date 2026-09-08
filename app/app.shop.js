@@ -41,27 +41,31 @@
   //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł ekstra -5% w klubie",
   //  • w klubie — cena klubowa staje się główną, podstawowa idzie w przekreślenie, a fioletowa linijka
   //    zmienia się w POTWIERDZENIE „Aktywna zniżka klubowa ekstra -5%" (na karcie produktu dodatkowo odznaka).
-  // ZAŁOŻENIE (do potwierdzenia): kod rabatowy i zniżka klubowa NIE łączą się — produkt z kodem zostaje na
-  // cenie z kodem, zmienia się tylko komunikat. Tak pokazują to warianty w Figmie (952 zł w obu rzędach).
+  // Kod rabatowy ŁĄCZY się ze zniżką klubową −5% (cena z kodem × 0,95), ale NIE z klubową ceną −40%
+  // (ustalenie Jarka 2026-09-08). Przy produkcie premium w klubie liczy się tylko −40% od ceny regularnej
+  // i nie pokazujemy kodu, żeby nie sugerować kumulacji. Dziś żaden produkt nie ma obu naraz — to zabezpieczenie.
   const inClub = () => !!S().clubJoined;
-  const clubPrice = (p) => p.premium ? p.price * 0.6 : p.price * 0.95;
+  const codeApplies = (p) => !!p.code && !(inClub() && p.premium);
+  const clubPrice = (p) => p.premium ? (p.old || p.price) * 0.6 : p.price * 0.95;
   const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} zniżka -40% w klubie` : `${zl(clubPrice(p))} ekstra -5% w klubie`;
   const clubActive = (p) => p.premium ? 'Aktywna zniżka klubowa -40%' : 'Aktywna zniżka klubowa ekstra -5%';
   // hero = karta produktu na PDP: tam komunikat o zniżce klubowej niesie ODZNAKA nad tytułem, więc fioletowa
   // linijka pod ceną znika (2726:16358); na kartach listingu odznaki nie ma, więc linijka zostaje (2726:16368).
   const priceVM = (p, t = type(), hero = false) => {
     if (p.unavailableAt === t) return null;
-    const club = inClub(), coded = !!p.code, clubMain = club && !coded;
+    const club = inClub();
     return {
-      current: zl(clubMain ? clubPrice(p) : p.price),
-      old: clubMain ? zl(p.price) : (p.old ? zl(p.old) : null),
+      // w klubie cena klubowa jest ceną główną (u produktu z kodem to cena z kodem pomniejszona o 5%),
+      // a przekreślona zostaje cena regularna — czyli `old`, jeśli produkt ma promocję, inaczej cena podstawowa
+      current: zl(club ? clubPrice(p) : p.price),
+      old: club ? zl(p.old || p.price) : (p.old ? zl(p.old) : null),
       club: club ? (hero ? null : clubActive(p)) : clubOffer(p),
-      promo: coded,   // zielona cena tylko przy promocji z kodem
+      promo: codeApplies(p),   // zielona cena tylko wtedy, gdy działa kod rabatowy
       lowest: p.old ? `Najniższa cena z 30 dni: ${zl(p.lowest || p.old)}` : null,
       note: t === 'wysylka' ? null : '+ opłata za pobranie', // wysyłka: cena stała, bez opłaty za pobranie (inventory P04d)
     };
   };
-  const badgeVM = (p, t = type()) => p.unavailableAt === t ? { basic: 'Niedostępne w wybranym Punkcie Pobrań' } : p.code ? { code: { discount: p.code.discount, text: `z kodem ${p.code.code}` } } : p.premium ? { premium: 'Niższa cena z ALAB club' } : null;
+  const badgeVM = (p, t = type()) => p.unavailableAt === t ? { basic: 'Niedostępne w wybranym Punkcie Pobrań' } : codeApplies(p) ? { code: { discount: p.code.discount, text: `z kodem ${p.code.code}` } } : p.premium ? { premium: 'Niższa cena z ALAB club' } : null;
   // Odznaka nad tytułem na karcie produktu: dla członka klubu potwierdzenie zniżki, dla pozostałych
   // zachęta przy produktach z niższą ceną klubową, a przy niedostępnym — informacja o punkcie.
   const heroBadge = (p, un) => un ? DS.BadgeBasic({ text: 'Niedostępne w wybranym Punkcie Pobrań' })
@@ -261,7 +265,7 @@
             <!-- Gdy produktu nie da się kupić w wybranym kontekście, nie zachęcamy do ALAB club: zniżka dotyczyłaby
                  czegoś, czego nie można dodać do koszyka, a jedyne sensowne działanie to zmiana Punktu Pobrań
                  lub sposobu realizacji. Duży banner klubu niżej w treści zostaje. -->
-            ${(p.code || (!club && !un)) ? `<div class="ds-PromoStack">${p.code ? DS.CodeBox({ discount: p.code.discount, code: p.code.code }) : ''}${(!club && !un) ? DS.ClubPromo() : ''}</div>` : ''}
+            ${(codeApplies(p) || (!club && !un)) ? `<div class="ds-PromoStack">${codeApplies(p) ? DS.CodeBox({ discount: p.code.discount, code: p.code.code }) : ''}${(!club && !un) ? DS.ClubPromo() : ''}</div>` : ''}
             ${DS.Button({ label: un ? 'Zmień punkt' : buyLabel, type: un ? 'secondary' : 'primary', block: true, attrs: { id: 'prod-buy', ...buyAttrs } })}
           </div>
           ${DS.Surface({ label: isPkg ? 'Opis pakietu' : 'Opis badania', content: DS.Cell({ icon: 'file-doc', title: p.desc, attrs: { 'data-action': 'full-desc', class: 'ds-Cell--clamp' } }) })}

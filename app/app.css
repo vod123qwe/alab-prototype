@@ -429,6 +429,15 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .shop__alts { display: flex; flex-direction: column; }
 
 /* Stan pusty z wyjściami do innych sposobów realizacji czyta się jako jeden blok, więc nie centrujemy go
-   w całej wysokości listingu — inaczej wiersze „Szukaj w…” wypadają pod krawędź ekranu. */
+   w całej wysokości listingu — inaczej wiersze „Szukaj w…” wypadają pod krawędź ekranu.
+   Rytm 1:1 z masterem 2546:109588: ikona 32, 12 do tekstu, 12 między linijkami, 48 do separatora „Lub” (16),
+   16 do listy wyjść i 16 między wierszami; wszystko na pełnej szerokości treści (marginesy daje kontener). */
 .shop__emptyAlts { display: flex; flex-direction: column; }
-.shop__emptyAlts .ds-SearchEmpty { min-height: 0; padding-top: 48px; justify-content: flex-start; }
+.shop__emptyAlts .ds-SearchEmpty { min-height: 0; padding: 0; gap: 12px; justify-content: flex-start; }
+.shop__emptyAlts .ds-SearchEmpty__icon { width: 32px; height: 32px; }
+.shop__emptyAlts .ds-SearchEmpty__text { gap: 12px; width: 100%; }
+.shop__emptyAlts .shop__or { margin-top: 48px; padding: 0; height: 16px; }
+.shop__emptyAlts .shop__alts { gap: 16px; margin-top: 16px; }
+/* na listingu kontener dokłada swój odstęp sekcji (24), więc blok podnosimy, żeby zaczynał się tak samo
+   wysoko jak w wyszukiwarce — oba ekrany mają wtedy identyczny odstęp od filtrów */
+.shop__listing > .shop__emptyAlts { margin-top: -20px; }

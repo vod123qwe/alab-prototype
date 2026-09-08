@@ -317,6 +317,10 @@ wysyłkowym”), a pod podpowiedzią jest separator „Lub” i wyjścia do pozo
 „Szukaj w Punkcie Pobrań — 3 pakiety i 7 badań”. Tapnięcie wiersza przełącza sposób realizacji, odświeża treść
 i zmienia adres — dokładnie jak chip, bo wiersze niosą ten sam atrybut.
 
+Rytm bloku jest 1:1 z masterem: ikona 32, 12 px do tekstu, 12 px między linijkami, 48 px do separatora „Lub”
+(16 px wysokości), 16 px do listy wyjść i 16 px między wierszami; nagłówek i wiersze mają tę samą szerokość
+treści, a odstęp od filtrów jest taki sam w wyszukiwarce i na listingu.
+
 Działa w trzech miejscach: w wyszukiwarce (podpowiedzi), na wynikach wyszukiwania i na listingu kategorii —
 w tym w scenariuszu, od którego się zaczęło: uczestnik wchodzi w kategorię w Punkcie Pobrań, przełącza na
 zestaw wysyłkowy i kategoria jest pusta. Gdy frazy nie ma nigdzie, zostaje stara podpowiedź „Sprawdź pisownię”
@@ -348,9 +352,12 @@ inaczej; sprawdzone w masterze. Sygnet ALAB w odznace ma własny kolor `Main/acc
 koloru tekstu. Zielona cena to wyłącznie sygnał promocji z kodem: wcześniej PriceBlock miał
 zieleń zawsze, teraz zieleni się przez wariant `ds-PriceBlock--promo`.
 
-**ZAŁOŻENIE do potwierdzenia:** kod rabatowy i zniżka klubowa **nie łączą się** — produkt z kodem zostaje na cenie
-z kodem, a zmienia się tylko komunikat (odznaka zamiast zachęty). Tak pokazują warianty w Figmie: w obu rzędach
-cena z kodem jest ta sama (952 zł). Gdyby miały się łączyć, wystarczy zdjąć warunek `!coded` w `priceVM`.
+**Zasada łączenia zniżek (decyzja Jarka, 2026-09-08):** kod rabatowy **łączy się** ze zniżką klubową −5%
+(cena z kodem × 0,95), ale **nie łączy się** z klubową ceną −40% przy produktach premium. Przy premium w klubie
+liczy się tylko −40% od ceny regularnej, a kod nie jest pokazywany, żeby nie sugerować kumulacji — dziś żaden
+produkt nie ma obu naraz, więc to zabezpieczenie na przyszłość (`codeApplies` w `app.shop.js`). Przykład:
+morfologia z rozmazem 31,00 zł regularnie, 24,80 zł z kodem, 23,56 zł z kodem i klubem; ferrytyna 49,00 zł
+regularnie i 29,40 zł w klubie, bez kodu.
 
 Wejście w zadanie czyści też zgody klubowe i tryb członka, więc każdy uczestnik zaczyna poza klubem — zgodnie
 z założeniem Maćka z tablicy.
