@@ -2,6 +2,25 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
+<!-- Router ścieżkowy: aplikacja żyje pod /app/, ale adres ekranu może być głębszy (/app/produkt/...).
+     <base> trzyma ścieżki względne (CSS, JS, assety) przy katalogu aplikacji, niezależnie od adresu ekranu.
+     Musi być statyczny i PRZED pierwszym <link>/<script> — preloader przeglądarki czyta go, zanim wykona skrypty. -->
+<base href="/app/">
+<script>
+  /* Awaryjnie: gdy prototyp stoi pod innym adresem niż /app/ (inny podkatalog, otwarcie z dysku) — poprawiamy bazę. */
+  (function () {
+    var p = location.pathname, i = p.indexOf('/app/');
+    var base = i >= 0 ? p.slice(0, i + 5) : p.replace(/[^/]*$/, '');
+    if (base !== '/app/') document.querySelector('base').href = base;
+    window.APP_BASE = base;
+    /* Powrót z 404.html (GitHub Pages): odtwarzamy adres ekranu, żeby link do konkretnego ekranu działał
+       także tam, gdzie serwer nie umie przepisać ścieżki na plik aplikacji. */
+    try {
+      var r = sessionStorage.getItem('alab:route');
+      if (r) { sessionStorage.removeItem('alab:route'); history.replaceState(null, '', base + r.replace(/^\/+/, '')); }
+    } catch (e) { /* prywatne okno */ }
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -10,7 +29,7 @@
 <meta name="theme-color" content="#04387c">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>ALAB • Prototyp — rejestracja i logowanie</title>
+<title>ALAB • Prototyp — badanie niemoderowane</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -25,7 +44,7 @@
 <aside class="dev" id="dev">
   <div class="dev__head">
     <span class="dev__logo" id="dev-logo"></span>
-    <div><b>ALAB • Prototyp</b><span>Onboarding → rejestracja → dashboard</span></div>
+    <div><b>ALAB • Prototyp</b><span>Badanie niemoderowane — 3 zadania</span></div>
   </div>
   <div class="dev__group">Ścieżka</div>
   <nav class="dev__nav" id="dev-nav"></nav>

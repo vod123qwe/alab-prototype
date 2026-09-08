@@ -18,9 +18,8 @@
     "js"
   ],
   "launch": {
-    "dev": "python -m http.server 8802 --directory \"F:/AI - Tests/alab/prototype\"",
+    "dev": "python \"F:/AI - Tests/alab/prototype/serve.py\" 8802",
     "devUrl": "http://localhost:8802/app/",
-    "file": "app/index.html",
     "url": "https://vod123qwe.github.io/alab-prototype/app/"
   },
   "links": {

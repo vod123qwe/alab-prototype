@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>ALAB • Prototyp — wczytuję ekran</title>
+<script>
+  /* GitHub Pages nie umie oddać aplikacji pod adresem ekranu (Netlify robi to regułą 200), więc każdy adres
+     bez pliku — np. /alab-prototype/app/zadanie/2 — trafia tutaj. Zapamiętujemy ścieżkę ekranu i wracamy do
+     katalogu aplikacji; skrypt w app/index.html odtwarza właściwy adres przez replaceState, więc uczestnik
+     kończy na czystym linku, bez parametrów. Na Netlify ten plik nigdy się nie uruchamia. */
+  (function () {
+    var p = location.pathname, i = p.indexOf('/app/');
+    if (i < 0) { location.replace(p.replace(/\/[^/]*$/, '/') + 'app/'); return; }
+    var base = p.slice(0, i + 5), route = p.slice(i + 5);
+    try { sessionStorage.setItem('alab:route', route + location.search + location.hash); } catch (e) { /* prywatne okno */ }
+    location.replace(base);
+  })();
+</script>
+</head>
+<body></body>
+</html>

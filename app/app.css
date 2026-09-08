@@ -383,7 +383,39 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .stub__action .ds-Button { width: 100%; }
 
 /* ekran wyboru zadań (start badania) */
-.tasks__body { gap: 12px; padding: 32px 20px 40px; }
-.tasks__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; margin: 0; }
-.tasks__lead { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
-.tasks__list { display: flex; flex-direction: column; gap: 4px; margin-top: 20px; }
+/* Ekran startowy badania — „Start screen” 3153:32180. Warstwy tła 1:1 z Figmy: granat, kadr ProductBackground
+   (568×612 od -24,-94) z blobem 841 obróconym o 75°, gradient 184° z rozmyciem 50, a na wierzchu rozmyta
+   poświata #096BCD (Ellipse 393: koło r 554,5 z blurem 167). Asset blobu ten sam co na splashu. */
+.tasks { background: #04387c; color: #fff; }
+.tasks__bg { position: absolute; inset: 0; overflow: hidden; background: #04387c; }
+.tasks__blob { position: absolute; left: -24px; top: -94px; width: 568px; height: 612px; overflow: hidden; }
+.tasks__blob img { position: absolute; left: 438.85px; top: 213.84px; width: 841px; height: 841px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(12px); }
+/* Warstwa „Content Background”: w Figmie rozmycie tła jest maskowane alfą warstwy, więc u góry, gdzie gradient
+   jest przezroczysty, blob pozostaje ostry. `backdrop-filter` w CSS działa na całej powierzchni niezależnie od tła,
+   dlatego tę samą krzywą alfy nakładamy maską — inaczej góra ekranu robi się wyprana. */
+.tasks__veil { position: absolute; inset: 0; background: #04387c;
+  -webkit-mask-image: linear-gradient(184.15deg, rgba(0, 0, 0, 0) 1.6%, #000 58%); mask-image: linear-gradient(184.15deg, rgba(0, 0, 0, 0) 1.6%, #000 58%); }
+.tasks__glow { position: absolute; left: -714px; bottom: -698px; width: 1109px; height: 1109px; border-radius: 50%; background: #096bcd; filter: blur(167px); }
+.tasks__top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+.tasks__content { position: absolute; left: 44px; right: 44px; bottom: 63px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 80px; }
+.tasks__logo { flex: 0 0 auto; width: 224px; height: 36px; color: #fff; }
+.tasks__logo svg { width: 100%; height: 100%; }
+.tasks__text { display: flex; flex-direction: column; gap: 32px; width: 100%; text-align: center; }
+.tasks__heading { display: flex; flex-direction: column; gap: 12px; }
+.tasks__eyebrow { font: 800 12px/20px var(--font-family-primary); letter-spacing: -0.01em; text-transform: uppercase; color: var(--content-on-primary); }
+.tasks__title { font: 700 var(--display-large-font-size)/var(--display-large-line-height) var(--font-family-primary); letter-spacing: -0.02em; margin: 0; color: var(--content-on-primary); }
+.tasks__lead { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-scrim-secondary); }
+/* lista zadań: w Figmie to trzy instancje CellTestResult, w kodzie najbliższy jest DS.Cell. Trzymamy je w JEDNYM
+   białym bloku (obrys i zaokrąglenie na kontenerze), a między wierszami jest tylko delikatny divider wcięty
+   o padding karty — zamiast przerwy i podwójnych obrysów. Wysokość wiersza 84 wychodzi z paddingu 20 + treści 44. */
+.tasks__list { display: flex; flex-direction: column; width: 100%; background: var(--background-surface); border: 1px solid var(--outline-border); border-radius: var(--radius-extralarge); overflow: hidden; }
+.tasks__list .ds-Cell { position: relative; min-height: 84px; padding: 20px 24px; gap: 16px; background: transparent; border: 0; border-radius: 0; }
+.tasks__list .ds-Cell + .ds-Cell::before { content: ""; position: absolute; left: 24px; right: 24px; top: 0; height: 1px; background: var(--outline-border); }
+.tasks__list .ds-Cell__content { gap: 4px; }
+.tasks__list .ds-Cell__title { font: 700 var(--headline-large-font-size)/var(--headline-large-line-height) var(--font-family-primary); letter-spacing: -0.01em; }
+.tasks__list .ds-Cell__subtitle { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.tasks__list .ds-Cell__trailing { width: 20px; height: 20px; }
+
+/* PDP: ikony wierszy w kartach („Opis badania”, „Pełny opis”, „FAQ”) w kolorze akcentu — tak jak wiersze
+   CellInfo pod nimi. Zawężone do karty produktu, żeby nie zmieniać Cell w arkuszach i na listach. */
+.product .ds-Surface .ds-Cell > .ds-icon { color: var(--main-accent); }

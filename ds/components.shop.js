@@ -44,14 +44,15 @@
 
   // ---------- Cell (wiersz listy: ikona 24 + tytuł + podtytuł + chevron) ----------
   // titleHtml pozwala podać gotowe HTML (np. podświetlenie frazy w podpowiedziach)
-  DS.Cell = ({ icon = 'file-note-search', title = '', titleHtml, subtitle, trailing = 'chevron-right', attrs: a } = {}) =>
-    `<button type="button" class="ds ds-Cell" ${attrs(a)}>${icon ? DS.icon(icon, 24) : ''}<span class="ds-Cell__content"><span class="ds-Cell__title">${titleHtml || esc(title)}</span>${subtitle ? `<span class="ds-Cell__subtitle">${esc(subtitle)}</span>` : ''}</span>${trailing ? DS.icon(trailing, 16, 'ds-Cell__trailing') : ''}</button>`;
+  DS.Cell = ({ icon = 'file-note-search', title = '', titleHtml, subtitle, trailing = 'chevron-right', attrs: a } = {}) => {
+    const { class: extra, ...rest } = a || {}; // klasa z attrs dokleja się do klasy komponentu (drugi atrybut class byłby zignorowany)
+    return `<button type="button" class="${cls('ds', 'ds-Cell', extra)}" ${attrs(rest)}>${icon ? DS.icon(icon, 24) : ''}<span class="ds-Cell__content"><span class="ds-Cell__title">${titleHtml || esc(title)}</span>${subtitle ? `<span class="ds-Cell__subtitle">${esc(subtitle)}</span>` : ''}</span>${trailing ? DS.icon(trailing, 16, 'ds-Cell__trailing') : ''}</button>`; };
 
   // ---------- Badges ----------
   DS.BadgePrice = ({ label = '-20%' } = {}) => `<span class="ds ds-BadgePrice">${esc(label)}</span>`;
   DS.BadgeCode = ({ discount = '-20%', text = 'z kodem JESIEN20' } = {}) => `<span class="ds ds-BadgeCode">${DS.BadgePrice({ label: discount })}<span>${esc(text)}</span></span>`;
-  DS.BadgePremium = ({ text = 'Niższa cena z ALAB Club' } = {}) => `<span class="ds ds-BadgePremium">${DS.icon('alabek', 16)}<span>${esc(text)}</span></span>`;
-  DS.BadgeBasic = ({ text = 'Niedostępne w wybranym punkcie', icon = 'unavailable' } = {}) => `<span class="ds ds-BadgeBasic">${DS.icon(icon, 16)}<span>${esc(text)}</span></span>`;
+  DS.BadgePremium = ({ text = 'Niższa cena z ALAB club' } = {}) => `<span class="ds ds-BadgePremium">${DS.icon('alabek', 16)}<span>${esc(text)}</span></span>`;
+  DS.BadgeBasic = ({ text = 'Niedostępne w wybranym Punkcie Pobrań', icon = 'unavailable' } = {}) => `<span class="ds ds-BadgeBasic">${DS.icon(icon, 16)}<span>${esc(text)}</span></span>`;
 
   // ---------- ProductCard (CellPackage / CellTest) ----------
   // badge: {code:{discount,text}} | {premium:text} | {basic:text}; price: {current, old, club, lowest, note}
@@ -97,7 +98,7 @@
     `<img class="ds-ClubBanner__blob ds-ClubBanner__blob--1" src="${DS.ASSETS}il_club_blob_1.svg" alt=""><img class="ds-ClubBanner__blob ds-ClubBanner__blob--2" src="${DS.ASSETS}il_club_blob_2.svg" alt="">` +
     `<div class="ds-ClubBanner__grad"></div></div>` +
     `<div class="ds-ClubBanner__content"><h2 class="ds-ClubBanner__title">Twój klub<br>na całe życie</h2><img class="ds-ClubBanner__logo" src="${DS.ASSETS}il_club_logo_banner.svg" alt="ALAB club">` +
-    `<ul class="ds-ClubBanner__list">${[['5% dodatkowej zniżki', 'na całą ofertę ALAB laboratoria'], ['Voucher 20%', 'w prezencie, do wykorzystania na kolejne zakupy po wykonaniu badań'], ['Oferty tylko dla klubowiczów', 'Promocje, oferta urodzinowa i inne niespodzianki w ciągu roku']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 16)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul></div>` +
+    `<ul class="ds-ClubBanner__list">${[['5% dodatkowej zniżki', 'na całą ofertę ALAB laboratoria'], ['Voucher 20%', 'w prezencie, do wykorzystania na kolejne zakupy po wykonaniu badań'], ['Oferty tylko dla klubowiczów', 'Akcje profilaktyczne, oferta urodzinowa i inne niespodzianki w ciągu roku']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 16)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul></div>` +
     DS.ButtonTiny({ label: 'Sprawdź', variant: 'tertiary', trailingIcon: 'chevron-right', attrs: { 'data-action': 'club-promo', class: 'ds-ClubBanner__cta' } }) + `</section>`;
   // ChipDropdown: chip z chevronem otwierający wybór (Listing: „Badania i pakiety ⌵”)
   DS.ChipDropdown = ({ label = 'Badania i pakiety', attrs: a } = {}) =>

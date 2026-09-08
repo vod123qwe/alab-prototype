@@ -67,10 +67,13 @@
     p('p-tarcz', 'Pakiet tarczycowy podstawowy', 'hormony', 'Tarczyca', 68.00, ['t-tsh', 't-ft4', 't-ft3', 't-atpo'], { old: 85.00, code: CODE, popular: true, symbol: 'PKTARPO',
       desc: 'Tarczyca jest niewielkim gruczołem produkującym hormony mające istotny wpływ na przemianę materii i regulację pracy wielu narządów. Pakiet ocenia jej funkcję w podstawowym zakresie.',
       prep: ['Na czczo, rano - TSH wykazuje rytm dobowy. Leki na tarczycę przyjmij po pobraniu.'] }),
-    p('p-zdrowie', 'Pakiet Zdrowie podstawowy', 'ogolne', 'Pakiety', 199.00, ['t-morf', 't-ob', 't-crp', 't-glu', 't-krea', 't-alt', 't-lip', 't-tsh'], { popular: true }),
+    // BEZ morfologii (pakiet jest na ekranie głównym — patrz README „Pod badania z użytkownikami”); suma składowych 178,08 zł
+    p('p-zdrowie', 'Pakiet Zdrowie podstawowy', 'ogolne', 'Pakiety', 149.00, ['t-fe', 't-ob', 't-crp', 't-glu', 't-krea', 't-alt', 't-lip', 't-tsh'], { popular: true }),
     p('p-pods', 'Pakiet badań podstawowych', 'ogolne', 'Pakiety', 129.00, ['t-morf', 't-ob', 't-crp', 't-glu', 't-lip', 't-krea', 't-alt', 't-tsh', 't-mocz'], { types: ['punkt'] }),
-    p('p-sport', 'Pakiet Sport', 'ogolne', 'Pakiety', 280.50, ['t-morf-roz', 't-crp', 't-ferr', 't-witd']),
-    p('p-kobiet', 'Pakiet dla kobiet', 'ogolne', 'Pakiety', 540.90, ['t-morf', 't-tsh', 't-ferr', 't-witd', 't-prl', 't-e2', 't-glu', 't-lip']),
+    // Pakiet Sport: 6 składowych i BEZ morfologii — plan badania niemoderowanego (zadanie 2 pyta o liczbę badań,
+    // a morfologia w pakiecie dawałaby obejście zadania „znajdź morfologię”). Suma składowych 245,40 zł → pakiet 199,00 zł.
+    p('p-sport', 'Pakiet Sport', 'ogolne', 'Pakiety', 199.00, ['t-crp', 't-ferr', 't-fe', 't-witd', 't-b12', 't-krea']),
+    p('p-kobiet', 'Pakiet dla kobiet', 'ogolne', 'Pakiety', 279.00, ['t-morf', 't-tsh', 't-ferr', 't-witd', 't-prl', 't-e2', 't-glu', 't-lip']),
 
     // ---- Hormony ----
     t('t-tsh', 'TSH – tyreotropina III generacji', 'hormony', 'Tarczyca', 29.68, { old: 37.10, code: CODE, popular: true, symbol: 'TSH', icd: 'L69', keywords: ['tsh', 'tarczyca', 'tyreotropina', 'hormony', 'badanie krwi', 'krew'],
@@ -81,7 +84,7 @@
     t('t-prl', 'Prolaktyna (PRL)', 'hormony', 'Hormony kobiece', 46.20, { icd: 'N59' }),
     t('t-e2', 'Estradiol (E2)', 'hormony', 'Hormony kobiece', 36.96, { old: 46.20, code: CODE, icd: 'K99' }),
     t('t-amh', 'AMH – hormon antymüllerowski', 'hormony', 'Hormony kobiece', 149.00, { unavailableAt: 'punkt', tat: '5 dni roboczych', icd: 'I43' }),
-    p('p-tarcz-roz', 'Pakiet tarczycowy rozszerzony', 'hormony', 'Tarczyca', 145.20, ['t-tsh', 't-ft4', 't-ft3', 't-atpo', 't-morf'], { old: 181.50, code: CODE }),
+    p('p-tarcz-roz', 'Pakiet tarczycowy rozszerzony', 'hormony', 'Tarczyca', 127.20, ['t-tsh', 't-ft4', 't-ft3', 't-atpo', 't-morf'], { old: 159.00, code: CODE }),
     p('p-meno', 'Pakiet hormony kobiece – menopauza', 'hormony', 'Hormony kobiece', 111.30, ['t-prl', 't-e2', 't-tsh', 't-amh'], { premium: true }),
 
     // ---- Alergie i nietolerancje ----
@@ -90,7 +93,7 @@
       desc: 'Molekularny panel alergologiczny oceniający uczulenie na niemal 300 alergenów wziewnych, pokarmowych i kontaktowych w jednym pobraniu krwi.' }),
     t('t-igg', 'Panel nietolerancji pokarmowych IgG – 44 składniki', 'alergie', 'Nietolerancje', 349.00, { types: ['punkt', 'dom', 'wysylka'], popular: true, tat: '10 dni roboczych',
       desc: 'Ocena swoistych przeciwciał IgG wobec 44 produktów spożywczych. W zestawie wysyłkowym próbkę suchej kropli krwi pobierasz samodzielnie.' }),
-    p('p-alergia', 'Pakiet alergiczny wziewny', 'alergie', 'Alergie', 189.00, ['t-ige', 't-morf', 't-crp']),
+    p('p-alergia', 'Pakiet alergiczny wziewny', 'alergie', 'Alergie', 72.00, ['t-ige', 't-morf', 't-crp']),
 
     // ---- Układ pokarmowy ----
     t('t-kalpro', 'Kalprotektyna w kale', 'pokarmowy', 'Jelita', 89.00, { material: 'Kał', types: KIT, popular: true, tat: '3 dni robocze', icd: 'I55' }),

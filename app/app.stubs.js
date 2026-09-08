@@ -59,22 +59,67 @@
   SCREENS['tab/cart'] = () => stub('cart', 'Koszyk', cartSkeleton, 'Jeśli zadanie jest skończone, kliknij poniżej.',
     DS.Button({ label: 'Zakończ zadanie', type: 'secondary', block: true, attrs: { 'data-action': 'end-task' } }));
 
-  // ---------------- wybór zadań (ekran startowy badania) ----------------
-  // Każde zadanie ma własny adres i startuje od zera: pusty koszyk, brak klubu, sposób realizacji = Punkt Pobrań.
-  const TASKS = [['1', 'Zadanie 1'], ['2', 'Zadanie 2'], ['3', 'Zadanie 3']];
+  // ---------------- ekran startowy badania (wybór zadania) ----------------
+  // 1:1 z „Start screen” 3153:32180 w pliku Alab • Design: granat, blob z tego samego assetu co splash,
+  // logo ALAB laboratoria, nadtytuł „Prototyp do badań ALAB”, display/large i lista trzech zadań.
+  // Każde zadanie ma własny adres i startuje od zera: pusty koszyk, brak klubu, realizacja = Punkt Pobrań.
+  const TASKS = [
+    ['1', 'Zadanie 1', 'Zamów badania moczu'],
+    ['2', 'Zadanie 2', 'Zamów Pakiet Sport'],
+    ['3', 'Zadanie 3', 'Zamów badanie krwi do domu'],
+  ];
   SCREENS['zadania'] = () => `<div class="screen tasks">
-      <div class="screen__top">${DS.StatusBar()}</div>
-      <div class="screen__body tasks__body">
-        <h1 class="tasks__title">Wybierz zadanie</h1>
-        <p class="tasks__lead">Każde zadanie zaczyna się od nowa, z pustym koszykiem.</p>
-        <div class="tasks__list">${TASKS.map(([n, label]) => DS.Cell({ icon: 'file-note-search', title: label, attrs: { 'data-action': 'start-task', 'data-task': n } })).join('')}</div>
+      <div class="tasks__bg" aria-hidden="true">
+        <div class="tasks__blob"><img src="${DS.ASSETS}img_splash_shape.png" alt=""></div>
+        <div class="tasks__veil"></div>
+        <div class="tasks__glow"></div>
       </div>
-      ${DS.HomeIndicator()}
+      <div class="tasks__top">${DS.StatusBar({ light: true })}</div>
+      <div class="tasks__content">
+        <span class="tasks__logo">${DS.ICONS['logo-laboratoria']}</span>
+        <div class="tasks__text">
+          <div class="tasks__heading">
+            <p class="tasks__eyebrow">Prototyp do badań ALAB</p>
+            <h1 class="tasks__title">Wybierz zadanie</h1>
+          </div>
+          <p class="tasks__lead">Każde zadanie zaczyna się od nowa,<br>z pustym koszykiem.</p>
+        </div>
+        <div class="tasks__list">${TASKS.map(([n, title, sub]) => DS.Cell({ icon: null, title, subtitle: sub, trailing: 'chevron-right-20', attrs: { 'data-action': 'start-task', 'data-task': n } })).join('')}</div>
+      </div>
+      ${DS.HomeIndicator({ light: true })}
     </div>`;
+  APP.FADE_ROUTES.add('zadania');      // ekran korzeniowy — wchodzi i wychodzi przejściem fade
+  APP.DARK_ROUTES.add('zadania');      // granatowy: tło dokumentu i theme-color jak na splashu
 
-  // Start zadania renderujemy POD adresem zadania (`#/zadanie/1`), żeby narzędzie badawcze widziało wejście.
-  const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; s.clubJoined = false; s.welcomed = true; };
-  SCREENS['zadanie/:id'] = () => { resetForTask(); return SCREENS['tab/start'](); };
+  // Start zadania renderujemy POD adresem zadania (`/app/zadanie/1`), żeby narzędzie badawcze widziało wejście.
+  // Uczestnik wchodzi jako zalogowany Pacjent — rejestracji i logowania w zadaniach nie ma.
+  const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; s.clubJoined = false; s.welcomed = true; s.loggedIn = true; };
+
+  // Wejście w zadanie wygląda jak uruchomienie aplikacji: najpierw krótki ekran ładowania (ten sam splash,
+  // co przy starcie apki), potem przejście na Start. Adres przez cały czas został `/app/zadanie/N`, więc
+  // narzędzie badawcze widzi wejście w zadanie, a uczestnik nie widzi, że stan jest czyszczony.
+  const BOOT_MS = 1200;
+  let booting = null;
+  const bootScreen = () => `<div class="screen splash"><div class="splash__bg"><img src="${DS.ASSETS}img_splash_shape.png" alt=""></div>
+      <div class="splash__top">${DS.StatusBar({ light: true })}</div>
+      <div class="splash__logo">${DS.ICONS['logo-laboratoria']}</div>
+      <div class="splash__bottom"><div class="stack-16" style="align-items:center;gap:20px"><span class="splash__loader">${DS.ICONS['splash-loader']}</span><p class="splash__tag">Zadbaj o zdrowie, wygodnie</p></div>${DS.HomeIndicator({ light: true })}</div>
+    </div>`;
+  SCREENS['zadanie/:id'] = (id) => {
+    if (booting === id) { booting = null; APP.hideTabBar = false; return SCREENS['tab/start'](); }
+    resetForTask(); booting = id; APP.hideTabBar = true; return bootScreen();
+  };
+  TASKS.forEach(([n]) => APP.FADE_ROUTES.add('zadanie/' + n));   // wejście w zadanie i wyjście z ładowania = przejście fade
+  APP.afterRender.push((route) => {
+    if (!booting || route !== 'zadanie/' + booting) return;
+    // ekran ładowania jest granatowy, a updateChrome ustawił już kolor dla trasy zadania (białej) — poprawiamy przed pierwszym paintem
+    requestAnimationFrame(() => {
+      APP.setThemeColor('#04387c');
+      if (matchMedia('(max-width: 900px)').matches) document.documentElement.style.backgroundColor = '#04387c';
+    });
+    const id = booting;
+    setTimeout(() => { if (booting === id && APP.current() === 'zadanie/' + id) APP.rerender('fade'); }, BOOT_MS);
+  });
 
   Object.assign(APP.ACTIONS, {
     'end-task': () => APP.go('zadania'),
@@ -98,5 +143,16 @@
   if (i >= 0) APP.ROUTES.splice(i + 1, 0, ['Wyniki · pełne (poza badaniem)', 'results-full'], ['Punkt Pobrań · zaślepka', 'punkt-pobran']);
   APP.ROUTES.push(['— Badanie'], ['Wybór zadań', 'zadania'],
     ['Zadanie 1 · mocz', 'zadanie/1'], ['Zadanie 2 · Pakiet Sport', 'zadanie/2'], ['Zadanie 3 · morfologia w domu', 'zadanie/3']);
+
+  // Prototyp badawczy zaczyna się od wyboru zadania. Rejestracja, logowanie i onboarding są POZA zakresem
+  // tego testu, więc chowamy je z wejścia i z panelu — ekrany zostają w kodzie i wrócą, gdy będą potrzebne
+  // (np. ekran zgód ALAB club, który ma się otwierać z karty produktu).
+  APP.setHome('zadania');
+  const HIDDEN = new Set(['splash', 'onboarding/1', 'onboarding/2', 'onboarding/3', 'start',
+    'register/1', 'register/2', 'register/3', 'club', 'login', 'faceid', 'reset', 'reset/sent']);
+  for (let i = APP.ROUTES.length - 1; i >= 0; i--) {
+    const r = APP.ROUTES[i];
+    if (r[1] ? HIDDEN.has(r[1]) : /Rejestracja|Logowanie/.test(r[0])) APP.ROUTES.splice(i, 1);
+  }
   APP.renderNav();
 })();

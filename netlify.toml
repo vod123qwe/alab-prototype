@@ -10,6 +10,13 @@
   status = 302
   force = true
 
+# Router ścieżkowy: adres ekranu (/app/produkt/...) nie ma swojego pliku — oddajemy aplikację i ona rysuje ekran.
+# Reguła nie zasłania istniejących plików (Netlify oddaje plik, jeśli pasuje) — version.json, assety i storybook działają jak wcześniej.
+[[redirects]]
+  from = "/app/*"
+  to = "/app/index.html"
+  status = 200
+
 # version.json czytamy przy „Sprawdź aktualizacje” — nie może siedzieć w cache
 [[headers]]
   for = "/app/version.json"

@@ -1,7 +1,7 @@
 /* ALAB • Prototyp — ukryte menu pod status barem: Storybook, reset widoku, sprawdzanie aktualizacji.
    Otwiera się tapnięciem w górny pasek telefonu (makietowy status bar na desktopie, strefa safe-area na telefonie). */
 (function () {
-  const APP = window.APP; const { go, snack } = APP;
+  const APP = window.APP; const { go, snack, file } = APP;   // file() = ścieżka względem katalogu aplikacji (patrz app.js)
   const $ = (s, r = document) => r.querySelector(s);
   const VERSION = window.APP_VERSION || 'dev';
   const ASSETS = ['index.html', 'app.js', 'app.css', 'app.shop.js', 'app.devmenu.js', 'version.js', '../ds/tokens.css', '../ds/components.css', '../ds/components.shop.css', '../ds/components.js', '../ds/components.shop.js', '../ds/icons.js'];
@@ -26,16 +26,16 @@
       const t = e.target.closest('[data-menu]'); if (!t) return;
       const k = t.dataset.menu;
       if (k === 'close') return close();
-      if (k === 'storybook') { location.href = '../storybook/index.html'; return; }
+      if (k === 'storybook') { location.href = file('../storybook/index.html'); return; }
       if (k === 'reset') { close(); APP.reset(); snack('Prototyp zresetowany', 'success', 110); return; }
       if (k === 'update') {
         const sub = t.querySelector('.ds-Cell__subtitle'); sub.textContent = 'Sprawdzam…';
         try {
-          const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }); const j = await r.json();
+          const r = await fetch(file('version.json') + '?t=' + Date.now(), { cache: 'no-store' }); const j = await r.json();
           if (j.version === VERSION) { sub.textContent = `Masz najnowszą wersję (${VERSION})`; }
           else {
             sub.textContent = `Nowa wersja ${j.version} — odświeżam…`;
-            await Promise.all(ASSETS.map(a => fetch(a, { cache: 'reload' }).catch(() => null)));
+            await Promise.all(ASSETS.map(a => fetch(file(a), { cache: 'reload' }).catch(() => null)));
             setTimeout(() => location.reload(), 300);
           }
         } catch (err) { sub.textContent = 'Nie udało się sprawdzić (brak sieci?)'; }

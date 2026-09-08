@@ -12,11 +12,19 @@ Trzy warstwy, jeden zestaw komponentów:
 
 ## Uruchomienie
 
-Bez buildu i zależności. Otwórz plik w przeglądarce albo odpal serwer statyczny:
+Bez buildu i zależności, ale **potrzebny jest serwer** — prototyp używa routera na ścieżkach
+(`/app/produkt/...`), więc adres ekranu nie ma swojego pliku na dysku i otwarcie `index.html`
+z dysku (`file://`) nie zadziała w pełni (przeglądarka blokuje tam zmianę adresu; router spada
+wtedy na stary tryb z hashem).
 
 ```bash
-python -m http.server 8802 --directory "F:/AI - Tests/alab/prototype"
+python "F:/AI - Tests/alab/prototype/serve.py" 8802
 ```
+
+`serve.py` robi lokalnie to samo co reguła na Netlify: nieznany adres pod `/app/` oddaje
+`/app/index.html`, więc odświeżenie strony i wklejony link do konkretnego ekranu działają.
+Zwykły `python -m http.server` tego nie umie i przy odświeżeniu głębokiego adresu da 404.
+`serve.bat` (dwuklik) uruchamia to samo i otwiera stronę z kodem QR dla telefonu.
 
 - Storybook: http://localhost:8802/storybook/
 - Prototyp: http://localhost:8802/app/
@@ -112,7 +120,34 @@ Poprawny PESEL testowy: `44051401359`.
 - **Zachowania**: auto-weryfikacja po wpisaniu 6. cyfry, licznik 29 s do ponownej wysyłki, reguły hasła podświetlane na zielono w trakcie pisania,
   scrim + arkusz kraju z filtrem. To interpretacja flow, nie decyzje z Figmy.
 
-## Rozjazdy z leksykonem UX writing (copy 1:1 z Figmy, celowo nie poprawione)
+## Leksykon UX writing (przejście 2026-09-08)
+
+Copy było wcześniej 1:1 z Figmy, razem z rozjazdami wobec leksykonu. Na prośbę Jarka zostały poprawione:
+
+| Było | Jest | Reguła |
+| --- | --- | --- |
+| „w punkcie pobran” (onboarding) | „w Punkcie Pobrań” | Punkt Pobrań z dużej, także w odmianie |
+| „konta pacjenta” (rejestracja) | „Konta Pacjenta” | Konto Pacjenta z dużej |
+| „dla pacjentów” (ALAB club) | „dla Pacjentów” | Pacjent z dużej |
+| „Chcę informację o promocjach i nowościach” | „Chcę informacje o akcjach profilaktycznych i nowościach” | zakaz słowa „promocja” |
+| „Promocje, oferta urodzinowa…” (banner klubu) | „Akcje profilaktyczne, oferta urodzinowa…” | zakaz słowa „promocja” |
+| „Niższa cena z ALAB Club” | „Niższa cena z ALAB club” | ALAB wersalikami, `club` z małej |
+| „Niedostępne w wybranym punkcie” | „Niedostępne w wybranym Punkcie Pobrań” | Punkt Pobrań z dużej |
+| „Warszawa 109 zł” | „Warszawa 109,00 zł” | kwoty zawsze z groszami |
+| „Twoje dane sa bezpieczne” | „…są bezpieczne” | literówka |
+| „nowego hasla”, przecinek zamiast kropki | „nowego hasła”, dwa zdania | literówka i interpunkcja |
+| „Akceptuje Regulamin i politykę prywatności” | „Akceptuję Regulamin i Politykę prywatności” | literówka i spójność nazw dokumentów |
+
+Pozostałe kwoty w interfejsie liczy helper `zl()`, który zawsze dopisuje grosze, więc reszta cen była zgodna.
+
+Świadomie **nie** zmienione:
+
+- klauzula RODO w zgodach ALAB club mówi „Państwu”, a leksykon każe zwracać się „Ciebie / Tobie” —
+  to treść prawna, a nie copy interfejsu; do decyzji z klientem,
+- „Krok 1 z 3” w wariancie bez numeru PESEL (w Figmie „Krok 1 z 2”) — u nas kroków jest trzy niezależnie
+  od PESEL, więc licznik pokazuje 3; to rozjazd z Figmą, nie z leksykonem.
+
+## Wcześniejsze rozjazdy z leksykonem (historycznie: copy 1:1 z Figmy)
 
 - Sklep: ceny bez groszy („68 zł”, „85 zł”, „39 zł”) → leksykon: zawsze `149,00 zł`; badge „Niższa cena z ALAB **Club**” → `club` z małej.
 
@@ -129,15 +164,17 @@ Nowe ekrany, 1:1 z masterów na stronie `↳ 11.08.26` pliku Alab • Design:
   (tytuł kategorii, pole szukania + przycisk filtrów, chipy sposobu realizacji), pod nim komórka adresu, rząd filtrów
   („Badania i pakiety ⌵” otwiera arkusz wyboru: wszystko / badania / pakiety; chipy podkategorii z licznikiem) i sekcje
   „Pakiety badań • N” / „Badania • N”. Wejście z kafla kategorii, z arkusza „Wszystkie kategorie” i z podpowiedzi wyszukiwarki.
-- **Wyniki wyszukiwania** `#/results` — „Listing • Wyniki wyszukiwania” 1183:26765; Enter w wyszukiwarce albo pierwszy wiersz podpowiedzi.
-- **Wszystkie pakiety / badania** `#/list/packages`, `#/list/tests` — z „Pokaż wszystkie” na stronie głównej.
+- **Wyniki wyszukiwania** `/app/wyniki-wyszukiwania` — „Listing • Wyniki wyszukiwania” 1183:26765; Enter w wyszukiwarce albo pierwszy wiersz podpowiedzi.
+- **Wszystkie pakiety / badania** `/app/lista/pakiety`, `/app/lista/badania` — z „Pokaż wszystkie” na stronie głównej.
 - **Karta produktu** `#/product/<id>` — „Produkt • Badanie • Morfologia krwi” 1183:19461 i „Produkt • Pakiet • Tarczyca” 1183:19462:
   hero z granatem, karta z ceną (PriceBlock), kod rabatowy + zachęta ALAB club (PromoStack), „Kup badanie / Kup pakiet”,
   opis, składowe pakietu (klikalne → karta badania), oczekiwanie / materiał / gdzie można wykonać, przygotowanie,
   „Kupując w pakiecie, oszczędzasz” (karuzela), szczegóły (pełny opis, FAQ, symbol + ICD), baner klubu, produkty powiązane.
   Po zjechaniu poniżej głównego przycisku wjeżdża przyklejone CTA „Kup badanie • cena” (wzorzec iOS, w Figmie CTA jest na dole makiety).
 - **Komórka pod paskiem zmienia się z chipem**: Punkt Pobrań → „Puławska 10, Warszawa / Dziś otwarte 7:00 - 11:00”;
-  ALAB w domu → „Usługa pobrania krwi w domu / Kraków 109 zł” (1183:26770); Zestaw wysyłkowy → „Samodzielne pobranie próbki”
+  ALAB w domu → „Usługa pobrania krwi w domu / Warszawa 109 zł” (master 1183:26770 ma „Kraków” — miasto zmienione
+  świadomie, bo plan badania stawia Pacjenta w Warszawie, a Punkt Pobrań jest na Puławskiej); Zestaw wysyłkowy →
+  „Samodzielne pobranie próbki”
   bez drugiej linii (1183:26771, ikona `ic_home-pin`).
 - **Arkusze (BottomSheet) zamykają się gestem jak w iOS** — `DS.presentSheet`: ciągnięcie w dół przesuwa arkusz za palcem
   i rozjaśnia scrim, odsłaniając ekran pod spodem; puszczenie poniżej 30% wysokości albo szybki ruch zamyka, inaczej arkusz
@@ -176,10 +213,10 @@ Ceny formatujemy zawsze z groszami (leksykon), choć część masterów pokazuje
 
 Nowe ekrany, 1:1 z sekcji „Wyniki badań” 2516:102053 i „Podstrony” 2265:66486 w pliku Alab • Design:
 
-- **Lista wyników** `#/tab/results` — „Listing • Wyniki wyszukiwania” 2516:102054: tytuł „Wyniki badań”, grupy lat
+- **Lista wyników** `/app/zakladka/wyniki` — „Listing • Wyniki wyszukiwania” 2516:102054: tytuł „Wyniki badań”, grupy lat
   (rok + linia), karty `CellTestResult` (tytuł, osoba, data, pill statusu). Najnowszy wynik ma wariant „New”
   (2 px obwódki, cień, aureola) i liczbę na zakładce Wyniki; po wejściu w wynik znacznik gaśnie.
-- **Stan pusty** `#/results-empty` — „Wyniki • Empty state” 2516:102079: ilustracja na blobie, tytuł, opis
+- **Stan pusty** `/app/wyniki-brak` — „Wyniki • Empty state” 2516:102079: ilustracja na blobie, tytuł, opis
   i „Przejdź do sklepu”. Wszystkie stany puste (wyniki, koszyk, zakładki) są wyśrodkowane w dostępnej wysokości.
 - **Szczegóły badania** `#/result/<id>` — 2516:102083: karta „Aktualny wynik” (gradient, pierścień postępu, pill-e),
   segmenty Wszystkie / Poza normą, zwijane grupy parametrów (`AccordionGroup`) z trzema typami wiersza
@@ -272,6 +309,40 @@ kilkoma drogami, ale odpowiedź nie leżała na wierzchu:
 W katalogu są dwa badania morfologii: „Morfologia krwi obwodowej z rozmazem” (24,80 zł, z kodem rabatowym)
 i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zauważa różnicę i którą wersję wybiera.
 
+### Karta produktu niedostępnego (2026-09-08)
+
+Gdy badania lub pakietu nie da się kupić w wybranym kontekście (Punkt Pobrań / sposób realizacji), karta
+nie pokazuje już zachęty do ALAB club nad przyciskiem. Zniżka dotyczyłaby czegoś, czego nie można dodać do
+koszyka, a jedyne sensowne działanie to zmiana Punktu Pobrań albo sposobu realizacji — i to zostaje jedynym
+przyciskiem. Karta wygląda wtedy tak: tytuł → pigułka „Niedostępne w wybranym Punkcie Pobrań” z podpowiedzią
+→ przycisk „Zmień punkt”. Duży banner klubu niżej w treści zostaje, bo nie jest częścią decyzji o zakupie.
+Kod rabatowy zostaje w kodzie warunkowo, ale dziś żaden niedostępny produkt go nie ma.
+
+### Poprawki z planu badawczego (2026-09-08)
+
+- **Pakiet Sport ma 6 składowych i nie zawiera morfologii**: CRP, ferrytyna, żelazo w surowicy, witamina D,
+  witamina B12, kreatynina. Wcześniej miał 4 składowe, w tym morfologię z rozmazem — a to dawało obejście
+  zadania „znajdź morfologię” (Pacjent trafiałby na nią przez pakiet) i przeczyło liczbie badań z planu.
+  Cena zmieniona z 280,50 zł na **199,00 zł**, bo suma składowych to 245,40 zł, a opis pakietu obiecuje,
+  że w pakiecie płaci się mniej niż za każde badanie osobno.
+- **ALAB w domu pokazuje Warszawę, nie Kraków** — plan badania stawia Pacjenta w Warszawie, a Punkt Pobrań
+  w prototypie jest na Puławskiej. Dwa różne miasta na jednym ekranie byłyby dla uczestnika zgrzytem.
+  Kwota 109 zł bez zmian.
+
+- **Morfologii nie ma też w „Pakiecie Zdrowie podstawowy”**, bo ten pakiet jest oznaczony jako popularny,
+  czyli stoi na ekranie głównym sklepu — wystarczyłoby go otworzyć, żeby znaleźć morfologię w składowych.
+  W jej miejsce weszło żelazo w surowicy (nadal 8 badań). W pozostałych pakietach morfologia zostaje:
+  są realistyczne i żaden nie jest na ekranie głównym.
+- **Ceny pakietów wyrównane tak, żeby każdy był tańszy od sumy składowych** — opis pakietu obiecuje, że
+  „kupując w pakiecie, płacisz mniej niż za każde badanie osobno”, a trzy pakiety były droższe:
+  Zdrowie podstawowy 199,00 → **149,00 zł** (suma 178,08), dla kobiet 540,90 → **279,00 zł** (suma 322,54),
+  alergiczny wziewny 189,00 → **72,00 zł** (suma 84,70). Czwarty, tarczycowy rozszerzony, miał cenę regularną
+  181,50 zł przy sumie 185,08 zł, czyli oszczędność na papierze — teraz 159,00 zł regularnie i 127,20 zł z kodem.
+  Sprawdzone skryptem: każdy pakiet ma cenę poniżej 95% sumy składowych.
+
+Otwarte: kwota „opłaty za pobranie” na karcie produktu nadal jest bez liczby (dopisek „+ opłata za pobranie”),
+a pytanie 1.1 planu prosi o podanie ceny badania. Do rozstrzygnięcia: dopisać kwotę czy zmienić treść pytania.
+
 ### Zaślepki zakładek (test niemoderowany)
 
 Start, Wyniki i Koszyk to zaślepki wg wzoru „Rejestracja - krok 8” 3136:31878. Wartości 1:1 z Figmy:
@@ -291,7 +362,7 @@ Tytuły: „Ekran startowy”, „Wyniki badań”, „Koszyk”. Szkielet Start
 i Koszyka odwzorowują ich własne układy (lista kart wyniku, pozycje koszyka z podsumowaniem) — to nasze założenie,
 bo wzór był tylko dla Startu.
 
-Pełny moduł Wyników nie został usunięty — jest pod trasą `#/results-full` (poza ścieżką badania,
+Pełny moduł Wyników nie został usunięty — jest pod trasą `/app/wyniki-pelne` (poza ścieżką badania,
 wejście z panelu prototypu). Kod: `app/app.stubs.js`.
 
 ### Elementy UI systemu i Punkt Pobrań (etap 1 domknięty)
@@ -301,16 +372,39 @@ a pasek statusu trzyma wtedy tylko wysokość (odstęp pod notch zostaje). Story
 w pełnej wersji, bo tam dokumentujemy design system, nie prototyp badawczy.
 
 Tapnięcie w komórkę adresu na ekranie sklepu (oraz CTA „Zmień punkt” na karcie niedostępnego badania)
-otwiera zaślepkę Punktu Pobrań pod adresem `#/punkt-pobran`: belka z krzyżykiem, szkielet listy punktów
+otwiera zaślepkę Punktu Pobrań pod adresem `/app/punkt-pobran`: belka z krzyżykiem, szkielet listy punktów
 i karta z komunikatem, w której drugie zdanie brzmi „Wróć do poprzedniego ekranu.” Wcześniej był tam snackbar.
 
-### Zadania badawcze: wybór zadań i koniec zadania
+### Zadania badawcze: ekran startowy i koniec zadania
 
-- `#/zadania` — ekran wyboru zadań („Wybierz zadanie”, trzy neutralne pozycje bez nazw produktów, żeby nie
-  podpowiadać kolejnego zadania). Bez dolnej nawigacji.
-- `#/zadanie/1`, `#/zadanie/2`, `#/zadanie/3` — wejście w zadanie. Adres zostaje w pasku (narzędzie badawcze widzi
-  wejście), a na ekranie renderuje się Start z zaślepką. Wejście czyści stan: pusty koszyk, brak ALAB club,
-  sposób realizacji ustawiony na Punkt Pobrań, wyczyszczone filtry i przeczytane wyniki.
+**Ekran startowy `/app/zadania` jest wejściem do prototypu** — wpisanie `/app/` prowadzi wprost na niego, a proces
+rejestracji, logowania i onboardingu jest **schowany**: nie ma go w panelu prototypu i nie da się na niego trafić
+z flow. Ekrany zostają w kodzie i działają pod swoimi adresami (`/app/logowanie`, `/app/rejestracja/1`,
+`/app/alab-club`…), więc wrócą, gdy będą potrzebne — np. ekran zgód ALAB club, który ma się otwierać z karty
+produktu. Wejście ustawia `APP.setHome('zadania')` w `app/app.stubs.js`; tam też jest lista schowanych tras
+i tam wraca każdy nieznany adres.
+
+Ekran zbudowany 1:1 z „Start screen” 3153:32180: granat `#04387c`, kadr ProductBackground (568×612 od −24,−94)
+z blobem 841 obróconym o 75° (ten sam asset co splash — sprawdzone, plik z Figmy jest identyczny), gradient
+184,15° i rozmyta poświata `#096BCD` z Ellipse 393. Treść: logo ALAB laboratoria 224×36, nadtytuł „Prototyp do
+badań ALAB” (800 12/20, uppercase), tytuł „Wybierz zadanie” (display/large 36/36) i lead „Każde zadanie zaczyna
+się od nowa, z pustym koszykiem” (body/small 13/20, onScrimSecondary). Odstępy 80 / 32 / 12, treść 63 px od dołu,
+marginesy 44. Karty: w Figmie CellTestResult z wyłączonymi wierszami, w kodzie `DS.Cell` bez ikony, z podtytułem
+i chevronem 20, zgrupowane w jeden blok (zaokrąglone tylko skrajne narożniki 28, 1 px przerwy, wysokość 84).
+Bez dolnej nawigacji.
+
+Podtytuły kart nazywają produkty („Zamów badania moczu”, „Zamów Pakiet Sport”, „Zamów badanie krwi do domu”),
+zgodnie z makietą. Warto o tym pamiętać przy analizie: uczestnik czyta całą listę przy pierwszym wejściu, więc
+przed zadaniem 2 wie, że szuka Pakietu Sport, a przed zadaniem 3 — że istnieje dostawa do domu. Wariant z samymi
+numerami to jedna linijka w tablicy `TASKS`.
+
+- `/app/zadanie/1`, `/app/zadanie/2`, `/app/zadanie/3` — wejście w zadanie. Wygląda jak **uruchomienie aplikacji**:
+  najpierw krótki ekran ładowania (ten sam splash z logo i spinnerem, co przy starcie apki, 1,2 s), potem przejście
+  fade na ekran Start. Adres przez cały czas zostaje `/app/zadanie/N`, więc narzędzie badawcze widzi wejście
+  w zadanie, a uczestnik nie widzi, że stan jest po cichu czyszczony: pusty koszyk, brak ALAB club, sposób
+  realizacji na Punkcie Pobrań, wyczyszczone filtry i przeczytane wyniki. Podczas ładowania dolna nawigacja jest
+  schowana (`APP.hideTabBar`), a kolor systemowego paska przechodzi na granat. Działa tak samo po kliknięciu karty
+  i po wejściu wprost z linku — Useberry może linkować od razu w `/app/zadanie/2`.
 - Zaślepka Koszyka ma pod tekstem przycisk **„Zakończ zadanie”**, który prowadzi na ekran wyboru zadań.
   Drugie zdanie w karcie brzmi „Jeśli zadanie jest skończone, kliknij poniżej.”
 
@@ -318,3 +412,95 @@ Otwarte: pytanie 1.1 z planu badawczego („ile zapłacisz za to badanie”) nie
 został zaślepką. Uczestnik musi odczytać kwotę z karty produktu, gdzie widnieje cena i dopisek „+ opłata za pobranie”
 bez kwoty. Do rozstrzygnięcia: pokazać kwotę opłaty na karcie produktu albo zmienić treść pytania.
 
+## Adresy ekranów (ścieżki, nie hash) — 2026-09-08
+
+Każdy ekran ma własny adres jako **ścieżkę**: `/app/produkt/morfologia-krwi`, a nie
+`/app/index.html#/product/t-morf`. Powód jest badawczy, nie estetyczny: fragment po `#` nigdy nie
+dociera do serwera, a narzędzia analityczne i badawcze rozpoznają ekran po adresie. Przy routerze
+na hashu cała sesja uczestnika mogła zapisać się jako jeden adres (`/app/index.html`), więc nie dałoby
+się policzyć, ile osób dotarło na kartę produktu ani ile zmieniło sposób realizacji. W Useberry
+zadanie można kończyć na „specific URL”, i to działa tylko wtedy, gdy adres naprawdę się zmienia.
+
+Jak to działa:
+
+- **Router** (`app/app.js`) zmienia adres przez `history.pushState` i sam rysuje ekran — bez przeładowania,
+  więc stan (koszyk, zgody) zostaje. Wstecz w przeglądarce i gest cofania działają normalnie.
+- **Nazwy tras zostają wewnętrznie po angielsku** (`product/t-morf`), a w URL pokazujemy polski slug.
+  Tłumaczenie siedzi w jednym miejscu: `PATH_WHOLE`, `PATH_SEG` i `PATH_ID` w `app/app.js`; mapy muszą być
+  odwracalne, więc wartości nie mogą się powtarzać. Slugi produktów, kategorii i wyników powstają
+  z ich nazw (`APP.slugs(...)` w `app.shop.js` i `app.results.js`), więc nowy produkt dostaje adres sam.
+- **`<base href="/app/">`** w `app/index.html` trzyma ścieżki względne (CSS, JS, assety) przy katalogu
+  aplikacji. Musi być statyczny i przed pierwszym `<link>`: preloader przeglądarki czyta go, zanim
+  wykona jakikolwiek skrypt — ustawianie bazy z JS dawało falę 404 przy każdym głębokim adresie.
+- **Netlify**: `netlify.toml` ma regułę `from = "/app/*" → to = "/app/index.html", status = 200`.
+  Reguła nie zasłania istniejących plików, więc `version.json`, assety i storybook działają jak wcześniej.
+- **Lokalnie**: `serve.py` (patrz „Uruchomienie”).
+- **GitHub Pages** nie umie przepisać adresu na plik aplikacji, więc jest `404.html` w korzeniu: zapamiętuje
+  ścieżkę ekranu, wraca do katalogu aplikacji, a skrypt w `app/index.html` odtwarza adres przez `replaceState`.
+  Link do konkretnego ekranu działa więc i tam, tylko z jednym przeskokiem. **Do badania używamy Netlify** —
+  tam adres ekranu jest oddawany od razu (reguła 200), bez przekierowania i bez sztuczek.
+- **Awaryjnie**: pod `file://` (bez serwera) router wraca do starych adresów z hashem, żeby prototyp
+  dał się w ogóle otworzyć. Do badań używamy wersji z serwera.
+- **Ścieżki do plików liczone raz na starcie, jako absolutne** (`DS.ASSETS`, `APP.file()` w `app/app.js`).
+  Względny `src` renderowany z JS liczy się od adresu **bieżącego** dokumentu, a router go zmienia — więc po
+  przejściu na `/app/produkt/...` `../ds/assets/` wskazywało `/app/ds/assets/` i zdjęcia (tło hero, banner klubu)
+  się nie wczytywały. `new URL('../ds/assets/', document.baseURI)` na starcie rozwiązuje to raz na zawsze i działa
+  nawet bez `<base>` (np. gdy przeglądarka trzyma w cache starszy `index.html`). To samo dotyczy „Sprawdź
+  aktualizacje” w menu prototypu i linku do storybooka — inaczej pobierałyby pliki spod adresu ekranu.
+- **`history.scrollRestoration = 'manual'`** — obowiązkowe przy tej zmianie. Odkąd ekrany mają prawdziwe
+  adresy, przeglądarka próbuje przywrócić pozycję przewinięcia z historii i trafia w kontener innego ekranu
+  (wszystkie mają tę samą strukturę DOM). Efekt: karta produktu otwierała się przewinięta o 2200 px,
+  bez niebieskiego tła hero i z belką w stanie „on scroll”. Pozycje przewinięcia trzymamy sami w `st().scroll`.
+
+Adresy ekranów, które są w ścieżce badania (do wklejenia w konfigurację zadań):
+
+| Ekran | Adres |
+| --- | --- |
+| **Ekran startowy — wybór zadań (wejście)** | `/app/zadania` (albo samo `/app/`) |
+| Wejście w zadanie 1 / 2 / 3 | `/app/zadanie/1`, `/app/zadanie/2`, `/app/zadanie/3` |
+| Sklep — strona główna | `/app/sklep/punkt-pobran` (albo `/w-domu`, `/zestaw-wysylkowy`) |
+| Wyszukiwarka (pusta) | `/app/szukaj/punkt-pobran` |
+| Wyniki wyszukiwania | `/app/wyniki-wyszukiwania/punkt-pobran` |
+| Kategoria „Badania i pakiety ogólne” | `/app/kategoria/badania-i-pakiety-ogolne/punkt-pobran` |
+| Listing „Badania” / „Pakiety badań” | `/app/lista/badania/punkt-pobran`, `/app/lista/pakiety/punkt-pobran` |
+| Karta produktu: morfologia z rozmazem | `/app/produkt/morfologia-krwi-obwodowej-z-rozmazem` |
+| Karta produktu: morfologia krwi | `/app/produkt/morfologia-krwi` |
+| Karta produktu: Pakiet Sport | `/app/produkt/pakiet-sport` |
+| Punkt Pobrań (zaślepka) | `/app/punkt-pobran` |
+| Zakładki: Start / Wyniki / Koszyk | `/app/zakladka/start`, `/app/zakladka/wyniki`, `/app/zakladka/koszyk` |
+| ALAB club — zgody | `/app/alab-club` |
+| Rejestracja: krok 1 / 2 / 3 | `/app/rejestracja/1`, `/app/rejestracja/2`, `/app/rejestracja/3` |
+| Logowanie, biometria, reset hasła | `/app/logowanie`, `/app/biometria`, `/app/reset-hasla` |
+| Wyniki poza badaniem (pełny moduł) | `/app/wyniki-pelne`, `/app/wynik/morfologia-krwi-obwodowej` |
+
+Adres każdego innego ekranu podejrzysz w konsoli: `APP.url('product/p-sport')`.
+
+### Sposób realizacji w adresie
+
+Sposób realizacji jest **segmentem ścieżki**, dopisywanym na końcu adresu tych ekranów, na których widać
+chipy realizacji (strona główna sklepu, wyszukiwarka, wyniki wyszukiwania, listingi kategorii i „wszystkie”):
+
+| Kontekst | Adres strony głównej | Adres listingu kategorii |
+| --- | --- | --- |
+| Punkt Pobrań | `/app/sklep/punkt-pobran` | `/app/kategoria/badania-i-pakiety-ogolne/punkt-pobran` |
+| ALAB w domu | `/app/sklep/w-domu` | `/app/kategoria/badania-i-pakiety-ogolne/w-domu` |
+| zestaw wysyłkowy | `/app/sklep/zestaw-wysylkowy` | `/app/kategoria/badania-i-pakiety-ogolne/zestaw-wysylkowy` |
+
+Dlaczego segment, a nie `?dostawa=dom`: narzędzia analityczne i badawcze potrafią traktować dwa adresy
+różniące się tylko parametrem jako ten sam ekran, a to jest pomiar, na którym zależy nam najbardziej
+(ile osób realnie zmieniło kontekst na dostawę do domu). Ścieżka nie zostawia tu miejsca na interpretację.
+
+Jak się zachowuje:
+
+- Kliknięcie chipa zmienia adres i **dokłada wpis do historii**, ale nie przerysowuje ekranu — treść
+  odświeża się punktowo, pozycja przewinięcia zostaje. Przełączenie jest więc widoczne w raporcie,
+  a dla uczestnika wygląda jak zwykła zmiana filtra.
+- Wstecz w przeglądarce wraca do poprzedniego sposobu realizacji (adres i stan ekranu się zgadzają).
+- Wklejony link z wariantem (`/app/sklep/w-domu`) ustawia sposób realizacji przed narysowaniem ekranu.
+- Wejście bez wariantu (`/app/sklep`) dostaje go automatycznie, więc adres zawsze mówi, w jakim
+  kontekście jest uczestnik.
+- Wejście w zadanie (`/app/zadanie/1`) czyści stan, więc sposób realizacji wraca na Punkt Pobrań.
+
+**Karta produktu zostaje jednym adresem** (`/app/produkt/morfologia-krwi`) — inaczej każde badanie miałoby
+trzy warianty adresu i raport zrobiłby się nieczytelny. Kontekst dostawy jest już policzony na listingu,
+z którego uczestnik wszedł na kartę. Nadal poza adresem: wybrane filtry (rodzaj produktu, podkategoria).

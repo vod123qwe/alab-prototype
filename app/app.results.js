@@ -189,6 +189,11 @@
     if (sc) { if (route === 'tab/results') sc.scrollTop = st().scroll[route] || 0; sc.addEventListener('scroll', () => { st().scroll[route] = sc.scrollTop; }, { passive: true }); }
   });
 
+  // Czytelne adresy wyników — te same slugi dla szczegółu i dla ekranu informacji dodatkowych
+  const rslug = {}; RESULTS.forEach(r => { rslug[r.id] = r.title.toLowerCase().replace(/ł/g, 'l').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 52).replace(/-+$/, ''); });
+  APP.slugs('result', rslug); APP.slugs('rinfo', rslug);
+
   APP.results = { newCount };
   APP.ROUTES.push(['— Wyniki'], ['Wyniki · lista', 'tab/results'], ['Wyniki · stan pusty', 'results-empty'],
     ['Wynik · morfologia', 'result/r1'], ['Wynik · panel alergiczny', 'result/r5'], ['Dodatkowe informacje', 'rinfo/r1'], ['Webview', 'webview/desc']);

@@ -1,7 +1,7 @@
 {
   "name": "ALAB • Prototyp",
   "short_name": "ALAB",
-  "start_url": "./index.html#/splash",
+  "start_url": "./splash",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#04387c",

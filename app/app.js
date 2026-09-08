@@ -3,8 +3,18 @@
    komponenty wyłącznie z ds/components.js. Bez buildu. */
 (function () {
   DS.SYSTEM_UI = false;   // prototyp bez elementów UI systemu (zegar, sygnał, bateria, kreska gestu) — założenie testu
+  // Ekran po wejściu musi być na górze. Przy adresach ścieżkowych przeglądarka próbuje przywrócić pozycję
+  // przewinięcia z historii i trafia w kontener innego ekranu (identyczna struktura DOM) — stąd karta produktu
+  // otwierała się przewinięta, bez niebieskiego hero. Pozycje trzymamy sami w `st().scroll`.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  DS.ASSETS = '../ds/assets/';
+  // Ścieżki do plików liczymy RAZ na starcie i trzymamy jako absolutne. Przy routerze ścieżkowym adres dokumentu
+  // zmienia się w trakcie (pushState), a względny `src` renderowany później liczyłby się od adresu EKRANU
+  // (`/app/produkt/…` + `../ds/assets/` = `/app/ds/assets/`) i assety by się nie wczytały. `document.baseURI`
+  // uwzględnia <base>, więc działa też przy wejściu wprost na głęboki adres.
+  const DIR = new URL('.', document.baseURI).href;        // katalog aplikacji, np. https://host/app/
+  const file = (p) => new URL(p, DIR).href;               // ścieżka względem katalogu aplikacji → absolutna
+  DS.ASSETS = file('../ds/assets/');
   const A = DS.ASSETS;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -20,11 +30,91 @@
   let S = initial();
   const COUNTRIES = [['Polska', '+ 48', 'pl'], ['Austria', '+ 43', 'at'], ['Belgia', '+ 32', 'be'], ['Finlandia', '+ 358', 'fi'], ['Francja', '+ 33', 'fr'], ['Hiszpania', '+ 34', 'es'], ['Holandia', '+ 31', 'nl'], ['Norwegia', '+ 47', 'no'], ['Szwajcaria', '+ 41', 'ch'], ['Szwecja', '+ 46', 'se'], ['Włochy', '+ 39', 'it']];
 
+  // ---------------- adresy ekranów ----------------
+  // Każdy ekran ma WŁASNY adres jako ścieżka (`/app/produkt/...`), nie hash — narzędzie badawcze
+  // (Useberry) rozpoznaje ekran po adresie, a fragment po „#” nigdy nie dociera do serwera.
+  // Trasy wewnętrznie zostają po angielsku; w URL pokazujemy czytelne polskie slugi, żeby raport
+  // z badania dał się czytać bez zaglądania w kod. Mapy muszą być odwracalne → wartości unikalne.
+  const BASE = window.APP_BASE || '/app/';
+  const PATHS_OK = location.protocol !== 'file:';   // file:// nie pozwala na pushState → fallback na hash
+  const PATH_WHOLE = {
+    splash: 'splash', start: 'start', club: 'alab-club', login: 'logowanie', faceid: 'biometria',
+    reset: 'reset-hasla', dashboard: 'sklep', search: 'szukaj', results: 'wyniki-wyszukiwania',
+    'results-empty': 'wyniki-brak', 'results-full': 'wyniki-pelne', 'punkt-pobran': 'punkt-pobran', zadania: 'zadania',
+  };
+  const PATH_SEG = {
+    onboarding: 'wprowadzenie', register: 'rejestracja', reset: 'reset-hasla', tab: 'zakladka',
+    category: 'kategoria', list: 'lista', product: 'produkt', result: 'wynik', rinfo: 'wynik-info',
+    webview: 'strona', zadanie: 'zadanie',
+  };
+  const PATH_ID = {
+    tab: { start: 'start', results: 'wyniki', cart: 'koszyk' },
+    list: { all: 'wszystko', tests: 'badania', packages: 'pakiety' },
+    reset: { sent: 'wyslany' },
+    webview: { desc: 'opis-badania', faq: 'pytania', club: 'alab-club', terms: 'regulamin' },
+  };
+  // moduły zgłaszają czytelne slugi swoich danych: APP.slugs('product', { 't-morf': 'morfologia-krwi' })
+  const slugs = (prefix, map) => { PATH_ID[prefix] = Object.assign(PATH_ID[prefix] || {}, map); };
+  // Wariant ekranu dopisywany na końcu adresu — u nas sposób realizacji w sklepie (`/app/sklep/w-domu`).
+  // Trasa się nie zmienia, ale adres musi, bo po nim liczymy, ile osób przełączyło kontekst.
+  // Moduł rejestruje trzy funkcje: get(trasa) → segment albo null, match(segment) → czy to wariant, set(segment) → zapisz w stanie.
+  let variant = { get: () => null, match: () => false, set: () => { } };
+  const routeVariant = (o) => { variant = o; };
+  const rev = (o) => { const r = {}; for (const k in o) r[o[k]] = k; return r; };
+  const cut = (s) => { const i = s.indexOf('/'); return i < 0 ? [s, ''] : [s.slice(0, i), s.slice(i + 1)]; };
+  const routePath = (route) => {
+    if (PATH_WHOLE[route]) return PATH_WHOLE[route];
+    const [a, id] = cut(route); if (!id) return route;
+    return (PATH_SEG[a] || a) + '/' + ((PATH_ID[a] && PATH_ID[a][id]) || id);
+  };
+  const toPath = (route) => { const v = variant.get(route); return routePath(route) + (v ? '/' + v : ''); };
+  const fromPath = (path) => {
+    if (!path) return '';
+    if (rev(PATH_WHOLE)[path]) return rev(PATH_WHOLE)[path];
+    const cutV = path.lastIndexOf('/');   // ostatni segment może być wariantem ekranu — odetnij i rozwiąż resztę
+    if (cutV > 0 && variant.match(path.slice(cutV + 1))) return fromPath(path.slice(0, cutV));
+    const [a, id] = cut(path); if (!id) return path;
+    const key = rev(PATH_SEG)[a] || a;
+    return key + '/' + ((PATH_ID[key] && rev(PATH_ID[key])[id]) || id);
+  };
+  const url = (route) => BASE + toPath(route);
+  // adres bieżącego ekranu w jednej postaci dla obu trybów (ścieżki / awaryjny hash)
+  const pathNow = () => {
+    if (!PATHS_OK) return location.hash.replace(/^#\/?/, '');
+    let p = decodeURI(location.pathname);
+    p = p.startsWith(BASE) ? p.slice(BASE.length) : '';
+    return p.replace(/^\/+|\/+$/g, '').replace(/^index\.html?$/, '');
+  };
+
   // ---------------- pomocnicze ----------------
-  const go = (route) => { location.hash = '#/' + route; };
+  // Zmiana adresu + jedno zdarzenie „popstate” → router ma jedną drogę wejścia (także przy cofaniu w przeglądarce).
+  const go = (route) => {
+    if (route === current()) return;
+    if (!PATHS_OK) { location.hash = '#/' + toPath(route); return; }
+    window.history.pushState(null, '', url(route));
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+  // podmiana adresu bez nowego wpisu w historii — krok onboardingu to przesunięcie taśmy, nie nowy ekran
+  const replaceRoute = (route) => {
+    if (!PATHS_OK) { location.replace('#/' + toPath(route)); return; }
+    window.history.replaceState(null, '', url(route));
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+  // Adres bez przerysowania ekranu: zmiana wariantu (sposób realizacji) zostawia tę samą trasę,
+  // więc ekran odświeżamy punktowo, a w historii dokładamy wpis, żeby przełączenie było widoczne w raporcie.
+  const syncUrl = ({ push = false } = {}) => {
+    if (!PATHS_OK) return;   // tryb awaryjny (file://) nie ma wariantu w adresie
+    const target = toPath(current());
+    if (target === pathNow()) return;
+    window.history[push ? 'pushState' : 'replaceState'](null, '', BASE + target);
+  };
+  // Ekran wejściowy (pusty adres, nieznana trasa, „Zacznij od nowa”). Wersja badawcza podmienia go
+  // na wybór zadania, bo rejestracja i logowanie są poza zakresem testu — patrz app.stubs.js.
+  let home = 'splash';
+  const setHome = (r) => { home = r; };
   let lastRoute = '';
-  let history = [];
-  const back = () => { history.pop(); const prev = history.pop(); go(prev || 'start'); };
+  let stack = [];
+  const back = () => { stack.pop(); const prev = stack.pop(); go(prev || 'start'); };
   const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
   const peselValid = (p) => {
     if (!/^\d{11}$/.test(p)) return false;
@@ -67,7 +157,7 @@
   };
 
   const ONB = [
-    ['Badania zamówisz w 3 krokach', 'Wybierz badanie, kup w aplikacji i wykonaj w punkcie pobran w ciągu 60 dni.'],
+    ['Badania zamówisz w 3 krokach', 'Wybierz badanie, kup w aplikacji i wykonaj w Punkcie Pobrań w ciągu 60 dni.'],
     ['Wyniki badań masz zawsze przy sobie', 'Powiadomimy Cię, gdy będą gotowe. Sprawdzisz je w aplikacji i udostępnisz lekarzowi.'],
     ['W ALAB club zapłacisz mniej', 'Dołączysz do programu bezpłatnie i od razu skorzystasz ze zniżek na badania.'],
   ];
@@ -90,16 +180,16 @@
     track.classList.remove('is-dragging'); track.style.transform = `translateX(${-(i - 1) * (100 / 3)}%)`;
     const dots = $('#onb-dots'); if (dots && +dots.dataset.step !== i) { dots.dataset.step = i; dots.innerHTML = DS.StepsIndicator({ steps: 3, current: i, text: false }); }
     $('#screen .onb')?.setAttribute('data-step', i);
-    $$$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current()));
+    $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current()));
   }
-  const onbGoto = (i) => { if (i < 1) i = 1; if (i > 3) return go('start'); location.replace('#/onboarding/' + i); };
+  const onbGoto = (i) => { if (i < 1) i = 1; if (i > 3) return go('start'); replaceRoute('onboarding/' + i); };
 
   SCREENS.start = () => `<div class="screen start">
     <div class="start__bg"><img src="${A}img_start_login.png" alt=""></div>
     <div class="splash__top">${DS.StatusBar({ light: true })}</div>
     <div class="start__header"><span class="start__mark">${DS.ICONS['alabek']}</span>${DS.ButtonTiny({ label: 'Wejdź jako gość', variant: 'tertiary', attrs: { 'data-action': 'guest' } })}</div>
     <div class="start__content">
-      <div class="start__heading"><p class="start__title">Załóż konto<br>lub zaloguj się</p><p class="start__lead">Twoje dane sa bezpieczne. Konto pozwala kupować badania i odbierać wyniki.</p></div>
+      <div class="start__heading"><p class="start__title">Załóż konto<br>lub zaloguj się</p><p class="start__lead">Twoje dane są bezpieczne. Konto pozwala kupować badania i odbierać wyniki.</p></div>
       <div class="start__actions">${DS.Button({ label: 'Zarejestruj się', block: true, attrs: { 'data-go': 'register/1' } })}${DS.Button({ label: 'Mam już konto', type: 'oncolor', block: true, attrs: { 'data-go': 'login' } })}</div>
       <p class="start__legal">Zakładając konto akceptujesz <span class="ds-TextLink">Regulamin</span> i <span class="ds-TextLink">Politykę prywatności</span></p>
     </div>
@@ -114,7 +204,7 @@
     });
     const body = `<div class="stack-32">
       ${DS.StepsIndicator({ steps: 3, current: 1, label: 'Twoje dane' })}
-      <p class="screen__title">Zarejestruj się do konta pacjenta</p></div>
+      <p class="screen__title">Zarejestruj się do Konta Pacjenta</p></div>
       <div class="fields">
         ${DS.TextField({ id: 'f-phone', label: 'Numer telefonu', value: S.phone, type: 'tel', helper: 'Wyślemy SMS z kodem potwierdzającym', leading: { prefix: { flag: S.prefix.flag, code: S.prefix.code, attrs: { 'data-action': 'open-country' } } }, inputAttrs: { inputmode: 'numeric', autocomplete: 'tel-national' }, attrs: { 'data-helper': 'Wyślemy SMS z kodem potwierdzającym' } })}
         ${S.noPesel ? `<div class="fields">
@@ -126,8 +216,8 @@
       </div>
       ${DS.Divider()}
       <div class="stack-0">
-        ${consent('terms', 'Akceptuje Regulamin i politykę prywatności', true, 'Regulamin określa zasady korzystania z aplikacji ALAB laboratoria i Konta Pacjenta. Polityka prywatności opisuje, jak przetwarzamy Twoje dane osobowe.')}
-        ${consent('marketing', 'Chcę informację o promocjach i nowościach', false, 'Zgoda na otrzymywanie informacji handlowych drogą elektroniczną. Możesz ją wycofać w każdej chwili w ustawieniach konta.')}
+        ${consent('terms', 'Akceptuję Regulamin i Politykę prywatności', true, 'Regulamin określa zasady korzystania z aplikacji ALAB laboratoria i Konta Pacjenta. Polityka prywatności opisuje, jak przetwarzamy Twoje dane osobowe.')}
+        ${consent('marketing', 'Chcę informacje o akcjach profilaktycznych i nowościach', false, 'Zgoda na otrzymywanie informacji handlowych drogą elektroniczną. Możesz ją wycofać w każdej chwili w ustawieniach konta.')}
       </div>`;
     return layout({ top: DS.TopBar({}), body, bodyClass: 'screen__body--pb', bottom: DS.BottomActionsBar({ buttons: [DS.Button({ label: 'Dalej', block: true, attrs: { 'data-action': 'register-1-next' } })] }) });
   };
@@ -177,7 +267,7 @@
     const body = `<div class="club__banner">
         <div class="club__photo"><img src="${A}img_club_consent.png" alt=""></div>
         <div style="position:relative;width:100%">${DS.StatusBar({ light: true })}</div>
-        <div class="club__intro"><span class="club__logo">${DS.ICONS['logo-club']}</span><div><p class="club__title">Bezpłatny program<br>dla pacjentów</p><p class="club__lead">Trzy korzyści, jedna decyzja.</p></div></div>
+        <div class="club__intro"><span class="club__logo">${DS.ICONS['logo-club']}</span><div><p class="club__title">Bezpłatny program<br>dla Pacjentów</p><p class="club__lead">Trzy korzyści, jedna decyzja.</p></div></div>
         <div class="club__carouselwrap"><div class="club__carousel" id="club-carousel">${DS.CarouselCell({ icon: 'tag', title: '5% dodatkowej zniżki', sub: 'na całą ofertę ALAB laboratoria' })}${DS.CarouselCell({ icon: 'gift', title: 'Oferta urodzinowa', sub: 'Specjalna niespodzianka w Twoim miesiącu' })}${DS.CarouselCell({ icon: 'voucher', title: 'Voucher 20%', sub: 'Po wykonaniu badania na kolejne zakupy' })}</div>
           <div class="club__dots" id="club-dots">${DS.StepsIndicator({ steps: 3, current: 1, text: false, onScrim: true })}</div>
           <div class="club__corner"></div></div>
@@ -213,7 +303,7 @@
 
   // ---- Reset hasła ----
   SCREENS.reset = () => layout({ top: DS.TopBar({ leading: 'x-close', leadingAttrs: { 'data-go': 'login' } }), bodyClass: 'screen__body--gap24',
-    body: `<div class="screen__heading"><p class="screen__title">Reset hasła</p><p class="screen__lead">Wpisz email użyty przy rejestracji, Jeśli istnieje konto, wyślemy link do ustawienia nowego hasla.</p></div>
+    body: `<div class="screen__heading"><p class="screen__title">Reset hasła</p><p class="screen__lead">Wpisz email użyty przy rejestracji. Jeśli istnieje konto, wyślemy link do ustawienia nowego hasła.</p></div>
       ${DS.TextField({ id: 'r-email', label: 'Email', value: S.resetEmail, type: 'email', state: S.resetEmail ? 'default' : 'focused', inputAttrs: { autocomplete: 'email', autofocus: true } })}
       ${DS.Button({ label: 'Wyślij link', block: true, attrs: { 'data-action': 'reset-send', id: 'reset-btn' } })}` });
 
@@ -229,9 +319,10 @@
   };
 
   // ---- Dashboard (istniejący prototyp sklepu w ramie telefonu) ----
-  SCREENS.dashboard = () => `<div class="screen dash"><iframe src="../index.html" title="Sklep • Strona główna"></iframe></div>`; // nadpisywane w app.shop.js
+  SCREENS.dashboard = () => `<div class="screen dash"><iframe src="${file('../index.html')}" title="Sklep • Strona główna"></iframe></div>`; // nadpisywane w app.shop.js
   // powitanie po rejestracji/logowaniu (raz)
-  window.addEventListener('hashchange', () => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
+  const onRoute = (fn) => { window.addEventListener('popstate', fn); window.addEventListener('hashchange', fn); };
+  onRoute(() => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
 
   // Kolor tła dokumentu i theme-color = kolor dolnej krawędzi ekranu (pas poza oknem PWA na iOS maluje html)
   // Dwa niezależne kolory: tło dokumentu (iOS maluje nim pas pod oknem PWA na dole) i theme-color (od niego zależy kolor
@@ -251,12 +342,12 @@
     ['— Logowanie'], ['Zaloguj się', 'login'], ['Zachęta Face ID (po logowaniu)', 'faceid'], ['Reset hasła', 'reset'], ['Sprawdź skrzynkę', 'reset/sent'],
     ['— Aplikacja'], ['Dashboard (sklep)', 'dashboard'],
   ];
-  const current = () => location.hash.replace(/^#\/?/, '') || 'splash';
+  const current = () => fromPath(pathNow()) || home;
   function resolve(route) {
     if (SCREENS[route]) return SCREENS[route]();
     const i = route.indexOf('/'); if (i > 0 && SCREENS[route.slice(0, i) + '/:id']) return SCREENS[route.slice(0, i) + '/:id'](decodeURIComponent(route.slice(i + 1)));
     const m = route.match(/^onboarding\/(\d)$/); if (m) return SCREENS['onboarding/:n'](m[1]);
-    return SCREENS.start();
+    return (SCREENS[home] || SCREENS.start)();
   }
   // Przejścia jak w iOS: push (nowy wjeżdża z prawej, stary odjeżdża w lewo i ciemnieje),
   // pop (odwrotnie), fade (splash → onboarding, → dashboard). Bez dir = przerysowanie w miejscu.
@@ -296,13 +387,17 @@
   }
   function route() {
     const r = current();
+    // wariant zapisany w adresie (np. /app/sklep/w-domu) musi być w stanie, zanim ekran się narysuje
+    const p = pathNow(), iv = p.lastIndexOf('/');
+    if (iv > 0 && variant.match(p.slice(iv + 1))) variant.set(p.slice(iv + 1));
     // krok onboardingu → tylko przesuń taśmę
-    if (onbIndex(r) && onbIndex(lastRoute) && $('#onb-track')) { history[history.length - 1] = r; lastRoute = r; onbSync(); return; }
-    const isBack = history.length >= 2 && history[history.length - 2] === r;
-    if (isBack) history.pop(); else history.push(r);
+    if (onbIndex(r) && onbIndex(lastRoute) && $('#onb-track')) { stack[stack.length - 1] = r; lastRoute = r; onbSync(); return; }
+    const isBack = stack.length >= 2 && stack[stack.length - 2] === r;
+    if (isBack) stack.pop(); else if (stack[stack.length - 1] !== r) stack.push(r);   // bez duplikatów: ta sama trasa z innym wariantem
     // fade: do tras „korzeniowych” (splash, start, dashboard, zakładki, wyszukiwarka) oraz ze splasha/onboardingu; z korzenia w głąb = push jak w iOS
     const dir = isBack ? 'back' : ((FADE_ROUTES.has(r) || lastRoute === 'splash' || onbIndex(lastRoute) || !lastRoute) ? 'fade' : 'fwd');
     lastRoute = r; render_(dir);
+    syncUrl();   // wklejony link bez wariantu (np. /app/sklep) dostaje pełny adres
   }
 
   // ---------------- gesty: swipe onboardingu + cofanie od lewej krawędzi ----------------
@@ -315,7 +410,7 @@
     const rect = phoneEl.getBoundingClientRect();
     const x = e.clientX - rect.left;
     if (track) { drag = { kind: 'onb', x0: e.clientX, y0: e.clientY, t0: performance.now(), w: rect.width, i: onbIndex(current()) || 1, el: track, moved: false }; track.classList.add('is-dragging'); }
-    else if (x < 28 && history.length >= 2 && !FADE_ROUTES.has(current()) && !onbIndex(current()) && !$('#overlay').firstElementChild) {
+    else if (x < 28 && stack.length >= 2 && !FADE_ROUTES.has(current()) && !onbIndex(current()) && !$('#overlay').firstElementChild) {
       const scr = $('#screen').lastElementChild; if (!scr) return;
       const dim = document.createElement('div'); dim.className = 'swipe-dim'; $('#screen').insertBefore(dim, scr);
       drag = { kind: 'back', x0: e.clientX, y0: e.clientY, t0: performance.now(), w: rect.width, el: scr, dim, moved: false };
@@ -482,17 +577,31 @@
     }, { passive: true });
   }
 
-  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav };
+  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav, slugs, url, toPath, fromPath, routeVariant, syncUrl, setHome, DARK_ROUTES, BASE, dir: DIR, file,
+    rerender: (dir) => render_(dir) };   // przerysowanie tej samej trasy (ekran ładowania zadania → Start)
 
   // ---------------- panel deweloperski ----------------
-  function renderNav() { $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="#/${r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join(''); $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current())); }
+  function renderNav() { $('#dev-nav').innerHTML = ROUTES.map(([label, r]) => r ? `<a href="${PATHS_OK ? url(r) : '#/' + r}" data-route="${r}">${esc(label)}</a>` : `<div class="sep">${esc(label.replace('— ', ''))}</div>`).join(''); $$('#dev-nav a').forEach(a => a.classList.toggle('active', a.dataset.route === current())); }
+  // Link w obrębie aplikacji obsługujemy routerem — pełne przeładowanie gubiłoby stan (koszyk, zgody).
+  document.addEventListener('click', (e) => {
+    if (!PATHS_OK || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    const a = e.target.closest('a[href]'); if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    const u = new URL(a.href, location.href);
+    if (u.origin !== location.origin || !u.pathname.startsWith(BASE)) return;
+    e.preventDefault(); go(fromPath(u.pathname.slice(BASE.length)) || 'splash');
+  });
   $('#dev-logo').innerHTML = DS.ICONS['alabek'];
   renderNav();
-  const resetAll = () => { S = initial(); history = []; lastRoute = ''; if (current() === 'splash') render_('fade'); else go('splash'); };
+  const resetAll = () => { S = initial(); stack = []; lastRoute = ''; if (current() === home) render_('fade'); else go(home); };
   window.APP.reset = resetAll;
   $('#dev-reset').addEventListener('click', resetAll);
   if (matchMedia('(max-width: 900px)').matches) document.body.classList.add('is-mobile');
 
-  window.addEventListener('hashchange', route);
-  document.addEventListener('DOMContentLoaded', () => { if (!location.hash) location.hash = '#/splash'; else route(); });
+  onRoute(route);
+  document.addEventListener('DOMContentLoaded', () => {
+    // wejście na /app/ (albo /app/index.html) normalizujemy do adresu pierwszego ekranu — bez wpisu w historii
+    // route() sam normalizuje adres na końcu (dopisze wariant) — replaceState przed nim zjadał wariant z wklejonego linku
+    if (PATHS_OK) route();
+    else if (!location.hash) location.hash = '#/splash'; else route();
+  });
 })();

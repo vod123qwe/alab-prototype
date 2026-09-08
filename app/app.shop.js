@@ -17,7 +17,9 @@
   // Komórka pod paskiem zmienia się razem z chipem (1:1 z masterami „Sklep • Strona główna”, „Typy • ALAB w domu”, „Typy • Wysyłkowe”)
   const DELIVERY = {
     punkt: { label: 'Punkt Pobrań', cell: { icon: 'location-check', title: 'Puławska 10, Warszawa', status: 'Dziś otwarte 7:00 - 11:00', action: 'change-point' } },
-    dom: { label: 'ALAB w domu', cell: { icon: 'location-check', title: 'Usługa pobrania krwi w domu', status: 'Kraków 109 zł', action: 'change-point' } },
+    // Miasto ZMIENIONE względem mastera 1183:26770 („Kraków”) — plan badania stawia Pacjenta w Warszawie,
+    // a Punkt Pobrań w prototypie jest na Puławskiej; dwa różne miasta na jednym ekranie myliłyby uczestnika.
+    dom: { label: 'ALAB w domu', cell: { icon: 'location-check', title: 'Usługa pobrania krwi w domu', status: 'Warszawa 109,00 zł', action: 'change-point' } },
     wysylka: { label: 'Zestaw wysyłkowy', cell: { icon: 'home-pin', title: 'Samodzielne pobranie próbki', status: null } },
   };
   const TYPES = Object.keys(DELIVERY);
@@ -40,7 +42,7 @@
     lowest: p.old ? `Najniższa cena z 30 dni: ${zl(p.lowest || p.old)}` : null,
     note: t === 'wysylka' ? null : '+ opłata za pobranie', // wysyłka: cena stała, bez opłaty za pobranie (inventory P04d)
   };
-  const badgeVM = (p, t = type()) => p.unavailableAt === t ? { basic: 'Niedostępne w wybranym punkcie' } : p.code ? { code: { discount: p.code.discount, text: `z kodem ${p.code.code}` } } : p.premium ? { premium: 'Niższa cena z ALAB Club' } : null;
+  const badgeVM = (p, t = type()) => p.unavailableAt === t ? { basic: 'Niedostępne w wybranym Punkcie Pobrań' } : p.code ? { code: { discount: p.code.discount, text: `z kodem ${p.code.code}` } } : p.premium ? { premium: 'Niższa cena z ALAB club' } : null;
   const card = (p) => {
     const un = p.unavailableAt === type();
     return DS.ProductCard({ id: p.id, kind: p.kind, meta: p.kind === 'package' ? `Liczba badań: ${p.components.length}` : `Materiał: ${p.material}`, title: p.title,
@@ -208,8 +210,11 @@
           <div class="ds ds-Surface product__main">
             <h1 class="product__title">${esc(p.title)}</h1>
             ${price ? DS.PriceBlock({ label: isPkg ? 'Cena za pakiet' : 'Cena za badanie', ...price, lowest: price.lowest && type() !== 'wysylka' ? price.lowest + ' dla wybranego Punktu Pobrań' : price.lowest })
-              : `<div class="product__unavailable">${DS.BadgeBasic({ text: 'Niedostępne w wybranym punkcie' })}<p class="product__unavailableHint">Zmień Punkt Pobrań lub sposób realizacji, żeby zobaczyć cenę.</p></div>`}
-            ${(p.code || !club) ? `<div class="ds-PromoStack">${p.code ? DS.CodeBox({ discount: p.code.discount, code: p.code.code }) : ''}${!club ? DS.ClubPromo() : ''}</div>` : ''}
+              : `<div class="product__unavailable">${DS.BadgeBasic({ text: 'Niedostępne w wybranym Punkcie Pobrań' })}<p class="product__unavailableHint">Zmień Punkt Pobrań lub sposób realizacji, żeby zobaczyć cenę.</p></div>`}
+            <!-- Gdy produktu nie da się kupić w wybranym kontekście, nie zachęcamy do ALAB club: zniżka dotyczyłaby
+                 czegoś, czego nie można dodać do koszyka, a jedyne sensowne działanie to zmiana Punktu Pobrań
+                 lub sposobu realizacji. Duży banner klubu niżej w treści zostaje. -->
+            ${(p.code || (!club && !un)) ? `<div class="ds-PromoStack">${p.code ? DS.CodeBox({ discount: p.code.discount, code: p.code.code }) : ''}${(!club && !un) ? DS.ClubPromo() : ''}</div>` : ''}
             ${DS.Button({ label: un ? 'Zmień punkt' : buyLabel, type: un ? 'secondary' : 'primary', block: true, attrs: { id: 'prod-buy', ...buyAttrs } })}
           </div>
           ${DS.Surface({ label: isPkg ? 'Opis pakietu' : 'Opis badania', content: DS.Cell({ icon: 'file-doc', title: p.desc, attrs: { 'data-action': 'full-desc', class: 'ds-Cell--clamp' } }) })}
@@ -333,7 +338,7 @@
     : (r === 'tab/results' || r === 'results-empty' || /^(result|rinfo)\//.test(r)) ? 'results' : 'shop';
   function syncTabBar(route) {
     const host = $('#tabbar'); if (!host) return;
-    const show = BAR_ROUTES(route);
+    const show = BAR_ROUTES(route) && !APP.hideTabBar;   // ekran ładowania zadania chowa pasek
     host.classList.toggle('is-off', !show);
     if (!show) return;
     const active = activeTabFor(route);
@@ -372,13 +377,33 @@
   });
   document.addEventListener('click', (e) => {
     const tab = e.target.closest('[data-tab]'); if (tab && !tab.classList.contains('screen')) { const t = TABS.find(x => x.id === tab.dataset.tab); if (t) { const sc = $('#screen .shop__scroll'); if (sc) st().scroll[current()] = sc.scrollTop; if (current() !== t.route) go(t.route); } return; }
-    const chip = e.target.closest('[data-delivery]'); if (chip) { if (st().delivery !== chip.dataset.delivery) { st().delivery = chip.dataset.delivery; refreshDelivery(); } return; }
+    const chip = e.target.closest('[data-delivery]'); if (chip) { if (st().delivery !== chip.dataset.delivery) { st().delivery = chip.dataset.delivery; APP.syncUrl({ push: true }); refreshDelivery(); } return; }
     const sub = e.target.closest('[data-sub]'); if (sub) { const cat = sub.dataset.cat; st().sub[cat] = st().sub[cat] === sub.dataset.sub ? null : sub.dataset.sub; refreshListing(); return; }
     // karta / wiersz z data-open otwiera produkt (kliknięcia w przyciski wewnątrz karty mają własne akcje)
     const open = e.target.closest('[data-open]'); if (open && !e.target.closest('button:not([data-open]), [data-action]')) openProduct(open.dataset.open);
   });
   document.addEventListener('ds:search', (e) => { st().query = e.detail.value; const r = $('#search-results'); if (r) r.innerHTML = searchResults(e.detail.value); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'search-input') { e.target.blur(); const q = e.target.value.trim(); if (q) { st().query = q; go('results'); } } });
+
+  // Sposób realizacji jest SEGMENTEM ścieżki (`/app/sklep/w-domu`), a nie parametrem `?dostawa=dom`:
+  // narzędzia badawcze i analityczne potrafią traktować dwa adresy różniące się tylko query jako ten sam ekran,
+  // a to jest pomiar, na którym zależy nam najbardziej (ile osób realnie zmieniło kontekst na dostawę do domu).
+  // Segment dopisujemy tylko tam, gdzie widać chipy sposobu realizacji — karta produktu zostaje jednym adresem.
+  const DELIVERY_SLUG = { punkt: 'punkt-pobran', dom: 'w-domu', wysylka: 'zestaw-wysylkowy' };
+  const DELIVERY_OF_SLUG = { 'punkt-pobran': 'punkt', 'w-domu': 'dom', 'zestaw-wysylkowy': 'wysylka' };
+  const hasDelivery = (r) => r === 'dashboard' || r === 'search' || r === 'results' || /^(category|list)\//.test(r);
+  APP.routeVariant({
+    get: (r) => hasDelivery(r) ? DELIVERY_SLUG[type()] : null,
+    match: (seg) => !!DELIVERY_OF_SLUG[seg],
+    set: (seg) => { const d = DELIVERY_OF_SLUG[seg]; if (d) st().delivery = d; },
+  });
+
+  // Czytelne adresy: produkt i kategoria dostają slug z nazwy (adres w raporcie z badania mówi, co to za ekran).
+  const slugify = (s) => s.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 52).replace(/-+$/, '');
+  const uniq = (items, key) => { const used = new Set(), map = {}; items.forEach(x => { let s = slugify(key(x)) || x.id; if (used.has(s)) s += '-' + x.id.replace(/^[tp]-/, ''); used.add(s); map[x.id] = s; }); return map; };
+  APP.slugs('product', uniq(PRODUCTS, x => x.title));
+  APP.slugs('category', uniq(CATEGORIES, x => x.label));
 
   // panel deweloperski: dopisz trasy sklepu
   APP.ROUTES.splice(APP.ROUTES.findIndex(r => r[1] === 'dashboard'), 1, ['Sklep · Strona główna', 'dashboard'], ['Sklep · Wyszukiwarka', 'search'], ['Listing · Hormony', 'category/hormony'], ['Listing · Wszystkie pakiety', 'list/packages'], ['Produkt · Badanie', 'product/t-morf-roz'], ['Produkt · Pakiet', 'product/p-tarcz'], ['Zakładka Start', 'tab/start'], ['Zakładka Wyniki', 'tab/results'], ['Zakładka Koszyk', 'tab/cart']);
