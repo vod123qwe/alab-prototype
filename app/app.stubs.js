@@ -8,16 +8,18 @@
   const esc = DS.esc;
 
   // pojedynczy klocek szkieletu; r = promień (domyślnie pigułka)
-  const sk = (w, h, r = 999) => `<span class="stub__skel" style="width:${w};height:${h}px;border-radius:${r}px"></span>`;
+  // wszystkie klocki mają promień 12 z CSS — wzór nie różnicuje go per element
+  const sk = (w, h) => `<span class="stub__skel" style="width:${w};height:${h}px"></span>`;
   const row = (content, gap = 12) => `<div class="stub__row" style="gap:${gap}px">${content}</div>`;
   // karta szkieletu: biały kontener z obwódką (jak CellTestResult / SurfaceSlot) i klockami w środku
-  const skCard = (inner, r = 28) => `<div class="stub__cardSkel" style="border-radius:${r}px">${inner}</div>`;
+  const skCard = (inner) => `<div class="stub__cardSkel">${inner}</div>`;
 
   const notice = (title, second = 'Przejdź do innej zakładki.', action = '') => `<div class="stub__notice"><div class="stub__card">` +
+    `<div class="stub__group">` +
     DS.ButtonTiny({ label: 'Niedostępne w badaniu', variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
     `<div class="stub__text"><p class="stub__title">${esc(title)}</p>` +
     `<p class="stub__desc"><span>Ta część aplikacji jest w przygotowaniu.</span><span class="stub__descStrong">${esc(second)}</span></p>` +
-    (action ? `<div class="stub__action">${action}</div>` : '') + `</div></div>`;
+    `</div></div>` + (action ? `<div class="stub__action">${action}</div>` : '') + `</div></div>`;
 
   const stub = (tab, title, skeleton, second, action) => `<div class="screen shop stub" data-tab="${tab}">
       <div class="screen__top">${DS.StatusBar()}</div>
@@ -26,25 +28,25 @@
     </div>`;
 
   // Start — szkielet 1:1 z wzoru: awatar + dwie linijki, dwa kafle, niżej sekcja z blokiem
-  const startSkeleton = `${row(sk('62px', 62, 16) + `<div class="stub__col">${sk('62px', 21)}${sk('222px', 21)}</div>`, 25)}
-      ${row(sk('154px', 59, 16) + sk('154px', 59, 16), 19)}
+  const startSkeleton = `${row(sk('62px', 62) + `<div class="stub__col">${sk('62px', 21)}${sk('222px', 21)}</div>`, 25)}
+      ${row(sk('154px', 59) + sk('154px', 59), 19)}
       <div class="stub__gap"></div>
-      <div class="stub__col" style="gap:12px">${sk('62px', 21)}${sk('222px', 21)}${sk('100%', 64, 16)}</div>`;
+      <div class="stub__col" style="gap:12px">${sk('62px', 21)}${sk('222px', 21)}${sk('100%', 64)}</div>`;
 
   // Wyniki — szkielet listy: tytuł, nagłówek roku i trzy karty wyniku z zawartością (tytuł, osoba, data, pill statusu)
   const resultCardSkel = () => skCard(`<div class="stub__col" style="gap:12px">${sk('70%', 20)}${sk('45%', 16)}</div>` +
     `<div class="stub__col" style="gap:16px">${sk('30%', 12)}${sk('148px', 32)}</div>`);
-  const resultsSkeleton = `${sk('200px', 40, 16)}
+  const resultsSkeleton = `${sk('200px', 40)}
       <div class="stub__gap stub__gap--sm"></div>
       ${sk('44px', 20)}
       <div class="stub__col" style="gap:12px">${resultCardSkel()}${resultCardSkel()}${resultCardSkel()}</div>`;
 
   // Koszyk — szkielet: tytuł, trzy pozycje i blok podsumowania
-  const cartSkeleton = `${sk('140px', 40, 16)}
+  const cartSkeleton = `${sk('140px', 40)}
       <div class="stub__gap stub__gap--sm"></div>
-      <div class="stub__col" style="gap:12px">${sk('100%', 72, 16)}${sk('100%', 72, 16)}${sk('100%', 72, 16)}</div>
+      <div class="stub__col" style="gap:12px">${sk('100%', 72)}${sk('100%', 72)}${sk('100%', 72)}</div>
       <div class="stub__gap"></div>
-      ${sk('100%', 120, 28)}`;
+      ${sk('100%', 120)}`;
 
   // Pełne Wyniki zostają w prototypie, ale poza ścieżką badania (podgląd z panelu)
   const fullResults = SCREENS['tab/results'];
@@ -55,7 +57,7 @@
   SCREENS['tab/start'] = () => stub('start', 'Ekran startowy', startSkeleton);
   SCREENS['tab/results'] = () => stub('results', 'Wyniki badań', resultsSkeleton);
   SCREENS['tab/cart'] = () => stub('cart', 'Koszyk', cartSkeleton, 'Jeśli zadanie jest skończone, kliknij poniżej.',
-    DS.Button({ label: 'Zakończ zadanie', block: true, attrs: { 'data-action': 'end-task' } }));
+    DS.Button({ label: 'Zakończ zadanie', type: 'secondary', block: true, attrs: { 'data-action': 'end-task' } }));
 
   // ---------------- wybór zadań (ekran startowy badania) ----------------
   // Każde zadanie ma własny adres i startuje od zera: pusty koszyk, brak klubu, sposób realizacji = Punkt Pobrań.
@@ -80,11 +82,11 @@
   });
 
   // Punkt Pobrań — wchodzimy z komórki adresu w sklepie i z CTA „Zmień punkt” na karcie produktu
-  const pointSkeleton = `${sk('100%', 56, 28)}
+  const pointSkeleton = `${sk('100%', 56)}
       <div class="stub__gap stub__gap--sm"></div>
-      ${sk('100%', 180, 16)}
+      ${sk('100%', 180)}
       <div class="stub__gap stub__gap--sm"></div>
-      <div class="stub__col" style="gap:12px">${sk('100%', 72, 16)}${sk('100%', 72, 16)}${sk('100%', 72, 16)}</div>`;
+      <div class="stub__col" style="gap:12px">${sk('100%', 72)}${sk('100%', 72)}${sk('100%', 72)}</div>`;
   SCREENS['punkt-pobran'] = () => `<div class="screen stub">
       <div class="screen__top">${DS.TopBar({ leading: 'x-close', title: 'Punkt Pobrań' })}</div>
       <div class="screen__body stub__body">${pointSkeleton}</div>

@@ -274,10 +274,14 @@ i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zau
 
 ### Zaślepki zakładek (test niemoderowany)
 
-Start, Wyniki i Koszyk to zaślepki wg wzoru „Rejestracja - krok 8” 3136:31878: pod spodem szkielet układu
-ekranu (klocki w Background/surfaceSecondary), nad nim wyśrodkowana karta z rozmyciem (radius 44, cień 0 4 60
-rgba(0,0,0,.06)) z pigułką „Niedostępne w badaniu”, tytułem (display/medium) i dwiema linijkami opisu:
-„Ta część aplikacji jest w przygotowaniu.” oraz „Przejdź do innej zakładki.” Karta ma 335×262 px, dokładnie jak w Figmie.
+Start, Wyniki i Koszyk to zaślepki wg wzoru „Rejestracja - krok 8” 3136:31878. Wartości 1:1 z Figmy:
+
+- **klocki szkieletu**: Background/surfaceQuaternary (#eaf0f9), promień 12 px dla każdego klocka,
+- **karta**: szerokość 335, promień 44, padding 48/20/36, gap 24 (grupa tekstu i przycisk), tło rgba(255,255,255,.01),
+  rozmycie 22, cień 0 4 60 rgba(33,55,163,.1), środek 13 px nad środkiem ekranu,
+- **wnętrze karty**: pigułka „Niedostępne w badaniu” i tekst jako jedna grupa z gapem 20, tytuł (display/medium)
+  i opis (body/xsmall) z gapem 12, w opisie dwie linijki rozdzielone pustą linią,
+- **przycisk** (tylko w Koszyku): Button secondary „Zakończ zadanie”.
 
 Szkielet Wyników odwzorowuje karty wyniku jako białe kontenery z obwódką i klockami w środku (tytuł, osoba,
 data, pill statusu), a nie jednolite szare bloki. Zakładka Wyniki nie pokazuje licznika nowych wyników, bo jest

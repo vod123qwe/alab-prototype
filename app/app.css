@@ -353,15 +353,18 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    szkielet układu pod spodem, nad nim wyśrodkowana karta z rozmyciem i komunikatem.
    ------------------------------------------------------------ */
 .stub__body { gap: 0; padding: 30px 24px 120px; }
-.stub__skel { display: block; flex: 0 0 auto; background: var(--background-surface-secondary); }
+/* klocki szkieletu: Background/surfaceQuaternary, promień 12 — wartości ze wzoru 3136:31878 */
+.stub__skel { display: block; flex: 0 0 auto; background: var(--background-surface-quaternary); border-radius: 12px; }
 .stub__row { display: flex; align-items: flex-start; }
 .stub__col { display: flex; flex-direction: column; gap: 20px; min-width: 0; flex: 1 1 auto; }
 .stub__row + .stub__row { margin-top: 34px; }
 .stub__gap { height: 56px; flex: 0 0 auto; }
 .stub__gap--sm { height: 24px; }
-.stub__notice { position: absolute; left: 20px; right: 20px; top: 50%; transform: translateY(-50%); z-index: 4; pointer-events: none; }
-.stub__card { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 48px 4px; border-radius: 44px;
-  background: rgba(255, 255, 255, .1); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 60px rgba(0, 0, 0, .06); }
+.stub__notice { position: absolute; left: 20px; right: 20px; top: calc(50% - 13px); transform: translateY(-50%); z-index: 4; pointer-events: none; }
+.stub__card { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 48px 20px 36px; border-radius: 44px;
+  background: rgba(255, 255, 255, .01); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); box-shadow: 0 4px 60px rgba(33, 55, 163, .1); }
+/* pigułka + tekst to jedna grupa (gap 20), przycisk siedzi pod nią na gapie karty (24) */
+.stub__group { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
 .stub__card .ds-ButtonTiny { background: var(--main-primary); pointer-events: none; }
 .stub__text { display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: center; }
 .stub__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; color: var(--content-on-surface); }
@@ -369,14 +372,14 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .stub__descStrong { color: var(--content-on-surface); }
 
 /* karta szkieletu: odwzorowuje realny kontener (białe tło + obwódka), żeby lista nie była jednolitą szarą plamą */
-.stub__cardSkel { display: flex; flex-direction: column; gap: 24px; padding: 24px 24px 20px; background: var(--background-surface); border: 1px solid var(--outline-border); }
+.stub__cardSkel { display: flex; flex-direction: column; gap: 24px; padding: 24px 24px 20px; background: var(--background-surface); border: 1px solid var(--outline-border); border-radius: 12px; }
 
 /* Prototyp bez elementów UI systemu: pasek statusu trzyma wysokość, kreska gestu jest ukryta również na desktopie */
 .ds-StatusBar--blank { justify-content: flex-start; }
 .phone .ds-HomeIndicator__bar { display: none; }
 
 /* akcja w karcie zaślepki (np. „Zakończ zadanie” w Koszyku) — karta ma wyłączone zdarzenia, przycisk je włącza */
-.stub__action { width: 100%; padding: 0 20px; pointer-events: auto; }
+.stub__action { width: 100%; pointer-events: auto; }
 .stub__action .ds-Button { width: 100%; }
 
 /* ekran wyboru zadań (start badania) */
