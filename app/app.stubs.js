@@ -67,16 +67,17 @@
   // gdy Maciej zmieni treść, zmieniamy ją tutaj. Ten sam tekst uczestnik widzi w Useberry.
   // Każde zadanie: nagłówek, krótki tytuł, scenariusz i wymagania jako punktowana lista. Punkty są znacznikami
   // (zielony tick), nie polami do zaznaczania — mają porządkować treść, a nie dawać uczestnikowi kolejnej rzeczy do klikania.
+  // Ostatnie pole to produkt, którego dotyczy zadanie — arkusz sukcesu pokazuje się TYLKO po dodaniu jego.
   const TASKS = [
     ['1', 'Zadanie 1', 'Zamów badania moczu',
       'Mieszkasz w Warszawie i chcesz zamówić badanie w aplikacji sieci diagnostycznej.',
-      ['Zamów ogólne badanie moczu.']],
+      ['Zamów ogólne badanie moczu.'], 't-mocz'],
     ['2', 'Zadanie 2', 'Zamów Pakiet Sport',
       'Szukasz gotowego zestawu badań dla osób aktywnych.',
-      ['Sprawdź, ile badań wchodzi w skład Pakietu Sport.', 'Zamów ten pakiet.']],
+      ['Sprawdź, ile badań wchodzi w skład Pakietu Sport.', 'Zamów ten pakiet.'], 'p-sport'],
     ['3', 'Zadanie 3', 'Zamów badanie krwi do domu',
       'Chcesz wykonać badanie morfologii krwi u siebie w domu — specjalista przyjedzie do Ciebie i je wykona.',
-      ['Sprawdź, po jakim czasie będzie dostępny wynik.', 'Zamów to badanie z pobraniem w domu.']],
+      ['Sprawdź, po jakim czasie będzie dostępny wynik.', 'Zamów to badanie z pobraniem w domu.'], 't-morf'],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
@@ -181,6 +182,9 @@
     addToCart(el, e);
     const s = APP.S; if (!s.task || s.taskDone) return;   // arkusz raz na zadanie, poza zadaniem wcale
     const p = CATALOG.byId(el.dataset.product || el.closest('.ds-ProductCard')?.dataset.product); if (!p) return;
+    // Zadanie jest skończone tylko wtedy, gdy do koszyka wpadł WŁAŚCIWY produkt. Inny zostaje w koszyku
+    // (uczestnik może się pomylić i szukać dalej), ale sukcesu nie ogłaszamy i adres końca się nie zmienia.
+    const want = taskOf(s.task); if (want && want[5] && p.id !== want[5]) return;
     s.taskDone = true;
     try { history.pushState(null, '', APP.url('koniec/' + p.id)); } catch (err) { /* file:// */ }
     setTimeout(() => doneSheet(p), 900);   // najpierw snackbar, potem arkusz

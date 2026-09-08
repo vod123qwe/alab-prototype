@@ -447,7 +447,12 @@ Bez powtarzania wymagań — uczestnik ma je już za sobą.
 Scenariusze i wymagania są rozpisane z różowych naklejek „Treść” z tablicy 11:757 i **tablica pozostaje
 źródłem prawdy** — gdy Maciej je zmieni, aktualizujemy `TASKS` w `app/app.stubs.js`.
 
-Po dodaniu do koszyka w trakcie zadania pojawia się **arkusz „Zadanie wykonane”**: zielony tick, nazwa produktu,
+Arkusz sukcesu pojawia się **tylko po dodaniu właściwego produktu** dla danego zadania (mocz → `t-mocz`,
+Pakiet Sport → `p-sport`, morfologia → `t-morf`; produkt jest ostatnim polem wpisu w `TASKS`). Inny produkt
+normalnie wpada do koszyka — uczestnik może się pomylić i szukać dalej — ale sukcesu nie ogłaszamy i adres
+końca zadania się nie zmienia. Gdy uczestnik w ogóle nie trafi, zadanie kończy przyciskiem w zakładce Koszyk.
+
+Po dodaniu właściwego produktu pojawia się **arkusz „Zadanie wykonane”**: zielony tick, nazwa produktu,
 zdanie o tym, że można jeszcze poklikać i wrócić przyciskiem w zakładce Koszyk, oraz akcje „Przejdź do kolejnego
 zadania” i „Przeglądaj dalej”. Arkusz nie zamyka eksploracji i pokazuje się raz na zadanie.
 
