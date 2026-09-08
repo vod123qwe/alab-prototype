@@ -63,11 +63,17 @@
   // 1:1 z „Start screen” 3153:32180 w pliku Alab • Design: granat, blob z tego samego assetu co splash,
   // logo ALAB laboratoria, nadtytuł „Prototyp do badań ALAB”, display/large i lista trzech zadań.
   // Każde zadanie ma własny adres i startuje od zera: pusty koszyk, brak klubu, realizacja = Punkt Pobrań.
+  // Treści zadań z tablicy badawczej (różowe naklejki „Treść" w 11:757). Źródłem prawdy jest tablica —
+  // gdy Maciej zmieni treść, zmieniamy ją tutaj. Ten sam tekst uczestnik widzi w Useberry.
   const TASKS = [
-    ['1', 'Zadanie 1', 'Zamów badania moczu'],
-    ['2', 'Zadanie 2', 'Zamów Pakiet Sport'],
-    ['3', 'Zadanie 3', 'Zamów badanie krwi do domu'],
+    ['1', 'Zadanie 1', 'Zamów badania moczu',
+      'Wyobraź sobie, że mieszkasz w Warszawie i chcesz w aplikacji sieci diagnostycznej zamówić sobie badanie. Spróbuj zamówić ogólne badanie moczu.'],
+    ['2', 'Zadanie 2', 'Zamów Pakiet Sport',
+      'Sprawdź, ile badań wchodzi w skład Pakietu Sport. Następnie zamów ten pakiet.'],
+    ['3', 'Zadanie 3', 'Zamów badanie krwi do domu',
+      'Załóżmy, że chcesz wykonać badanie morfologii krwi u siebie w domu — specjalista przyjedzie do Ciebie i je wykona. Zwróć uwagę, po jakim czasie będzie dostępny wynik badania, i zamów takie badanie.'],
   ];
+  const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
       <div class="tasks__bg" aria-hidden="true">
         <div class="tasks__blob"><img src="${DS.ASSETS}img_splash_shape.png" alt=""></div>
@@ -96,7 +102,7 @@
   // Członkostwo w ALAB club PRZECHODZI między zadaniami: kto dołączył w zadaniu 1, widzi zadania 2 i 3 już
   // jako członek klubu (ustalenie z Maćkiem). Trzyma się na sesji przeglądarki, więc przetrwa też wejście
   // w kolejne zadanie z linku. Reszta stanu (koszyk, sposób realizacji, filtry, wyniki) startuje od zera.
-  const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; delete s.clubFrom;
+  const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; delete s.clubFrom; delete s.taskDone;
     s.clubJoined = APP.recallClub(); if (!s.clubJoined) s.club = { terms: false, rodo: false };
     s.welcomed = true; s.loggedIn = true; };
 
@@ -112,7 +118,7 @@
     </div>`;
   SCREENS['zadanie/:id'] = (id) => {
     if (booting === id) { booting = null; APP.hideTabBar = false; return SCREENS['tab/start'](); }
-    resetForTask(); booting = id; APP.hideTabBar = true; return bootScreen();
+    resetForTask(); APP.S.task = id; booting = id; APP.hideTabBar = true; return bootScreen();
   };
   TASKS.forEach(([n]) => APP.FADE_ROUTES.add('zadanie/' + n));   // wejście w zadanie i wyjście z ładowania = przejście fade
   APP.afterRender.push((route) => {
@@ -126,9 +132,61 @@
     setTimeout(() => { if (booting === id && APP.current() === 'zadanie/' + id) APP.rerender('fade'); }, BOOT_MS);
   });
 
+  // Kliknięcie karty zadania otwiera arkusz z treścią: nagłówek „Zadanie 1", tytuł, opis i dwie akcje.
+  // Uczestnik ma instrukcję pod ręką także w prototypie, nie tylko w Useberry.
+  const taskSheet = (n) => {
+    const t = taskOf(n); if (!t) return;
+    const sheet = DS.presentSheet({ title: t[1], content:
+      `<div class="taskSheet">
+        <div class="taskSheet__text"><p class="taskSheet__title">${esc(t[2])}</p><p class="taskSheet__desc">${esc(t[3])}</p></div>
+        <div class="taskSheet__actions">
+          ${DS.Button({ label: 'Rozpocznij zadanie', block: true, attrs: { 'data-task-start': n } })}
+          ${DS.Button({ label: 'Zamknij', type: 'ghost', block: true, attrs: { 'data-action': 'sheet-close' } })}
+        </div>
+      </div>` });
+    sheet.wrap.addEventListener('click', (e) => { if (!e.target.closest('[data-task-start]')) return; sheet.close(false); APP.go('zadanie/' + n); });
+  };
+
+  // Koniec zadania: po dodaniu do koszyka arkusz z potwierdzeniem, a adres zmienia się na `/app/koniec/<produkt>/<tryb klubu>`,
+  // żeby w Useberry dało się rozdzielić zakup z ALAB club i bez (uwaga Maćka z tablicy). Arkusz nie zamyka
+  // eksploracji: uczestnik może zostać w aplikacji i wrócić tu zakładką Koszyk albo iść do kolejnego zadania.
+  const doneSheet = (p) => {
+    const s = APP.S, t = taskOf(s.task);
+    const back = () => { try { history.replaceState(null, '', APP.url('product/' + p.id)); } catch (e) { /* file:// */ } };
+    const sheet = DS.presentSheet({ title: t ? t[1] + ' wykonane' : 'Zadanie wykonane', onClose: back, content:
+      `<div class="taskSheet">
+        <div class="doneSheet__mark">${DS.icon('check-circle-fill', null, 'doneSheet__icon')}</div>
+        <div class="taskSheet__text"><p class="taskSheet__title">${esc(p.title)} jest w koszyku</p>
+          <p class="taskSheet__desc">To wszystko, o co prosiliśmy w tym zadaniu. Możesz jeszcze poklikać w aplikacji — do tego ekranu wrócisz przyciskiem w zakładce Koszyk.</p></div>
+        <div class="taskSheet__actions">
+          ${DS.Button({ label: 'Przejdź do kolejnego zadania', block: true, attrs: { 'data-action': 'end-task' } })}
+          ${DS.Button({ label: 'Przeglądaj dalej', type: 'ghost', block: true, attrs: { 'data-action': 'sheet-close' } })}
+        </div>
+      </div>` });
+    return sheet;
+  };
+
+  // Dokładamy się do akcji sklepu zamiast jej przepisywać — logika badania zostaje w tym pliku.
+  const addToCart = APP.ACTIONS['add-to-cart'];
+  APP.ACTIONS['add-to-cart'] = (el, e) => {
+    addToCart(el, e);
+    const s = APP.S; if (!s.task || s.taskDone) return;   // arkusz raz na zadanie, poza zadaniem wcale
+    const p = CATALOG.byId(el.dataset.product || el.closest('.ds-ProductCard')?.dataset.product); if (!p) return;
+    s.taskDone = true;
+    try { history.pushState(null, '', APP.url('koniec/' + p.id)); } catch (err) { /* file:// */ }
+    setTimeout(() => doneSheet(p), 900);   // najpierw snackbar, potem arkusz
+  };
+
+  // Wejście na adres końca zadania (odświeżenie, wklejony link) rysuje kartę produktu i ten sam arkusz.
+  SCREENS['koniec/:id'] = (id) => SCREENS['product/:id'](id);
+  APP.afterRender.push((route) => {
+    if (!route.startsWith('koniec/')) return;
+    const p = CATALOG.byId(route.slice(7)); if (p) setTimeout(() => doneSheet(p), 60);
+  });
+
   Object.assign(APP.ACTIONS, {
     'end-task': () => APP.go('zadania'),
-    'start-task': (el) => APP.go('zadanie/' + el.dataset.task),
+    'start-task': (el) => taskSheet(el.dataset.task),
   });
 
   // Punkt Pobrań — wchodzimy z komórki adresu w sklepie i z CTA „Zmień punkt” na karcie produktu

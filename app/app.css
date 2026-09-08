@@ -441,3 +441,13 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* na listingu kontener dokłada swój odstęp sekcji (24), więc blok podnosimy, żeby zaczynał się tak samo
    wysoko jak w wyszukiwarce — oba ekrany mają wtedy identyczny odstęp od filtrów */
 .shop__listing > .shop__emptyAlts { margin-top: -20px; }
+
+/* Arkusz z treścią zadania i arkusz „zadanie wykonane”: tytuł, opis i dwie akcje jedna pod drugą
+   (główna + „tertiary”, czyli w naszym DS Button ghost). Dolny odstęp bierze pod uwagę kreskę gestu. */
+.taskSheet { display: flex; flex-direction: column; gap: var(--space-5xl); width: 100%; padding-bottom: var(--space-2xl); }
+.taskSheet__text { display: flex; flex-direction: column; gap: var(--space-xl); }
+.taskSheet__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -0.01em; color: var(--content-on-surface); }
+.taskSheet__desc { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.taskSheet__actions { display: flex; flex-direction: column; gap: var(--space-md); }
+.doneSheet__mark { display: flex; }
+.doneSheet__icon { width: 48px; height: 48px; }

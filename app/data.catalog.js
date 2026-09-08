@@ -49,15 +49,13 @@
 
   const PRODUCTS = [
     // ---- Badania i pakiety ogólne ----
-    t('t-morf-roz', 'Morfologia krwi obwodowej z rozmazem', 'ogolne', 'Krew', 24.80, { old: 31.00, code: CODE, symbol: 'MORFR', icd: 'C55',
-      keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'rozmaz', 'cbc', 'hematologia', 'mrf'],
-      desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi, a rozmaz pozwala ocenić ich wygląd pod mikroskopem.' }),
-    t('t-morf', 'Morfologia krwi', 'ogolne', 'Krew', 21.70, { symbol: 'MORF', icd: 'C55',
-      keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
-      desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi.' }),
     t('t-ob', 'Odczyn Biernackiego (OB)', 'ogolne', 'Krew', 14.00, { icd: 'C59' }),
     t('t-crp', 'CRP – białko C-reaktywne', 'ogolne', 'Krew', 28.00, { popular: true, icd: 'I81', keywords: ['crp', 'stan zapalny', 'zapalenie', 'badanie krwi', 'krew'], desc: 'CRP to białko ostrej fazy, którego stężenie rośnie w stanach zapalnych i infekcjach. Badanie pomaga ocenić nasilenie zapalenia i skuteczność leczenia.' }),
     t('t-glu', 'Glukoza na czczo w surowicy', 'ogolne', 'Krew', 15.00, { popular: true, icd: 'L43', keywords: ['glukoza', 'cukier', 'cukrzyca', 'badanie krwi', 'krew'], desc: 'Podstawowe badanie w kierunku cukrzycy i zaburzeń gospodarki węglowodanowej. Wykonuj rano, na czczo, po 8-12 godzinach od ostatniego posiłku.' }),
+    // morfologia świadomie NIE na początku listy — zadaniem uczestnika jest ją znaleźć (plan badania, zadanie 3)
+    t('t-morf', 'Morfologia krwi', 'ogolne', 'Krew', 21.70, { symbol: 'MORF', icd: 'C55',
+      keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
+      desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi.' }),
     t('t-krea', 'Kreatynina', 'ogolne', 'Krew', 18.00, { icd: 'M37' }),
     t('t-alt', 'ALT – aminotransferaza alaninowa', 'ogolne', 'Krew', 16.00, { icd: 'I17' }),
     t('t-mocz', 'Badanie ogólne moczu', 'ogolne', 'Mocz', 15.00, { material: 'Mocz', types: ['punkt'], icd: 'A01' }),

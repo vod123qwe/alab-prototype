@@ -361,7 +361,7 @@
   }
   function kindSheet(ctx) {
     const sheet = DS.presentSheet({ title: 'Pokaż', content: `<div class="ds-BottomSheet__scroll" style="gap:4px">${KINDS.map(([id, label]) => DS.Cell({ icon: id === 'all' ? 'view-list' : id === 'tests' ? 'test-tube' : 'file-check', title: label, trailing: st().kind === id ? 'check-circle' : null, attrs: { 'data-kind-pick': id, class: st().kind === id ? 'is-selected' : '' } })).join('')}</div>` });
-    sheet.wrap.addEventListener('click', (e) => { const k = e.target.closest('[data-kind-pick]'); if (!k) return; st().kind = k.dataset.kindPick; sheet.close(); refreshListing(); });
+    sheet.wrap.addEventListener('click', (e) => { const k = e.target.closest('[data-kind-pick]'); if (!k) return; st().kind = k.dataset.kindPick; sheet.close(); APP.syncUrl({ push: true }); refreshListing(); });
   }
 
   // ---------------- odświeżanie w miejscu (zmiana sposobu realizacji / filtrów) ----------------
@@ -431,7 +431,7 @@
   document.addEventListener('click', (e) => {
     const tab = e.target.closest('[data-tab]'); if (tab && !tab.classList.contains('screen')) { const t = TABS.find(x => x.id === tab.dataset.tab); if (t) { const sc = $('#screen .shop__scroll'); if (sc) st().scroll[current()] = sc.scrollTop; if (current() !== t.route) go(t.route); } return; }
     const chip = e.target.closest('[data-delivery]'); if (chip) { if (st().delivery !== chip.dataset.delivery) { st().delivery = chip.dataset.delivery; APP.syncUrl({ push: true }); refreshDelivery(); } return; }
-    const sub = e.target.closest('[data-sub]'); if (sub) { const cat = sub.dataset.cat; st().sub[cat] = st().sub[cat] === sub.dataset.sub ? null : sub.dataset.sub; refreshListing(); return; }
+    const sub = e.target.closest('[data-sub]'); if (sub) { const cat = sub.dataset.cat; st().sub[cat] = st().sub[cat] === sub.dataset.sub ? null : sub.dataset.sub; APP.syncUrl({ push: true }); refreshListing(); return; }
     // karta / wiersz z data-open otwiera produkt (kliknięcia w przyciski wewnątrz karty mają własne akcje)
     const open = e.target.closest('[data-open]'); if (open && !e.target.closest('button:not([data-open]), [data-action]')) openProduct(open.dataset.open);
   });
@@ -448,28 +448,47 @@
   // Tryb ALAB club też siedzi w adresie — bez tego nie da się policzyć, ile osób kupiło z klubem, a ile bez
   // (uwaga Maćka z tablicy). Dokładamy go tam, gdzie zmienia to, co widać: ekrany sklepu z cenami, karta
   // produktu i koszyk (tam kończy się zadanie). Ekran wyboru zadań i ekran zgód zostają bez wariantu.
+  // slugify siedzi tutaj, bo korzysta z niego i mapa podkategorii w adresie, i slugi produktów niżej
+  const slugify = (s) => s.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 52).replace(/-+$/, '');
   const CLUB_SLUG = { yes: 'w-klubie', no: 'bez-klubu' };
-  const hasClub = (r) => hasDelivery(r) || /^product\//.test(r) || r === 'tab/cart';
+  const hasClub = (r) => hasDelivery(r) || /^(product|koniec)\//.test(r) || r === 'tab/cart';
+  // Filtry też zmieniają adres — „przejście w pakiety z filtrów → nowy url" z tablicy Maćka. Segment pojawia się
+  // tylko wtedy, gdy filtr jest włączony, więc domyślne adresy zostają krótkie. Prefiksy `tylko-` i `pod-`
+  // trzymają wartości filtrów rozłączne z identyfikatorami ekranów (np. `lista/pakiety` to inny byt).
+  const KIND_SLUG = { tests: 'tylko-badania', packages: 'tylko-pakiety' };
+  const KIND_OF_SLUG = { 'tylko-badania': 'tests', 'tylko-pakiety': 'packages' };
+  const SUB_SLUG = new Map(); PRODUCTS.forEach(p => { if (p.sub) SUB_SLUG.set('pod-' + slugify(p.sub), p.sub); });
+  const catOf = (r) => r.startsWith('category/') ? r.slice(9) : null;
+  const hasKind = (r) => r === 'results' || r.startsWith('category/');
   APP.routeVariant({
-    get: (r) => [hasDelivery(r) ? DELIVERY_SLUG[type()] : null, hasClub(r) ? (inClub() ? CLUB_SLUG.yes : CLUB_SLUG.no) : null].filter(Boolean).join('/') || null,
-    match: (seg) => !!DELIVERY_OF_SLUG[seg] || seg === CLUB_SLUG.yes || seg === CLUB_SLUG.no,
-    set: (seg) => {
+    get: (r) => {
+      const segs = [];
+      if (hasKind(r) && st().kind && st().kind !== 'all') segs.push(KIND_SLUG[st().kind]);
+      const cat = catOf(r); if (cat && st().sub[cat]) segs.push('pod-' + slugify(st().sub[cat]));
+      if (hasDelivery(r)) segs.push(DELIVERY_SLUG[type()]);
+      if (hasClub(r)) segs.push(inClub() ? CLUB_SLUG.yes : CLUB_SLUG.no);
+      return segs.join('/') || null;
+    },
+    match: (seg) => !!DELIVERY_OF_SLUG[seg] || seg === CLUB_SLUG.yes || seg === CLUB_SLUG.no || !!KIND_OF_SLUG[seg] || SUB_SLUG.has(seg),
+    set: (seg, r) => {
       const d = DELIVERY_OF_SLUG[seg];
       if (d) st().delivery = d;
       else if (seg === CLUB_SLUG.yes || seg === CLUB_SLUG.no) { const on = seg === CLUB_SLUG.yes; S().clubJoined = on; APP.rememberClub(on); }
+      else if (KIND_OF_SLUG[seg]) st().kind = KIND_OF_SLUG[seg];
+      else if (SUB_SLUG.has(seg)) { const cat = catOf(r || ''); if (cat) st().sub[cat] = SUB_SLUG.get(seg); }
     },
   });
   if (APP.recallClub()) S().clubJoined = true;   // wejście w kolejne zadanie z linku: klub pamiętamy na sesję
 
   // Czytelne adresy: produkt i kategoria dostają slug z nazwy (adres w raporcie z badania mówi, co to za ekran).
-  const slugify = (s) => s.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 52).replace(/-+$/, '');
   const uniq = (items, key) => { const used = new Set(), map = {}; items.forEach(x => { let s = slugify(key(x)) || x.id; if (used.has(s)) s += '-' + x.id.replace(/^[tp]-/, ''); used.add(s); map[x.id] = s; }); return map; };
-  APP.slugs('product', uniq(PRODUCTS, x => x.title));
+  const PRODUCT_SLUGS = uniq(PRODUCTS, x => x.title);
+  APP.slugs('product', PRODUCT_SLUGS); APP.slugs('koniec', PRODUCT_SLUGS);   // /app/koniec/<produkt>/<tryb klubu>
   APP.slugs('category', uniq(CATEGORIES, x => x.label));
 
   // panel deweloperski: dopisz trasy sklepu
-  APP.ROUTES.splice(APP.ROUTES.findIndex(r => r[1] === 'dashboard'), 1, ['Sklep · Strona główna', 'dashboard'], ['Sklep · Wyszukiwarka', 'search'], ['Listing · Hormony', 'category/hormony'], ['Listing · Wszystkie pakiety', 'list/packages'], ['Produkt · Badanie', 'product/t-morf-roz'], ['Produkt · Pakiet', 'product/p-tarcz'], ['Zakładka Start', 'tab/start'], ['Zakładka Wyniki', 'tab/results'], ['Zakładka Koszyk', 'tab/cart']);
+  APP.ROUTES.splice(APP.ROUTES.findIndex(r => r[1] === 'dashboard'), 1, ['Sklep · Strona główna', 'dashboard'], ['Sklep · Wyszukiwarka', 'search'], ['Listing · Hormony', 'category/hormony'], ['Listing · Wszystkie pakiety', 'list/packages'], ['Produkt · Badanie', 'product/t-morf'], ['Produkt · Pakiet', 'product/p-tarcz'], ['Zakładka Start', 'tab/start'], ['Zakładka Wyniki', 'tab/results'], ['Zakładka Koszyk', 'tab/cart']);
   APP.renderNav();
   APP.shop = { st, card, forType, catsFor, DELIVERY, tabBar, TABS };
 })();

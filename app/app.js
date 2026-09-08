@@ -395,7 +395,7 @@
     const r = current();
     // warianty zapisane w adresie (np. /app/sklep/w-domu/w-klubie) muszą być w stanie, zanim ekran się narysuje;
     // zdejmujemy je od końca, bo segmentów może być kilka, a `set` rozpoznaje je po wartości
-    for (let p = pathNow(), i = p.lastIndexOf('/'); i > 0 && variant.match(p.slice(i + 1)); p = p.slice(0, i), i = p.lastIndexOf('/')) variant.set(p.slice(i + 1));
+    for (let p = pathNow(), i = p.lastIndexOf('/'); i > 0 && variant.match(p.slice(i + 1)); p = p.slice(0, i), i = p.lastIndexOf('/')) variant.set(p.slice(i + 1), r);
     // krok onboardingu → tylko przesuń taśmę
     if (onbIndex(r) && onbIndex(lastRoute) && $('#onb-track')) { stack[stack.length - 1] = r; lastRoute = r; onbSync(); return; }
     const isBack = stack.length >= 2 && stack[stack.length - 2] === r;

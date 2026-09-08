@@ -306,8 +306,9 @@ kilkoma drogami, ale odpowiedź nie leżała na wierzchu:
 - **Przez ALAB w domu**: oba badania są dostępne w tym sposobie realizacji (chip „ALAB w domu” na listingu i w sklepie).
 - **Przez „Pokaż wszystkie badania”** na ekranie głównym również prowadzi do listingu z morfologią.
 
-W katalogu są dwa badania morfologii: „Morfologia krwi obwodowej z rozmazem” (24,80 zł, z kodem rabatowym)
-i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zauważa różnicę i którą wersję wybiera.
+W katalogu jest **jedno** badanie morfologii — „Morfologia krwi” (21,70 zł). Wariant z rozmazem został usunięty,
+bo dwie bardzo podobne pozycje rozmywały obraz w zadaniu 3. Morfologia leży **czwarta** na liście w podkategorii
+Krew (po OB, CRP i glukozie), więc nie wpada w oko od razu — uczestnik ma ją znaleźć, a nie zobaczyć na wierzchu.
 
 ### Brak wyników w wybranym sposobie realizacji (2026-09-08)
 
@@ -393,8 +394,10 @@ Kod rabatowy zostaje w kodzie warunkowo, ale dziś żaden niedostępny produkt g
   181,50 zł przy sumie 185,08 zł, czyli oszczędność na papierze — teraz 159,00 zł regularnie i 127,20 zł z kodem.
   Sprawdzone skryptem: każdy pakiet ma cenę poniżej 95% sumy składowych.
 
-Otwarte: kwota „opłaty za pobranie” na karcie produktu nadal jest bez liczby (dopisek „+ opłata za pobranie”),
-a pytanie 1.1 planu prosi o podanie ceny badania. Do rozstrzygnięcia: dopisać kwotę czy zmienić treść pytania.
+Dwa punkty z planu domknięte decyzją Jarka (2026-09-08): **Pakiet Sport** ma nie być widoczny na ekranie głównym
+sklepu i tak jest — nie jest oznaczony jako popularny, więc dochodzi się do niego przez kategorię, filtry albo
+wyszukiwarkę. **Kwota opłaty za pobranie** zostaje w prototypie bez liczby (dopisek „+ opłata za pobranie”);
+pytanie 1.1 planu trzeba więc czytać jako cenę samego badania.
 
 ### Zaślepki zakładek (test niemoderowany)
 
@@ -429,7 +432,24 @@ Tapnięcie w komórkę adresu na ekranie sklepu (oraz CTA „Zmień punkt” na 
 otwiera zaślepkę Punktu Pobrań pod adresem `/app/punkt-pobran`: belka z krzyżykiem, szkielet listy punktów
 i karta z komunikatem, w której drugie zdanie brzmi „Wróć do poprzedniego ekranu.” Wcześniej był tam snackbar.
 
-### Zadania badawcze: ekran startowy i koniec zadania
+### Zadania badawcze: arkusz z treścią, koniec zadania i adresy
+
+Kliknięcie karty zadania otwiera **arkusz z treścią zadania**: nagłówek („Zadanie 1”), tytuł, opis i dwie akcje —
+„Rozpocznij zadanie” (primary) oraz „Zamknij” (w naszym DS Button `ghost`, czyli trzeci wariant). Uczestnik ma
+instrukcję pod ręką także w prototypie, nie tylko w Useberry. Treści zadań są przepisane z różowych naklejek
+„Treść” z tablicy 11:757 i **tablica pozostaje źródłem prawdy** — gdy Maciej je zmieni, aktualizujemy `TASKS`
+w `app/app.stubs.js`.
+
+Po dodaniu do koszyka w trakcie zadania pojawia się **arkusz „Zadanie wykonane”**: zielony tick, nazwa produktu,
+zdanie o tym, że można jeszcze poklikać i wrócić przyciskiem w zakładce Koszyk, oraz akcje „Przejdź do kolejnego
+zadania” i „Przeglądaj dalej”. Arkusz nie zamyka eksploracji i pokazuje się raz na zadanie.
+
+W tym samym momencie adres zmienia się na **`/app/koniec/<produkt>/<tryb klubu>`**, na przykład
+`/app/koniec/badanie-ogolne-moczu/w-klubie`. To jest ten warunek ukończenia zadania, o który prosił Maciej:
+osobny adres per produkt i per wersja z klubem oraz bez. „Przeglądaj dalej” cicho wraca adresem na kartę produktu,
+a wejście wprost na adres końca (odświeżenie, wklejony link) rysuje kartę produktu z tym samym arkuszem.
+
+### Ekran startowy i wejście w zadanie
 
 **Ekran startowy `/app/zadania` jest wejściem do prototypu** — wpisanie `/app/` prowadzi wprost na niego, a proces
 rejestracji, logowania i onboardingu jest **schowany**: nie ma go w panelu prototypu i nie da się na niego trafić
@@ -551,6 +571,13 @@ ekranach sklepu z cenami, na karcie produktu i w koszyku, czyli tam, gdzie końc
 | **Koszyk (koniec zadania)** | `/app/zakladka/koszyk/bez-klubu` | `/app/zakladka/koszyk/w-klubie` |
 
 Ekran wyboru zadań, wejście w zadanie i ekran zgód zostają bez wariantu — tam tryb jeszcze nic nie zmienia.
+
+**Filtry też są w adresie** („przejście w pakiety z filtrów → nowy url” z tablicy). Segment pojawia się tylko
+wtedy, gdy filtr jest włączony, więc domyślne adresy zostają krótkie: rodzaj produktu jako `tylko-pakiety`
+albo `tylko-badania`, podkategoria jako `pod-<nazwa>`. Pełny przykład:
+`/app/kategoria/hormony/tylko-pakiety/pod-tarczyca/punkt-pobran/bez-klubu`. Prefiksy `tylko-` i `pod-` trzymają
+wartości filtrów rozłączne z identyfikatorami ekranów (`lista/pakiety` to inny byt niż filtr „tylko pakiety”),
+a wklejony link odtwarza oba filtry przed narysowaniem listingu.
 Adres jest źródłem prawdy w obie strony: wklejony link z `w-klubie` ustawia tryb przed narysowaniem ekranu.
 
 **Członkostwo przechodzi między zadaniami.** Kto dołączył w zadaniu 1, widzi zadania 2 i 3 już jako członek
