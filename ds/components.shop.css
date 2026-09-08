@@ -122,7 +122,9 @@
 .ds-PriceBlock { display: flex; flex-direction: column; gap: var(--space-sm); width: 100%; }
 .ds-PriceBlock__label { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); margin-bottom: 4px; }
 .ds-PriceBlock__row { display: flex; align-items: baseline; gap: var(--space-md); flex-wrap: wrap; }
-.ds-PriceBlock__current { font: 700 28px/32px var(--font-family-primary); letter-spacing: -0.02em; color: var(--functional-success); }
+.ds-PriceBlock__current { font: 700 28px/32px var(--font-family-primary); letter-spacing: -0.02em; color: var(--content-on-surface); }
+/* zielona cena = promocja z kodem rabatowym (warianty 2726:16354 vs 2726:16358); zwykła i klubowa są w onSurface */
+.ds-PriceBlock--promo .ds-PriceBlock__current { color: var(--functional-success); }
 .ds-PriceBlock__old { font: 700 var(--label-large-font-size)/var(--label-large-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); }
 .ds-PriceBlock__club { font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); color: var(--main-accent-loyalty); }
 .ds-PriceBlock__notes { display: flex; flex-direction: column; gap: var(--space-md); margin-top: var(--space-md); font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
@@ -193,3 +195,9 @@
 .ds-FilterRow::-webkit-scrollbar { display: none; }
 .ds-FilterRow > * { flex: 0 0 auto; }
 .ds-FilterRow__sep { width: 1px; height: 24px; background: var(--outline-border); margin: 0 8px; }
+
+/* Odznaka klubowa dla członka ALAB club: zamiast gradientowej zachęty jasny fiolet z tekstem w kolorze
+   akcentu lojalnościowego (tło = --main-accent-loyalty 8%, bo osobnego tokenu na tę powierzchnię nie ma). */
+.ds-BadgePremium--soft { background: var(--background-surface-loyality-subtle); border-color: transparent; box-shadow: none; color: var(--content-on-surface); }
+/* sygnet ma własny kolor z DS (Main/accent-loyalty), nie dziedziczy koloru tekstu odznaki */
+.ds-BadgePremium--soft .ds-icon { color: var(--main-accent-loyalty); }

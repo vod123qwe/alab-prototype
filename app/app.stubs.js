@@ -93,7 +93,8 @@
 
   // Start zadania renderujemy POD adresem zadania (`/app/zadanie/1`), żeby narzędzie badawcze widziało wejście.
   // Uczestnik wchodzi jako zalogowany Pacjent — rejestracji i logowania w zadaniach nie ma.
-  const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; s.clubJoined = false; s.welcomed = true; s.loggedIn = true; };
+  const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; delete s.clubFrom;
+    s.clubJoined = false; s.club = { terms: false, rodo: false }; s.welcomed = true; s.loggedIn = true; };
 
   // Wejście w zadanie wygląda jak uruchomienie aplikacji: najpierw krótki ekran ładowania (ten sam splash,
   // co przy starcie apki), potem przejście na Start. Adres przez cały czas został `/app/zadanie/N`, więc
@@ -149,7 +150,7 @@
   // (np. ekran zgód ALAB club, który ma się otwierać z karty produktu).
   APP.setHome('zadania');
   const HIDDEN = new Set(['splash', 'onboarding/1', 'onboarding/2', 'onboarding/3', 'start',
-    'register/1', 'register/2', 'register/3', 'club', 'login', 'faceid', 'reset', 'reset/sent']);
+    'register/1', 'register/2', 'register/3', 'login', 'faceid', 'reset', 'reset/sent']);   // 'club' zostaje: to podstrona sklepu
   for (let i = APP.ROUTES.length - 1; i >= 0; i--) {
     const r = APP.ROUTES[i];
     if (r[1] ? HIDDEN.has(r[1]) : /Rejestracja|Logowanie/.test(r[0])) APP.ROUTES.splice(i, 1);

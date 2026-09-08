@@ -309,6 +309,38 @@ kilkoma drogami, ale odpowiedź nie leżała na wierzchu:
 W katalogu są dwa badania morfologii: „Morfologia krwi obwodowej z rozmazem” (24,80 zł, z kodem rabatowym)
 i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zauważa różnicę i którą wersję wybiera.
 
+### ALAB club: podstrona ze zgód i tryb członka (2026-09-08)
+
+Zachęta do klubu (mały banner pod ceną i duży banner w treści karty produktu) prowadzi teraz na **ekran zgód
+ALAB club** pod adresem `/app/alab-club` — ten sam, który był w rejestracji. Zaznaczenie dwóch wymaganych zgód
+i „Dołącz do ALAB club” **przełącza tryb użytkownika** i wraca dokładnie na ekran, z którego uczestnik przyszedł,
+z potwierdzeniem w snackbarze. „Nie teraz” wraca bez dołączania. Bez zgód przycisk pokazuje błąd — to zaznaczenie
+zgody jest momentem zmiany trybu.
+
+Ceny w trybie członka zmieniają się wszędzie, 1:1 z wariantami z Figmy („Warianty • Banner PDP hero” 2726:16353,
+karta badania 2726:16368, karta pakietu 2726:16383):
+
+| | Bez klubu | W ALAB club |
+| --- | --- | --- |
+| Cena główna | cena podstawowa | cena klubowa (−5%, a przy produktach premium −40%) |
+| Cena przekreślona | tylko przy promocji z kodem | cena podstawowa |
+| Fioletowa linijka | zachęta „20,61 zł ekstra −5% w klubie” | potwierdzenie „Aktywna zniżka klubowa ekstra −5%” |
+| Karta produktu (PDP) | zachęta do klubu pod ceną | odznaka nad tytułem, bez fioletowej linijki |
+| Kolor ceny | zielony tylko przy kodzie rabatowym, inaczej onSurface | tak samo |
+
+Odznaka nad tytułem na karcie produktu ma tło `Background/surfaceLoyalitySubtle` (#f8f0ff, nowy token
+`--background-surface-loyality-subtle`) i tekst w `content/onSurface` — nie fioletowy, choć intuicja podpowiada
+inaczej; sprawdzone w masterze. Sygnet ALAB w odznace ma własny kolor `Main/accent-loyalty` i nie dziedziczy
+koloru tekstu. Zielona cena to wyłącznie sygnał promocji z kodem: wcześniej PriceBlock miał
+zieleń zawsze, teraz zieleni się przez wariant `ds-PriceBlock--promo`.
+
+**ZAŁOŻENIE do potwierdzenia:** kod rabatowy i zniżka klubowa **nie łączą się** — produkt z kodem zostaje na cenie
+z kodem, a zmienia się tylko komunikat (odznaka zamiast zachęty). Tak pokazują warianty w Figmie: w obu rzędach
+cena z kodem jest ta sama (952 zł). Gdyby miały się łączyć, wystarczy zdjąć warunek `!coded` w `priceVM`.
+
+Wejście w zadanie czyści też zgody klubowe i tryb członka, więc każdy uczestnik zaczyna poza klubem — zgodnie
+z założeniem Maćka z tablicy.
+
 ### Karta produktu niedostępnego (2026-09-08)
 
 Gdy badania lub pakietu nie da się kupić w wybranym kontekście (Punkt Pobrań / sposób realizacji), karta

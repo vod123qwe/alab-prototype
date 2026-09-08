@@ -36,13 +36,37 @@
   const plural = (n, one, few, many) => `${n} ${n === 1 ? one : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many)}`;
   const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
 
-  const clubLine = (p) => p.premium ? `${zl(p.price * 0.6)} zniżka -40% w klubie` : `${zl(p.price * 0.95)} ekstra -5% w klubie`;
-  const priceVM = (p, t = type()) => p.unavailableAt === t ? null : {
-    current: zl(p.price), old: p.old ? zl(p.old) : null, club: clubLine(p),
-    lowest: p.old ? `Najniższa cena z 30 dni: ${zl(p.lowest || p.old)}` : null,
-    note: t === 'wysylka' ? null : '+ opłata za pobranie', // wysyłka: cena stała, bez opłaty za pobranie (inventory P04d)
+  // ---------------- ceny: użytkownik podstawowy vs członek ALAB club ----------------
+  // Warianty 1:1 z „Warianty • Banner PDP hero" 2726:16353 oraz kart badania 2726:16368 i pakietu 2726:16383:
+  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł ekstra -5% w klubie",
+  //  • w klubie — cena klubowa staje się główną, podstawowa idzie w przekreślenie, a fioletowa linijka
+  //    zmienia się w POTWIERDZENIE „Aktywna zniżka klubowa ekstra -5%" (na karcie produktu dodatkowo odznaka).
+  // ZAŁOŻENIE (do potwierdzenia): kod rabatowy i zniżka klubowa NIE łączą się — produkt z kodem zostaje na
+  // cenie z kodem, zmienia się tylko komunikat. Tak pokazują to warianty w Figmie (952 zł w obu rzędach).
+  const inClub = () => !!S().clubJoined;
+  const clubPrice = (p) => p.premium ? p.price * 0.6 : p.price * 0.95;
+  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} zniżka -40% w klubie` : `${zl(clubPrice(p))} ekstra -5% w klubie`;
+  const clubActive = (p) => p.premium ? 'Aktywna zniżka klubowa -40%' : 'Aktywna zniżka klubowa ekstra -5%';
+  // hero = karta produktu na PDP: tam komunikat o zniżce klubowej niesie ODZNAKA nad tytułem, więc fioletowa
+  // linijka pod ceną znika (2726:16358); na kartach listingu odznaki nie ma, więc linijka zostaje (2726:16368).
+  const priceVM = (p, t = type(), hero = false) => {
+    if (p.unavailableAt === t) return null;
+    const club = inClub(), coded = !!p.code, clubMain = club && !coded;
+    return {
+      current: zl(clubMain ? clubPrice(p) : p.price),
+      old: clubMain ? zl(p.price) : (p.old ? zl(p.old) : null),
+      club: club ? (hero ? null : clubActive(p)) : clubOffer(p),
+      promo: coded,   // zielona cena tylko przy promocji z kodem
+      lowest: p.old ? `Najniższa cena z 30 dni: ${zl(p.lowest || p.old)}` : null,
+      note: t === 'wysylka' ? null : '+ opłata za pobranie', // wysyłka: cena stała, bez opłaty za pobranie (inventory P04d)
+    };
   };
   const badgeVM = (p, t = type()) => p.unavailableAt === t ? { basic: 'Niedostępne w wybranym Punkcie Pobrań' } : p.code ? { code: { discount: p.code.discount, text: `z kodem ${p.code.code}` } } : p.premium ? { premium: 'Niższa cena z ALAB club' } : null;
+  // Odznaka nad tytułem na karcie produktu: dla członka klubu potwierdzenie zniżki, dla pozostałych
+  // zachęta przy produktach z niższą ceną klubową, a przy niedostępnym — informacja o punkcie.
+  const heroBadge = (p, un) => un ? DS.BadgeBasic({ text: 'Niedostępne w wybranym Punkcie Pobrań' })
+    : inClub() ? DS.BadgePremium({ text: clubActive(p), tone: 'soft' })
+      : p.premium ? DS.BadgePremium({ text: 'Niższa cena z ALAB club' }) : '';
   const card = (p) => {
     const un = p.unavailableAt === type();
     return DS.ProductCard({ id: p.id, kind: p.kind, meta: p.kind === 'package' ? `Liczba badań: ${p.components.length}` : `Materiał: ${p.material}`, title: p.title,
@@ -193,7 +217,7 @@
   SCREENS['product/:id'] = (id) => {
     const p = byId(id); if (!p) return SCREENS.dashboard();
     const isPkg = p.kind === 'package', un = p.unavailableAt === type(), club = !!S().clubJoined;
-    const price = priceVM(p);
+    const price = priceVM(p, type(), true);
     const where = TYPES.filter(t => p.types.includes(t)).map(t => DELIVERY[t].label).join(', ');
     const comps = isPkg ? p.components.map(byId).filter(Boolean) : [];
     // „Kupując w pakiecie, oszczędzasz”: pakiety zawierające to badanie, a gdy brak — pakiety z tej samej kategorii
@@ -208,9 +232,10 @@
         <div class="product__heroSpacer"></div>
         <div class="product__content">
           <div class="ds ds-Surface product__main">
+            ${(() => { const b = heroBadge(p, un); return b ? `<div class="product__badge">${b}</div>` : ''; })()}
             <h1 class="product__title">${esc(p.title)}</h1>
             ${price ? DS.PriceBlock({ label: isPkg ? 'Cena za pakiet' : 'Cena za badanie', ...price, lowest: price.lowest && type() !== 'wysylka' ? price.lowest + ' dla wybranego Punktu Pobrań' : price.lowest })
-              : `<div class="product__unavailable">${DS.BadgeBasic({ text: 'Niedostępne w wybranym Punkcie Pobrań' })}<p class="product__unavailableHint">Zmień Punkt Pobrań lub sposób realizacji, żeby zobaczyć cenę.</p></div>`}
+              : `<p class="product__unavailableHint">Cenę zobaczysz po wybraniu punktu, w którym wykonujemy to badanie.</p>`}
             <!-- Gdy produktu nie da się kupić w wybranym kontekście, nie zachęcamy do ALAB club: zniżka dotyczyłaby
                  czegoś, czego nie można dodać do koszyka, a jedyne sensowne działanie to zmiana Punktu Pobrań
                  lub sposobu realizacji. Duży banner klubu niżej w treści zostaje. -->
@@ -373,7 +398,9 @@
     'full-desc': () => info('Pełny opis — treść z API w kolejnym etapie'),
     'faq': () => info('FAQ badania — w kolejnym etapie'),
     'copy-code': (el) => { const code = el.dataset.code; (navigator.clipboard?.writeText(code) || Promise.resolve()).then(() => snack(`Skopiowano kod ${code}`, 'success', 110), () => info(`Kod: ${code}`)); },
-    'club-promo': () => info('Dołączenie do ALAB club — Moduł 9, w kolejnym etapie'),
+    // Zachęta do klubu (mały banner pod ceną i duży banner w treści) otwiera ekran zgód ALAB club.
+    // Zapamiętujemy, z którego ekranu wchodzimy, żeby po decyzji wrócić dokładnie tam — z nowymi cenami.
+    'club-promo': () => { S().clubFrom = current(); go('club'); },
   });
   document.addEventListener('click', (e) => {
     const tab = e.target.closest('[data-tab]'); if (tab && !tab.classList.contains('screen')) { const t = TABS.find(x => x.id === tab.dataset.tab); if (t) { const sc = $('#screen .shop__scroll'); if (sc) st().scroll[current()] = sc.scrollTop; if (current() !== t.route) go(t.route); } return; }

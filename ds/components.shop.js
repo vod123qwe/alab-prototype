@@ -51,7 +51,10 @@
   // ---------- Badges ----------
   DS.BadgePrice = ({ label = '-20%' } = {}) => `<span class="ds ds-BadgePrice">${esc(label)}</span>`;
   DS.BadgeCode = ({ discount = '-20%', text = 'z kodem JESIEN20' } = {}) => `<span class="ds ds-BadgeCode">${DS.BadgePrice({ label: discount })}<span>${esc(text)}</span></span>`;
-  DS.BadgePremium = ({ text = 'Niższa cena z ALAB club' } = {}) => `<span class="ds ds-BadgePremium">${DS.icon('alabek', 16)}<span>${esc(text)}</span></span>`;
+  // tone: 'solid' = zachęta dla użytkownika bez klubu (gradient), 'soft' = potwierdzenie dla członka klubu
+  // (jasny fiolet), wg wariantów „Warianty • Banner PDP hero" 2726:16353 w pliku Alab • Design.
+  DS.BadgePremium = ({ text = 'Niższa cena z ALAB club', tone = 'solid' } = {}) =>
+    `<span class="${cls('ds', 'ds-BadgePremium', tone === 'soft' && 'ds-BadgePremium--soft')}">${DS.icon('alabek', 16)}<span>${esc(text)}</span></span>`;
   DS.BadgeBasic = ({ text = 'Niedostępne w wybranym Punkcie Pobrań', icon = 'unavailable' } = {}) => `<span class="ds ds-BadgeBasic">${DS.icon(icon, 16)}<span>${esc(text)}</span></span>`;
 
   // ---------- ProductCard (CellPackage / CellTest) ----------
@@ -73,8 +76,8 @@
   DS.Surface = ({ label, content = '', attrs: a } = {}) =>
     `<section class="ds ds-Surface" ${attrs(a)}>${label ? `<p class="ds-Surface__label">${esc(label)}</p>` : ''}${content}</section>`;
   // PriceBlock: „Cena za badanie” + cena (zielona) + przekreślona + cena klubowa + Omnibus + „+ opłata za pobranie ⓘ”
-  DS.PriceBlock = ({ label = 'Cena za badanie', current = '', old, club, lowest, note } = {}) =>
-    `<div class="ds ds-PriceBlock"><p class="ds-PriceBlock__label">${esc(label)}</p>` +
+  DS.PriceBlock = ({ label = 'Cena za badanie', current = '', old, club, lowest, note, promo = false } = {}) =>
+    `<div class="${cls('ds', 'ds-PriceBlock', promo && 'ds-PriceBlock--promo')}"><p class="ds-PriceBlock__label">${esc(label)}</p>` +
     `<div class="ds-PriceBlock__row"><span class="ds-PriceBlock__current">${esc(current)}</span>${old ? `<s class="ds-PriceBlock__old">${esc(old)}</s>` : ''}</div>` +
     (club ? `<p class="ds-PriceBlock__club">${esc(club)}</p>` : '') +
     ((lowest || note) ? `<div class="ds-PriceBlock__notes">${lowest ? `<p>${esc(lowest)}</p>` : ''}${note ? `<p class="ds-PriceBlock__note">${esc(note)}${DS.icon('info-circle', 16)}</p>` : ''}</div>` : '') + `</div>`;

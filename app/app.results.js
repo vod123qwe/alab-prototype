@@ -132,9 +132,9 @@ W gotowej wersji znajdziesz tu ${w.about}.` })}</div>
     'faq': () => faqSheet(),
     'open-webview': (el) => go('webview/' + (el.dataset.web || 'desc')),
   });
-  // PDP: „Pełny opis badania” otwiera webview zamiast snackbara
+  // PDP: „Pełny opis badania” otwiera webview zamiast snackbara.
+  // Zachęta do ALAB club prowadzi na ekran zgód (app.shop.js), nie na webview — dlatego tu jej nie nadpisujemy.
   ACTIONS['full-desc'] = () => go('webview/desc');
-  ACTIONS['club-promo'] = () => go('webview/club');
 
   document.addEventListener('click', (e) => {
     // akordeony wyniku

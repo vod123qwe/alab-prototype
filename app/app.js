@@ -528,9 +528,13 @@
       let ok = true;
       ['terms', 'rodo'].forEach(k => { if (!S.club[k]) { $('#club-' + k)?.classList.add('is-error'); $('#club-' + k + ' .ds-Checkbox')?.classList.add('is-error'); ok = false; } });
       if (!ok) { snack('Zaznacz wymagane zgody, żeby dołączyć do ALAB club', 'error', 190); $('#club-terms')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
-      S.clubJoined = true; S.loggedIn = true; go('dashboard');
+      S.clubJoined = true; S.loggedIn = true;
+      const back1 = S.clubFrom; delete S.clubFrom;
+      go(back1 || 'dashboard');
+      // wejście z karty produktu: potwierdzamy zmianę trybu, bo ceny na ekranie zmieniają się „same"
+      if (back1) setTimeout(() => snack('Witaj w ALAB club. Ceny klubowe są już aktywne.', 'success', 110), 420);
     },
-    'club-skip': () => { S.clubJoined = false; S.loggedIn = true; go('dashboard'); },
+    'club-skip': () => { S.clubJoined = false; S.loggedIn = true; const b = S.clubFrom; delete S.clubFrom; go(b || 'dashboard'); },
     'faceid-on': () => faceIdOverlay(() => { S.faceId = true; go('dashboard'); }),
     'faceid-skip': () => { S.faceId = false; go('dashboard'); },
     login: () => {

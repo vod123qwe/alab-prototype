@@ -12,6 +12,7 @@
   --main-primary: #04387c;
   --main-accent: #096bcd;
   --main-accent-loyalty: #8401cb;
+  --background-surface-loyality-subtle: #f8f0ff;   /* tło odznaki klubowej; pisownia jak zmienna w DS */
 
   /* --- Background --- */
   --background-surface: #ffffff;

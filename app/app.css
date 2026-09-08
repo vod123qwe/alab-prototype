@@ -418,3 +418,6 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* PDP: ikony wierszy w kartach („Opis badania”, „Pełny opis”, „FAQ”) w kolorze akcentu — tak jak wiersze
    CellInfo pod nimi. Zawężone do karty produktu, żeby nie zmieniać Cell w arkuszach i na listach. */
 .product .ds-Surface .ds-Cell > .ds-icon { color: var(--main-accent); }
+
+/* Odznaka nad tytułem na karcie produktu (warianty 2726:16353): wyrównana do lewej, nie rozciąga się na kartę */
+.product__badge { display: flex; flex: 0 0 auto; }
