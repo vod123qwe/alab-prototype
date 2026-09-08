@@ -367,3 +367,6 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .stub__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; color: var(--content-on-surface); }
 .stub__desc { display: flex; flex-direction: column; gap: 18px; font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); }
 .stub__descStrong { color: var(--content-on-surface); }
+
+/* karta szkieletu: odwzorowuje realny kontener (białe tło + obwódka), żeby lista nie była jednolitą szarą plamą */
+.stub__cardSkel { display: flex; flex-direction: column; gap: 24px; padding: 24px 24px 20px; background: var(--background-surface); border: 1px solid var(--outline-border); }

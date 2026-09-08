@@ -59,7 +59,7 @@
   ];
   TABS.forEach(t => FADE_ROUTES.add(t.route)); FADE_ROUTES.add('search');
   // badge: Koszyk = liczba pozycji, Wyniki = liczba nowych wyników (app.results.js)
-  const tabBar = (active) => DS.BottomTabBar({ active, items: TABS.map(t => ({ ...t, badge: t.id === 'cart' ? (st().cart || null) : (t.id === 'results' ? ((APP.results && APP.results.newCount()) || null) : null) })), });
+  const tabBar = (active) => DS.BottomTabBar({ active, items: TABS.map(t => ({ ...t, badge: t.id === 'cart' ? (st().cart || null) : (t.id === 'results' && !APP.resultsStub ? ((APP.results && APP.results.newCount()) || null) : null) })), });
   const chips = (style) => TYPES.map(id => DS.FilterChip({ label: DELIVERY[id].label, selected: type() === id, style, attrs: { 'data-delivery': id } })).join('');
   const locCell = () => { const c = DELIVERY[type()].cell; return DS.CellOrderTypeStatus({ icon: c.icon, title: c.title, status: c.status, attrs: c.action ? { 'data-action': c.action } : { tabindex: '-1' } }); };
   const HOME_TILES = 6; // siatka: > 6 kategorii → 5 + „Wszystkie kategorie”, ≤ 6 → wszystkie

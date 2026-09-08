@@ -10,6 +10,8 @@
   // pojedynczy klocek szkieletu; r = promień (domyślnie pigułka)
   const sk = (w, h, r = 999) => `<span class="stub__skel" style="width:${w};height:${h}px;border-radius:${r}px"></span>`;
   const row = (content, gap = 12) => `<div class="stub__row" style="gap:${gap}px">${content}</div>`;
+  // karta szkieletu: biały kontener z obwódką (jak CellTestResult / SurfaceSlot) i klockami w środku
+  const skCard = (inner, r = 28) => `<div class="stub__cardSkel" style="border-radius:${r}px">${inner}</div>`;
 
   const notice = (title) => `<div class="stub__notice"><div class="stub__card">` +
     DS.ButtonTiny({ label: 'Niedostępne w badaniu', variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
@@ -29,11 +31,13 @@
       <div class="stub__gap"></div>
       <div class="stub__col" style="gap:12px">${sk('62px', 21)}${sk('222px', 21)}${sk('100%', 64, 16)}</div>`;
 
-  // Wyniki — szkielet listy: tytuł, nagłówek roku i trzy karty wyniku (radius 28 jak CellTestResult)
+  // Wyniki — szkielet listy: tytuł, nagłówek roku i trzy karty wyniku z zawartością (tytuł, osoba, data, pill statusu)
+  const resultCardSkel = () => skCard(`<div class="stub__col" style="gap:12px">${sk('70%', 20)}${sk('45%', 16)}</div>` +
+    `<div class="stub__col" style="gap:16px">${sk('30%', 12)}${sk('148px', 32)}</div>`);
   const resultsSkeleton = `${sk('200px', 40, 16)}
       <div class="stub__gap stub__gap--sm"></div>
       ${sk('44px', 20)}
-      <div class="stub__col" style="gap:12px">${sk('100%', 168, 28)}${sk('100%', 168, 28)}${sk('100%', 168, 28)}</div>`;
+      <div class="stub__col" style="gap:12px">${resultCardSkel()}${resultCardSkel()}${resultCardSkel()}</div>`;
 
   // Koszyk — szkielet: tytuł, trzy pozycje i blok podsumowania
   const cartSkeleton = `${sk('140px', 40, 16)}
@@ -45,6 +49,8 @@
   // Pełne Wyniki zostają w prototypie, ale poza ścieżką badania (podgląd z panelu)
   const fullResults = SCREENS['tab/results'];
   if (fullResults) SCREENS['results-full'] = fullResults;
+
+  APP.resultsStub = true;   // zakładka Wyniki jest zaślepką → bez licznika nowych wyników w dolnej nawigacji
 
   SCREENS['tab/start'] = () => stub('start', 'Ekran startowy', startSkeleton);
   SCREENS['tab/results'] = () => stub('results', 'Wyniki badań', resultsSkeleton);

@@ -279,6 +279,10 @@ ekranu (klocki w Background/surfaceSecondary), nad nim wyśrodkowana karta z roz
 rgba(0,0,0,.06)) z pigułką „Niedostępne w badaniu”, tytułem (display/medium) i dwiema linijkami opisu:
 „Ta część aplikacji jest w przygotowaniu.” oraz „Przejdź do innej zakładki.” Karta ma 335×262 px, dokładnie jak w Figmie.
 
+Szkielet Wyników odwzorowuje karty wyniku jako białe kontenery z obwódką i klockami w środku (tytuł, osoba,
+data, pill statusu), a nie jednolite szare bloki. Zakładka Wyniki nie pokazuje licznika nowych wyników, bo jest
+zaślepką — licznik wróci sam, gdy zdejmiemy `APP.resultsStub`. Licznik Koszyka działa dalej.
+
 Tytuły: „Ekran startowy”, „Wyniki badań”, „Koszyk”. Szkielet Startu jest 1:1 z wzoru; szkielety Wyników
 i Koszyka odwzorowują ich własne układy (lista kart wyniku, pozycje koszyka z podsumowaniem) — to nasze założenie,
 bo wzór był tylko dla Startu.
