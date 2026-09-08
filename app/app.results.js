@@ -96,11 +96,13 @@
 
   // ---------------- webview (placeholder treści z serwisu ALAB) ----------------
   SCREENS['webview/:id'] = (key) => {
-    const w = WEBVIEWS[key] || { title: 'Informacje' };
+    const w = WEBVIEWS[key] || { title: 'Informacje', about: 'treść tej części aplikacji' };
     return `<div class="screen webview">
       <div class="screen__top">${DS.TopBar({ leading: 'x-close', title: w.title })}</div>
-      <div class="screen__body webview__body">${DS.ScreenState({ title: 'Webview',
-        body: 'Placeholder dla ekranów z webview. Zachowujemy jedynie górną belkę nawigacyjną, reszta to pobrana treść.' })}</div>
+      <div class="screen__body webview__body">${DS.ScreenState({ title: 'Tu wczytamy stronę ALAB',
+        body: `Ta część aplikacji pokazuje treść z serwisu ALAB w oknie aplikacji — zostaje tylko belka u góry z tytułem.
+
+W gotowej wersji znajdziesz tu ${w.about}.` })}</div>
       ${DS.HomeIndicator()}
     </div>`;
   };

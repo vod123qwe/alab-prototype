@@ -11,8 +11,6 @@
   // wszystkie klocki mają promień 12 z CSS — wzór nie różnicuje go per element
   const sk = (w, h) => `<span class="stub__skel" style="width:${w};height:${h}px"></span>`;
   const row = (content, gap = 12) => `<div class="stub__row" style="gap:${gap}px">${content}</div>`;
-  // karta szkieletu: biały kontener z obwódką (jak CellTestResult / SurfaceSlot) i klockami w środku
-  const skCard = (inner) => `<div class="stub__cardSkel">${inner}</div>`;
 
   const notice = (title, second = 'Przejdź do innej zakładki.', action = '') => `<div class="stub__notice"><div class="stub__card">` +
     `<div class="stub__group">` +
@@ -33,13 +31,15 @@
       <div class="stub__gap"></div>
       <div class="stub__col" style="gap:12px">${sk('62px', 21)}${sk('222px', 21)}${sk('100%', 64)}</div>`;
 
-  // Wyniki — szkielet listy: tytuł, nagłówek roku i trzy karty wyniku z zawartością (tytuł, osoba, data, pill statusu)
-  const resultCardSkel = () => skCard(`<div class="stub__col" style="gap:12px">${sk('70%', 20)}${sk('45%', 16)}</div>` +
-    `<div class="stub__col" style="gap:16px">${sk('30%', 12)}${sk('148px', 32)}</div>`);
+  // Wyniki — szkielet listy BEZ ramek: tytuł, nagłówek roku i trzy grupy klocków (tytuł, podtytuł, pill statusu).
+  // Wcześniej klocki siedziały w białych kartach z obwódką i cała lista zlewała się w jedną plamę — teraz
+  // grupy rozdziela duży odstęp, więc od razu widać, że to trzy pozycje listy.
+  const resultRowSkel = () => `<div class="stub__col" style="gap:14px">${sk('70%', 20)}${sk('45%', 16)}${sk('148px', 32)}</div>`;
   const resultsSkeleton = `${sk('200px', 40)}
       <div class="stub__gap stub__gap--sm"></div>
       ${sk('44px', 20)}
-      <div class="stub__col" style="gap:12px">${resultCardSkel()}${resultCardSkel()}${resultCardSkel()}</div>`;
+      <div class="stub__gap stub__gap--sm"></div>
+      <div class="stub__col" style="gap:44px">${resultRowSkel()}${resultRowSkel()}${resultRowSkel()}</div>`;
 
   // Koszyk — szkielet: tytuł, trzy pozycje i blok podsumowania
   const cartSkeleton = `${sk('140px', 40)}

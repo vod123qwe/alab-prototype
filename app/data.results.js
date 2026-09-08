@@ -89,12 +89,14 @@
     { id: 'q4', q: 'Ile mam czasu na wykonanie badania?', a: 'Na wykonanie opłaconego badania masz 60 dni od zakupu. Termin znajdziesz w szczegółach zamówienia, a przed jego upływem przypomnimy Ci o wizycie w Punkcie Pobrań.' },
   ];
 
-  // Ekrany otwierane jako webview (treść pobierana ze strony ALAB — w prototypie placeholder)
+  // Ekrany otwierane jako webview (treść pobierana ze strony ALAB — w prototypie zaślepka).
+  // `about` = co znajdzie się w tej przestrzeni w gotowej aplikacji; wchodzi do treści zaślepki,
+  // żeby uczestnik badania wiedział, gdzie trafił, a nie widział samego słowa „placeholder”.
   const WEBVIEWS = {
-    desc: { title: 'Opis badania' },
-    faq: { title: 'Najczęstsze pytania' },
-    club: { title: 'ALAB club' },
-    terms: { title: 'Regulamin' },
+    desc: { title: 'Opis badania', about: 'pełny opis badania: po co się je wykonuje, jak przygotować się do pobrania i jak czytać wynik' },
+    faq: { title: 'Najczęstsze pytania', about: 'odpowiedzi na pytania, które Pacjenci zadają najczęściej: przygotowanie, czas oczekiwania i interpretacja wyniku' },
+    club: { title: 'ALAB club', about: 'zasady ALAB club: zniżki, voucher, oferta urodzinowa i warunki uczestnictwa' },
+    terms: { title: 'Regulamin', about: 'Regulamin aplikacji i Politykę prywatności w pełnej wersji' },
   };
 
   const isOk = (x) => x.status === 'ok' || x.status === 'neg';

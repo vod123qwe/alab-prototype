@@ -347,7 +347,8 @@ a pytanie 1.1 planu prosi o podanie ceny badania. Do rozstrzygnięcia: dopisać 
 
 Start, Wyniki i Koszyk to zaślepki wg wzoru „Rejestracja - krok 8” 3136:31878. Wartości 1:1 z Figmy:
 
-- **klocki szkieletu**: Background/surfaceQuaternary (#eaf0f9), promień 12 px dla każdego klocka,
+- **klocki szkieletu**: Background/surfaceQuaternary (#eaf0f9), promień 12 px dla każdego klocka, bez ramek
+  (klocki w białych kartach z obwódką zlewały się w plamę — pozycje listy Wyników rozdziela teraz odstęp 44 px),
 - **karta**: szerokość 335, promień 44, padding 48/20/36, gap 24 (grupa tekstu i przycisk), tło rgba(255,255,255,.01),
   rozmycie 22, cień 0 4 60 rgba(33,55,163,.1), środek 13 px nad środkiem ekranu,
 - **wnętrze karty**: pigułka „Niedostępne w badaniu” i tekst jako jedna grupa z gapem 20, tytuł (display/medium)
@@ -407,6 +408,11 @@ numerami to jedna linijka w tablicy `TASKS`.
   i po wejściu wprost z linku — Useberry może linkować od razu w `/app/zadanie/2`.
 - Zaślepka Koszyka ma pod tekstem przycisk **„Zakończ zadanie”**, który prowadzi na ekran wyboru zadań.
   Drugie zdanie w karcie brzmi „Jeśli zadanie jest skończone, kliknij poniżej.”
+
+Webview (`/app/strona/...`) nie mówi już „placeholder”: belka trzyma tytuł przestrzeni („Opis badania”,
+„Najczęstsze pytania”, „ALAB club”, „Regulamin”), a treść wyjaśnia, że ta część pokazuje stronę ALAB w oknie
+aplikacji, i wymienia, co znajdzie się pod nią w gotowej wersji. Opisy są w polu `about` w `app/data.results.js`,
+więc nowy webview dopisuje się jedną linijką.
 
 Otwarte: pytanie 1.1 z planu badawczego („ile zapłacisz za to badanie”) nie ma odpowiedzi w koszyku, bo koszyk
 został zaślepką. Uczestnik musi odczytać kwotę z karty produktu, gdzie widnieje cena i dopisek „+ opłata za pobranie”
