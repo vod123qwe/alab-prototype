@@ -7,7 +7,7 @@ Trzy warstwy, jeden zestaw komponentów:
 |---|---|---|
 | **DS w kodzie** | `ds/` | tokeny (`tokens.css`), komponenty (`components.css` + `components.js`), ikony (`icons.js`), assety z Figmy (`assets/`) |
 | **Storybook** | `storybook/index.html` | katalog fundamentów i komponentów z playgroundem, matrycą wariantów i tabelą props |
-| **Prototyp** | `app/index.html` | ścieżka Splash → Onboarding → Start → Rejestracja (3 kroki) → Zgody ALAB club → Face ID → Dashboard, plus Logowanie i Reset hasła |
+| **Prototyp** | `app/index.html` | ścieżka Splash → Onboarding → Start → Rejestracja (3 kroki) → Zgody ALAB club → Dashboard; Logowanie → zachęta o biometrię → Dashboard; plus Reset hasła |
 | Sklep (starszy) | `index.html` | pierwsza, responsywna wersja ekranu sklepu (poza prototypem; zostawiona dla porównania) |
 
 ## Uruchomienie
@@ -243,3 +243,12 @@ Nowe komponenty DS (w storybooku): `CellTestResult`, `BadgeStatus`, `YearRule`, 
   z marginesem 5% (zgodnie z opisem komponentu w DS 2483:41824).
 - Daty piszemy z miesiącem z małej litery (leksykon ALAB); listing w Figmie ma „12 Marca 2026”.
 - „Udostępnij” i „Pobierz PDF” pokazują snackbar — to funkcje systemowe, poza zakresem prototypu.
+
+### Biometria (2026-09-07)
+
+Zachęta „Loguj się szybciej” pojawia się **po logowaniu**, nie w rejestracji — tak jak w docelowym flow.
+Pytamy raz: dopóki Pacjent nie zdecyduje (`faceId === null`), ekran pokazuje się po każdym poprawnym logowaniu;
+po wyborze („Włącz Face ID” albo „Nie teraz”) logowanie prowadzi prosto na dashboard. Rejestracja kończy się
+na zgodach ALAB club i od razu wchodzi na dashboard z powitalnym snackbarem (przy okazji poprawione:
+rejestracja ustawia teraz stan zalogowania, wcześniej po rejestracji Pacjent formalnie nie był zalogowany).
+

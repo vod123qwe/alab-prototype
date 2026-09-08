@@ -193,6 +193,7 @@
   };
 
   // ---- Face ID (K4 zachęta) ----
+  // Zachęta do biometrii pojawia się PO LOGOWANIU (nie w rejestracji) — pytamy raz, dopóki Pacjent nie zdecyduje
   SCREENS.faceid = () => `<div class="screen"><div class="screen__top">${DS.TopBar({})}</div>
     <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%)">${DS.ScreenState({ asset: A + 'il_phone_tick.png', title: 'Loguj się szybciej', body: 'Wchodź do aplikacji odciskiem palca albo twarzą.\n\nHasło zostaje w zapasie, na wypadek gdyby biometria nie zadziałała.', buttons: [DS.Button({ label: 'Włącz Face ID', block: true, attrs: { 'data-action': 'faceid-on' } }), DS.Button({ label: 'Nie teraz', type: 'secondary', block: true, attrs: { 'data-action': 'faceid-skip' } })] })}</div>
     <div class="screen__bottom">${DS.HomeIndicator()}</div></div>`;
@@ -244,8 +245,8 @@
   // ---------------- router ----------------
   const ROUTES = [
     ['Splash', 'splash'], ['Onboarding 1/3', 'onboarding/1'], ['Onboarding 2/3', 'onboarding/2'], ['Onboarding 3/3', 'onboarding/3'], ['Start', 'start'],
-    ['— Rejestracja'], ['Krok 1 · Dane logowania', 'register/1'], ['Krok 2 · Kod SMS', 'register/2'], ['Krok 3 · Dane podstawowe', 'register/3'], ['Zgody ALAB club', 'club'], ['Zachęta Face ID', 'faceid'],
-    ['— Logowanie'], ['Zaloguj się', 'login'], ['Reset hasła', 'reset'], ['Sprawdź skrzynkę', 'reset/sent'],
+    ['— Rejestracja'], ['Krok 1 · Dane logowania', 'register/1'], ['Krok 2 · Kod SMS', 'register/2'], ['Krok 3 · Dane podstawowe', 'register/3'], ['Zgody ALAB club', 'club'],
+    ['— Logowanie'], ['Zaloguj się', 'login'], ['Zachęta Face ID (po logowaniu)', 'faceid'], ['Reset hasła', 'reset'], ['Sprawdź skrzynkę', 'reset/sent'],
     ['— Aplikacja'], ['Dashboard (sklep)', 'dashboard'],
   ];
   const current = () => location.hash.replace(/^#\/?/, '') || 'splash';
@@ -430,9 +431,9 @@
       let ok = true;
       ['terms', 'rodo'].forEach(k => { if (!S.club[k]) { $('#club-' + k)?.classList.add('is-error'); $('#club-' + k + ' .ds-Checkbox')?.classList.add('is-error'); ok = false; } });
       if (!ok) { snack('Zaznacz wymagane zgody, żeby dołączyć do ALAB club', 'error', 190); $('#club-terms')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
-      S.clubJoined = true; go('faceid');
+      S.clubJoined = true; S.loggedIn = true; go('dashboard');
     },
-    'club-skip': () => { S.clubJoined = false; go('faceid'); },
+    'club-skip': () => { S.clubJoined = false; S.loggedIn = true; go('dashboard'); },
     'faceid-on': () => faceIdOverlay(() => { S.faceId = true; go('dashboard'); }),
     'faceid-skip': () => { S.faceId = false; go('dashboard'); },
     login: () => {
