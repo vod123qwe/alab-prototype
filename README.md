@@ -272,3 +272,17 @@ kilkoma drogami, ale odpowiedź nie leżała na wierzchu:
 W katalogu są dwa badania morfologii: „Morfologia krwi obwodowej z rozmazem” (24,80 zł, z kodem rabatowym)
 i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zauważa różnicę i którą wersję wybiera.
 
+### Zaślepki zakładek (test niemoderowany)
+
+Start, Wyniki i Koszyk to zaślepki wg wzoru „Rejestracja - krok 8” 3136:31878: pod spodem szkielet układu
+ekranu (klocki w Background/surfaceSecondary), nad nim wyśrodkowana karta z rozmyciem (radius 44, cień 0 4 60
+rgba(0,0,0,.06)) z pigułką „Niedostępne w badaniu”, tytułem (display/medium) i dwiema linijkami opisu:
+„Ta część aplikacji jest w przygotowaniu.” oraz „Przejdź do innej zakładki.” Karta ma 335×262 px, dokładnie jak w Figmie.
+
+Tytuły: „Ekran startowy”, „Wyniki badań”, „Koszyk”. Szkielet Startu jest 1:1 z wzoru; szkielety Wyników
+i Koszyka odwzorowują ich własne układy (lista kart wyniku, pozycje koszyka z podsumowaniem) — to nasze założenie,
+bo wzór był tylko dla Startu.
+
+Pełny moduł Wyników nie został usunięty — jest pod trasą `#/results-full` (poza ścieżką badania,
+wejście z panelu prototypu). Kod: `app/app.stubs.js`.
+

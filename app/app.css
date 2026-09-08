@@ -347,3 +347,23 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .result .ds-SwitchableTabRow, .result .result__groups, .result .result__more, .result .ds-ToastMessage { position: relative; z-index: 1; }
 .result .screen__top .ds-TopBar__subtitle { opacity: 0; max-height: 0; overflow: hidden; transform: translateY(-4px); transition: opacity .22s ease, max-height .28s cubic-bezier(.32,.72,0,1), transform .28s cubic-bezier(.32,.72,0,1); }
 .result .screen__top.is-summary .ds-TopBar__subtitle { opacity: 1; max-height: 20px; transform: none; }
+
+/* ------------------------------------------------------------
+   Zaślepki zakładek (test niemoderowany) — wzór „Rejestracja - krok 8” 3136:31878:
+   szkielet układu pod spodem, nad nim wyśrodkowana karta z rozmyciem i komunikatem.
+   ------------------------------------------------------------ */
+.stub__body { gap: 0; padding: 30px 24px 120px; }
+.stub__skel { display: block; flex: 0 0 auto; background: var(--background-surface-secondary); }
+.stub__row { display: flex; align-items: flex-start; }
+.stub__col { display: flex; flex-direction: column; gap: 20px; min-width: 0; flex: 1 1 auto; }
+.stub__row + .stub__row { margin-top: 34px; }
+.stub__gap { height: 56px; flex: 0 0 auto; }
+.stub__gap--sm { height: 24px; }
+.stub__notice { position: absolute; left: 20px; right: 20px; top: 50%; transform: translateY(-50%); z-index: 4; pointer-events: none; }
+.stub__card { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 48px 4px; border-radius: 44px;
+  background: rgba(255, 255, 255, .1); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 4px 60px rgba(0, 0, 0, .06); }
+.stub__card .ds-ButtonTiny { background: var(--main-primary); pointer-events: none; }
+.stub__text { display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: center; }
+.stub__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; color: var(--content-on-surface); }
+.stub__desc { display: flex; flex-direction: column; gap: 18px; font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); }
+.stub__descStrong { color: var(--content-on-surface); }

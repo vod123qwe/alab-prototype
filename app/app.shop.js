@@ -100,16 +100,7 @@
       </div>
     </div>`;
 
-  // Zakładki bez własnych ekranów w Figmie → lekkie placeholdery na tym samym tab barze
-  const tabPlaceholder = (id, title, body, asset) => `<div class="screen shop" data-tab="${id}">
-      <div class="screen__top">${DS.TopBar({ leading: false, title })}</div>
-      <div class="screen__body shop__scroll" style="padding-bottom:120px">${DS.ScreenState({ asset: A + asset, title, body })}</div></div>`;
-  SCREENS['tab/start'] = () => tabPlaceholder('start', 'Dzień dobry', 'Ekran Start (dashboard) powstanie na bazie Modułu 2. W prototypie pokazujemy tu ścieżkę zakupową w zakładce Sklep.', 'il_phone_tick.png');
-  SCREENS['tab/cart'] = () => `<div class="screen shop" data-tab="cart">
-      <div class="screen__top">${DS.TopBar({ leading: false, title: 'Koszyk', subtitle: st().cart ? plural(st().cart, 'pozycja', 'pozycje', 'pozycji') : null })}</div>
-      <div class="screen__body shop__scroll" style="padding-bottom:120px">${st().cart
-        ? `<div class="stack-12">${Object.entries(st().added).map(([id, n]) => { const p = byId(id); return DS.Cell({ icon: p.kind === 'package' ? 'file-check' : 'test-tube', title: p.title, subtitle: `${zl(p.price)}${n > 1 ? ` • ${n} szt.` : ''}`, attrs: { 'data-open': p.id } }); }).join('')}</div>`
-        : DS.ScreenState({ asset: A + 'il_mail_sent.png', title: 'Koszyk jest pusty', body: 'Dodaj badania lub pakiety w zakładce Sklep.', buttons: [DS.Button({ label: 'Przejdź do sklepu', block: true, attrs: { 'data-tab': 'shop' } })] })}</div></div>`;
+  // Zakładki Start, Wyniki i Koszyk to zaślepki testu niemoderowanego — definiuje je app/app.stubs.js
 
   // ---------------- Wyszukiwarka (Start / Podpowiedzi / Brak wyników) ----------------
   const highlight = (title, q) => { const i = norm(title).indexOf(norm(q)); if (i < 0) return esc(title); return esc(title.slice(0, i)) + `<span class="match">${esc(title.slice(i, i + q.length))}</span>` + esc(title.slice(i + q.length)); };
