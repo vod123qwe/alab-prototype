@@ -1,0 +1,22 @@
+# ALAB • Prototyp — statyczny hosting na Netlify (bez buildu).
+# Wejście: / → /app/ (klikalny prototyp), /storybook/ → katalog komponentów DS.
+[build]
+  publish = "."
+  command = ""
+
+[[redirects]]
+  from = "/"
+  to = "/app/"
+  status = 302
+  force = true
+
+# version.json czytamy przy „Sprawdź aktualizacje” — nie może siedzieć w cache
+[[headers]]
+  for = "/app/version.json"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/app/version.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"

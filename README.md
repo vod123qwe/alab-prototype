@@ -59,7 +59,17 @@ CellOrderTypeStatus, siatka CategoryTile, sekcje z ProductCard (CellPackage/Cell
 
 ## Na telefonie
 
-**Najprościej:** publiczny link GitHub Pages: https://vod123qwe.github.io/alab-prototype/app/ (storybook: https://vod123qwe.github.io/alab-prototype/storybook/). Repo jest publiczne, więc ekrany i kod są widoczne dla każdego z linkiem.
+**Najprościej:** publiczny link Netlify: https://alab-prototype.netlify.app/ (storybook: https://alab-prototype.netlify.app/storybook/).
+Wejście na `/` przekierowuje do prototypu. Stary adres GitHub Pages nadal działa: https://vod123qwe.github.io/alab-prototype/app/
+
+Wdrożenie na Netlify (konto j.pastuszak@futuremind.com, projekt `alab-prototype`, publish = katalog repo):
+
+```bash
+npx netlify-cli deploy --prod --dir=.
+```
+
+Netlify nie jest jeszcze podłączone do repozytorium, więc deploy robimy komendą wyżej. Automat po każdym pushu
+można włączyć w panelu Netlify (Project configuration → Build & deploy → Link repository).. Repo jest publiczne, więc ekrany i kod są widoczne dla każdego z linkiem.
 
 Wariant w sieci lokalnej (bez publikacji):
 
