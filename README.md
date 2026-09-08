@@ -309,6 +309,20 @@ kilkoma drogami, ale odpowiedź nie leżała na wierzchu:
 W katalogu są dwa badania morfologii: „Morfologia krwi obwodowej z rozmazem” (24,80 zł, z kodem rabatowym)
 i „Morfologia krwi” (21,70 zł). To celowe, żeby zobaczyć, czy Pacjent zauważa różnicę i którą wersję wybiera.
 
+### Brak wyników w wybranym sposobie realizacji (2026-09-08)
+
+Wzór 2546:109588 (wyszukiwarka) i 2265:66501 (listing): gdy w wybranym sposobie realizacji nic nie ma, nie
+zostawiamy ślepego zaułka. Nagłówek mówi, GDZIE nic nie ma („Brak wyników dla «witamina» w zestawie
+wysyłkowym”), a pod podpowiedzią jest separator „Lub” i wyjścia do pozostałych sposobów realizacji z liczbami:
+„Szukaj w Punkcie Pobrań — 3 pakiety i 7 badań”. Tapnięcie wiersza przełącza sposób realizacji, odświeża treść
+i zmienia adres — dokładnie jak chip, bo wiersze niosą ten sam atrybut.
+
+Działa w trzech miejscach: w wyszukiwarce (podpowiedzi), na wynikach wyszukiwania i na listingu kategorii —
+w tym w scenariuszu, od którego się zaczęło: uczestnik wchodzi w kategorię w Punkcie Pobrań, przełącza na
+zestaw wysyłkowy i kategoria jest pusta. Gdy frazy nie ma nigdzie, zostaje stara podpowiedź „Sprawdź pisownię”
+i sekcja „Najczęściej szukane”. Stan pusty z wyjściami nie centruje się w całej wysokości listingu, bo wtedy
+wiersze wypadały pod krawędź ekranu.
+
 ### ALAB club: podstrona ze zgód i tryb członka (2026-09-08)
 
 Zachęta do klubu (mały banner pod ceną i duży banner w treści karty produktu) prowadzi teraz na **ekran zgód
@@ -516,6 +530,26 @@ Adresy ekranów, które są w ścieżce badania (do wklejenia w konfigurację za
 | Wyniki poza badaniem (pełny moduł) | `/app/wyniki-pelne`, `/app/wynik/morfologia-krwi-obwodowej` |
 
 Adres każdego innego ekranu podejrzysz w konsoli: `APP.url('product/p-sport')`.
+
+### Tryb ALAB club w adresie
+
+Adres mówi też, czy uczestnik jest w klubie — bez tego nie da się policzyć, ile osób kupiło z klubem, a ile bez
+(uwaga Maćka z tablicy). Segment `w-klubie` albo `bez-klubu` dokładamy tam, gdzie zmienia to, co widać: na
+ekranach sklepu z cenami, na karcie produktu i w koszyku, czyli tam, gdzie kończy się zadanie:
+
+| Ekran | Bez klubu | W klubie |
+| --- | --- | --- |
+| Sklep | `/app/sklep/punkt-pobran/bez-klubu` | `/app/sklep/punkt-pobran/w-klubie` |
+| Karta produktu | `/app/produkt/pakiet-sport/bez-klubu` | `/app/produkt/pakiet-sport/w-klubie` |
+| **Koszyk (koniec zadania)** | `/app/zakladka/koszyk/bez-klubu` | `/app/zakladka/koszyk/w-klubie` |
+
+Ekran wyboru zadań, wejście w zadanie i ekran zgód zostają bez wariantu — tam tryb jeszcze nic nie zmienia.
+Adres jest źródłem prawdy w obie strony: wklejony link z `w-klubie` ustawia tryb przed narysowaniem ekranu.
+
+**Członkostwo przechodzi między zadaniami.** Kto dołączył w zadaniu 1, widzi zadania 2 i 3 już jako członek
+klubu; kto nie dołączył, robi je bez klubu. Trzymamy to w sesji przeglądarki (`sessionStorage`), więc przetrwa
+też wejście w kolejne zadanie z linku — a tak właśnie robi to Useberry. „Zacznij od nowa” w menu prototypu
+czyści pamięć, więc kolejny uczestnik startuje poza klubem.
 
 ### Sposób realizacji w adresie
 

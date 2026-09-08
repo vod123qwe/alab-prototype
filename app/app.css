@@ -421,3 +421,14 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 
 /* Odznaka nad tytułem na karcie produktu (warianty 2726:16353): wyrównana do lewej, nie rozciąga się na kartę */
 .product__badge { display: flex; flex: 0 0 auto; }
+
+/* Brak wyników w wybranym sposobie realizacji: separator „Lub” i lista przejść do pozostałych sposobów
+   (wzór 2546:109588). Wiersze to DS.Cell, więc dziedziczą typografię i wysokości z systemu. */
+.shop__or { display: flex; align-items: center; gap: var(--space-2xl); padding: 8px 0; color: var(--content-on-surface-tertiary); font: 600 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary); }
+.shop__or::before, .shop__or::after { content: ""; flex: 1 1 0; height: 1px; background: var(--outline-border); }
+.shop__alts { display: flex; flex-direction: column; }
+
+/* Stan pusty z wyjściami do innych sposobów realizacji czyta się jako jeden blok, więc nie centrujemy go
+   w całej wysokości listingu — inaczej wiersze „Szukaj w…” wypadają pod krawędź ekranu. */
+.shop__emptyAlts { display: flex; flex-direction: column; }
+.shop__emptyAlts .ds-SearchEmpty { min-height: 0; padding-top: 48px; justify-content: flex-start; }

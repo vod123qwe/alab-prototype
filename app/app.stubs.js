@@ -93,8 +93,12 @@
 
   // Start zadania renderujemy POD adresem zadania (`/app/zadanie/1`), żeby narzędzie badawcze widziało wejście.
   // Uczestnik wchodzi jako zalogowany Pacjent — rejestracji i logowania w zadaniach nie ma.
+  // Członkostwo w ALAB club PRZECHODZI między zadaniami: kto dołączył w zadaniu 1, widzi zadania 2 i 3 już
+  // jako członek klubu (ustalenie z Maćkiem). Trzyma się na sesji przeglądarki, więc przetrwa też wejście
+  // w kolejne zadanie z linku. Reszta stanu (koszyk, sposób realizacji, filtry, wyniki) startuje od zera.
   const resetForTask = () => { const s = APP.S; delete s.shop; delete s.res; delete s.clubFrom;
-    s.clubJoined = false; s.club = { terms: false, rodo: false }; s.welcomed = true; s.loggedIn = true; };
+    s.clubJoined = APP.recallClub(); if (!s.clubJoined) s.club = { terms: false, rodo: false };
+    s.welcomed = true; s.loggedIn = true; };
 
   // Wejście w zadanie wygląda jak uruchomienie aplikacji: najpierw krótki ekran ładowania (ten sam splash,
   // co przy starcie apki), potem przejście na Start. Adres przez cały czas został `/app/zadanie/N`, więc

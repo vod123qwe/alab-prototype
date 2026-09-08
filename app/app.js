@@ -108,6 +108,12 @@
     if (target === pathNow()) return;
     window.history[push ? 'pushState' : 'replaceState'](null, '', BASE + target);
   };
+  // Członkostwo w ALAB club trzymamy na czas sesji przeglądarki, nie tylko w pamięci ekranu: Useberry
+  // wchodzi w każde zadanie z linku (pełne przeładowanie), a uczestnik, który dołączył w zadaniu 1,
+  // ma widzieć kolejne zadania już jako członek klubu.
+  const rememberClub = (on) => { try { sessionStorage.setItem('alab:club', on ? '1' : '0'); } catch (e) { /* prywatne okno */ } };
+  const recallClub = () => { try { return sessionStorage.getItem('alab:club') === '1'; } catch (e) { return false; } };
+
   // Ekran wejściowy (pusty adres, nieznana trasa, „Zacznij od nowa”). Wersja badawcza podmienia go
   // na wybór zadania, bo rejestracja i logowanie są poza zakresem testu — patrz app.stubs.js.
   let home = 'splash';
@@ -387,9 +393,9 @@
   }
   function route() {
     const r = current();
-    // wariant zapisany w adresie (np. /app/sklep/w-domu) musi być w stanie, zanim ekran się narysuje
-    const p = pathNow(), iv = p.lastIndexOf('/');
-    if (iv > 0 && variant.match(p.slice(iv + 1))) variant.set(p.slice(iv + 1));
+    // warianty zapisane w adresie (np. /app/sklep/w-domu/w-klubie) muszą być w stanie, zanim ekran się narysuje;
+    // zdejmujemy je od końca, bo segmentów może być kilka, a `set` rozpoznaje je po wartości
+    for (let p = pathNow(), i = p.lastIndexOf('/'); i > 0 && variant.match(p.slice(i + 1)); p = p.slice(0, i), i = p.lastIndexOf('/')) variant.set(p.slice(i + 1));
     // krok onboardingu → tylko przesuń taśmę
     if (onbIndex(r) && onbIndex(lastRoute) && $('#onb-track')) { stack[stack.length - 1] = r; lastRoute = r; onbSync(); return; }
     const isBack = stack.length >= 2 && stack[stack.length - 2] === r;
@@ -528,13 +534,13 @@
       let ok = true;
       ['terms', 'rodo'].forEach(k => { if (!S.club[k]) { $('#club-' + k)?.classList.add('is-error'); $('#club-' + k + ' .ds-Checkbox')?.classList.add('is-error'); ok = false; } });
       if (!ok) { snack('Zaznacz wymagane zgody, żeby dołączyć do ALAB club', 'error', 190); $('#club-terms')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
-      S.clubJoined = true; S.loggedIn = true;
+      S.clubJoined = true; S.loggedIn = true; rememberClub(true);
       const back1 = S.clubFrom; delete S.clubFrom;
       go(back1 || 'dashboard');
       // wejście z karty produktu: potwierdzamy zmianę trybu, bo ceny na ekranie zmieniają się „same"
       if (back1) setTimeout(() => snack('Witaj w ALAB club. Ceny klubowe są już aktywne.', 'success', 110), 420);
     },
-    'club-skip': () => { S.clubJoined = false; S.loggedIn = true; const b = S.clubFrom; delete S.clubFrom; go(b || 'dashboard'); },
+    'club-skip': () => { S.clubJoined = false; S.loggedIn = true; rememberClub(false); const b = S.clubFrom; delete S.clubFrom; go(b || 'dashboard'); },
     'faceid-on': () => faceIdOverlay(() => { S.faceId = true; go('dashboard'); }),
     'faceid-skip': () => { S.faceId = false; go('dashboard'); },
     login: () => {
@@ -581,7 +587,7 @@
     }, { passive: true });
   }
 
-  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav, slugs, url, toPath, fromPath, routeVariant, syncUrl, setHome, DARK_ROUTES, BASE, dir: DIR, file,
+  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav, slugs, url, toPath, fromPath, routeVariant, syncUrl, setHome, DARK_ROUTES, BASE, dir: DIR, file, rememberClub, recallClub,
     rerender: (dir) => render_(dir) };   // przerysowanie tej samej trasy (ekran ładowania zadania → Start)
 
   // ---------------- panel deweloperski ----------------
@@ -596,7 +602,11 @@
   });
   $('#dev-logo').innerHTML = DS.ICONS['alabek'];
   renderNav();
-  const resetAll = () => { S = initial(); stack = []; lastRoute = ''; if (current() === home) render_('fade'); else go(home); };
+  const resetAll = () => {
+    S = initial(); stack = []; lastRoute = '';
+    try { sessionStorage.removeItem('alab:club'); } catch (e) { /* prywatne okno */ }   // nowy uczestnik = poza klubem
+    if (current() === home) render_('fade'); else go(home);
+  };
   window.APP.reset = resetAll;
   $('#dev-reset').addEventListener('click', resetAll);
   if (matchMedia('(max-width: 900px)').matches) document.body.classList.add('is-mobile');

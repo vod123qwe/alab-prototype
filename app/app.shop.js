@@ -16,11 +16,11 @@
   // ---------------- sposoby realizacji ----------------
   // Komórka pod paskiem zmienia się razem z chipem (1:1 z masterami „Sklep • Strona główna”, „Typy • ALAB w domu”, „Typy • Wysyłkowe”)
   const DELIVERY = {
-    punkt: { label: 'Punkt Pobrań', cell: { icon: 'location-check', title: 'Puławska 10, Warszawa', status: 'Dziś otwarte 7:00 - 11:00', action: 'change-point' } },
+    punkt: { label: 'Punkt Pobrań', loc: 'w Punkcie Pobrań', cell: { icon: 'location-check', title: 'Puławska 10, Warszawa', status: 'Dziś otwarte 7:00 - 11:00', action: 'change-point' } },
     // Miasto ZMIENIONE względem mastera 1183:26770 („Kraków”) — plan badania stawia Pacjenta w Warszawie,
     // a Punkt Pobrań w prototypie jest na Puławskiej; dwa różne miasta na jednym ekranie myliłyby uczestnika.
-    dom: { label: 'ALAB w domu', cell: { icon: 'location-check', title: 'Usługa pobrania krwi w domu', status: 'Warszawa 109,00 zł', action: 'change-point' } },
-    wysylka: { label: 'Zestaw wysyłkowy', cell: { icon: 'home-pin', title: 'Samodzielne pobranie próbki', status: null } },
+    dom: { label: 'ALAB w domu', loc: 'w ALAB w domu', cell: { icon: 'location-check', title: 'Usługa pobrania krwi w domu', status: 'Warszawa 109,00 zł', action: 'change-point' } },
+    wysylka: { label: 'Zestaw wysyłkowy', loc: 'w zestawie wysyłkowym', cell: { icon: 'home-pin', title: 'Samodzielne pobranie próbki', status: null } },
   };
   const TYPES = Object.keys(DELIVERY);
 
@@ -140,20 +140,26 @@
   // Lekki „stemming”: ucinamy końcówkę fleksyjną, żeby „morfologii”, „badania”, „krwi” trafiały w te same wpisy.
   const stem = (w) => w.length >= 7 ? w.slice(0, -2) : w.length >= 5 ? w.slice(0, -1) : w;
   const hits = (text, q) => norm(q).split(/\s+/).filter(w => w.length > 1).every(w => text.includes(w) || text.includes(stem(w)));
-  const matches = (q) => { const items = forType(); return {
+  const matches = (q, t = type()) => { const items = forType(t); return {
     pk: items.filter(p => p.kind === 'package' && hits(haystack(p), q)),
     ts: items.filter(p => p.kind === 'test' && hits(haystack(p), q)),
-    cats: catsFor().filter(c => hits(norm(c.label), q)) }; };
+    cats: catsFor(t).filter(c => hits(norm(c.label), q)) }; };
   function searchResults(q) {
     if (q.trim().length < 3) return mostSearched();
     const { pk, ts, cats } = matches(q); const nq = norm(q.trim());
     const total = pk.length + ts.length + cats.length;
-    if (!total) return DS.SearchEmpty({ title: `Brak wyników dla „${q.trim()}”`, hint: 'Sprawdź pisownię lub wyszukaj inną frazę' }) + DS.Divider() + mostSearched();
+    if (!total) {
+      // fraza może istnieć w innym sposobie realizacji — wtedy zamiast „najczęściej szukanych" dajemy przejście tam
+      const alts = altList(t => { const m = matches(q, t); return { pk: m.pk.length, ts: m.ts.length }; });
+      const title = `Brak wyników dla „${q.trim()}” ${DELIVERY[type()].loc}`;
+      return alts.length ? emptyWithAlts(title, 'Sprawdź pisownię lub wyszukaj inną frazę', alts)
+        : DS.SearchEmpty({ icon: 'file-note-search', title, hint: 'Sprawdź pisownię lub wyszukaj inną frazę' }) + DS.Divider() + mostSearched();
+    }
     const first = ts[0] || pk[0];
     // dopowiedzenie reszty słowa tylko wtedy, gdy fraza faktycznie występuje w nazwie (przy trafieniu po synonimie pokazujemy samą frazę)
     const at = first ? norm(first.title).indexOf(nq) : -1;
     const tail = at >= 0 ? first.title.slice(at + nq.length).split(/[\s–,]/)[0] : '';
-    const phrase = first ? DS.Cell({ icon: 'file-note-search', titleHtml: '„' + `<span class="match">${esc(q.trim())}</span>` + esc(tail) + '”', subtitle: `${plural(pk.length, 'pakiet', 'pakiety', 'pakietów')} i ${plural(ts.length, 'badanie', 'badania', 'badań')}`, attrs: { 'data-action': 'search-submit', 'data-q': q.trim() } }) : '';
+    const phrase = first ? DS.Cell({ icon: 'file-note-search', titleHtml: '„' + `<span class="match">${esc(q.trim())}</span>` + esc(tail) + '”', subtitle: countLabel({ pk: pk.length, ts: ts.length }), attrs: { 'data-action': 'search-submit', 'data-q': q.trim() } }) : '';
     const sec = (label, items, icon, mapSub, action, key) => items.length ? `<div class="search__group"><p class="search__label">${label}</p><div class="search__list">${items.map(it => DS.Cell({ icon, titleHtml: highlight(it.title || it.label, q.trim()), subtitle: mapSub(it), attrs: { 'data-action': action, [key]: it.id } })).join('')}</div></div>` : '';
     return `<p class="search__count">${total + (first ? 1 : 0)} podpowiedzi</p>${phrase}` +
       [sec('Pakiety badań', pk, 'file-check', p => `${plural(p.components.length, 'badanie', 'badania', 'badań')} • ${zl(p.price)}`, 'open-product', 'data-open'),
@@ -166,21 +172,37 @@
 
   // ---------------- Listing (kategoria / wyniki / wszystkie pakiety lub badania) ----------------
   const KINDS = [['all', 'Badania i pakiety'], ['tests', 'Badania'], ['packages', 'Pakiety badań']];
-  function listingItems(ctx) {
-    let items = forType();
+  function listingItems(ctx, t = type()) {
+    let items = forType(t);
     if (ctx.cat) items = items.filter(p => p.cat === ctx.cat.id);
     if (ctx.query) items = items.filter(p => hits(haystack(p), ctx.query));
     if (ctx.cat && st().sub[ctx.cat.id]) items = items.filter(p => p.sub === st().sub[ctx.cat.id]);
     return items;
   }
   const kindOf = (ctx) => ctx.fixedKind || st().kind;
+  // ---------------- brak wyników w wybranym sposobie realizacji ----------------
+  // Wzór 2546:109588 (wyszukiwarka) i 2265:66501 (listing): zamiast ślepego zaułka mówimy, że w TYM sposobie
+  // realizacji nic nie ma, i dajemy wyjście — ile jest w pozostałych i przejście jednym tapnięciem.
+  const countLabel = ({ pk, ts }) => [pk && plural(pk, 'pakiet', 'pakiety', 'pakietów'), ts && plural(ts, 'badanie', 'badania', 'badań')].filter(Boolean).join(' i ');
+  const altList = (counts) => TYPES.filter(t => t !== type()).map(t => ({ t, n: counts(t) })).filter(x => x.n.pk + x.n.ts > 0);
+  const altRows = (alts) => !alts.length ? '' :
+    `<div class="shop__or"><span>Lub</span></div><div class="shop__alts">` +
+    alts.map(({ t, n }) => DS.Cell({ icon: 'file-note-search', title: `Szukaj ${DELIVERY[t].loc}`, subtitle: countLabel(n), attrs: { 'data-delivery': t } })).join('') + `</div>`;
+  // owijka, żeby stan pusty NIE centrował się w całej wysokości (wtedy wiersze wyjścia lądowały pod ekranem)
+  const emptyWithAlts = (title, hint, alts) => `<div class="shop__emptyAlts">` + DS.SearchEmpty({ icon: 'file-note-search', title, hint }) + altRows(alts) + `</div>`;
   function listingBody(ctx) {
     const items = listingItems(ctx), kind = kindOf(ctx);
     const pk = items.filter(p => p.kind === 'package'), ts = items.filter(p => p.kind === 'test');
     const sec = (title, arr) => arr.length ? `<section class="shop__section">${DS.SectionHeader({ title, count: arr.length })}<div class="shop__cards">${arr.map(card).join('')}</div></section>` : '';
     const html = (kind !== 'tests' ? sec('Pakiety badań', pk) : '') + (kind !== 'packages' ? sec('Badania', ts) : '');
-    // Brak wyników po filtrach (1183:26768) — copy przyjęte, master nie był odczytany 1:1
-    return html || DS.SearchEmpty({ title: 'Brak badań dla wybranych filtrów', hint: 'Zmień sposób realizacji, kategorię lub rodzaj produktu' });
+    if (html) return html;
+    // Brak wyników: jeśli w innym sposobie realizacji te badania są, prowadzimy tam (2265:66501);
+    // jeśli nigdzie ich nie ma, zostaje komunikat o filtrach (1183:26768 — copy przyjęte).
+    const alts = altList(t => { const items = listingItems(ctx, t), k = kindOf(ctx);
+      return { pk: k !== 'tests' ? items.filter(p => p.kind === 'package').length : 0, ts: k !== 'packages' ? items.filter(p => p.kind === 'test').length : 0 }; });
+    const what = ctx.query ? `Brak wyników dla „${ctx.query}”` : ctx.fixedKind === 'packages' ? 'Brak pakietów' : 'Brak badań w tej kategorii';
+    return alts.length ? emptyWithAlts(`${what} ${DELIVERY[type()].loc}`, 'Zmień sposób realizacji, żeby je zobaczyć.', alts)
+      : DS.SearchEmpty({ icon: 'file-note-search', title: 'Brak badań dla wybranych filtrów', hint: 'Zmień sposób realizacji, kategorię lub rodzaj produktu' });
   }
   const filtersRow = (ctx) => {
     if (ctx.fixedKind) return '';
@@ -346,7 +368,7 @@
   }
   function refreshDelivery() {
     const r = current();
-    $$('[data-delivery]').forEach(c => { const on = c.dataset.delivery === type(); c.classList.toggle('is-selected', on); c.setAttribute('aria-pressed', on); });
+    $$('.ds-FilterChip[data-delivery]').forEach(c => { const on = c.dataset.delivery === type(); c.classList.toggle('is-selected', on); c.setAttribute('aria-pressed', on); });
     swap($('#shop-loc'), locCell());
     if (r === 'dashboard') { swap($('#shop-tiles'), tilesHtml()); swap($('#shop-popular'), popularSections()); }
     else if (isListing(r)) { st().sub = {}; refreshListing(); }
@@ -419,11 +441,21 @@
   const DELIVERY_SLUG = { punkt: 'punkt-pobran', dom: 'w-domu', wysylka: 'zestaw-wysylkowy' };
   const DELIVERY_OF_SLUG = { 'punkt-pobran': 'punkt', 'w-domu': 'dom', 'zestaw-wysylkowy': 'wysylka' };
   const hasDelivery = (r) => r === 'dashboard' || r === 'search' || r === 'results' || /^(category|list)\//.test(r);
+  // Tryb ALAB club też siedzi w adresie — bez tego nie da się policzyć, ile osób kupiło z klubem, a ile bez
+  // (uwaga Maćka z tablicy). Dokładamy go tam, gdzie zmienia to, co widać: ekrany sklepu z cenami, karta
+  // produktu i koszyk (tam kończy się zadanie). Ekran wyboru zadań i ekran zgód zostają bez wariantu.
+  const CLUB_SLUG = { yes: 'w-klubie', no: 'bez-klubu' };
+  const hasClub = (r) => hasDelivery(r) || /^product\//.test(r) || r === 'tab/cart';
   APP.routeVariant({
-    get: (r) => hasDelivery(r) ? DELIVERY_SLUG[type()] : null,
-    match: (seg) => !!DELIVERY_OF_SLUG[seg],
-    set: (seg) => { const d = DELIVERY_OF_SLUG[seg]; if (d) st().delivery = d; },
+    get: (r) => [hasDelivery(r) ? DELIVERY_SLUG[type()] : null, hasClub(r) ? (inClub() ? CLUB_SLUG.yes : CLUB_SLUG.no) : null].filter(Boolean).join('/') || null,
+    match: (seg) => !!DELIVERY_OF_SLUG[seg] || seg === CLUB_SLUG.yes || seg === CLUB_SLUG.no,
+    set: (seg) => {
+      const d = DELIVERY_OF_SLUG[seg];
+      if (d) st().delivery = d;
+      else if (seg === CLUB_SLUG.yes || seg === CLUB_SLUG.no) { const on = seg === CLUB_SLUG.yes; S().clubJoined = on; APP.rememberClub(on); }
+    },
   });
+  if (APP.recallClub()) S().clubJoined = true;   // wejście w kolejne zadanie z linku: klub pamiętamy na sesję
 
   // Czytelne adresy: produkt i kategoria dostają slug z nazwy (adres w raporcie z badania mówi, co to za ekran).
   const slugify = (s) => s.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
