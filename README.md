@@ -434,11 +434,18 @@ i karta z komunikatem, w której drugie zdanie brzmi „Wróć do poprzedniego e
 
 ### Zadania badawcze: arkusz z treścią, koniec zadania i adresy
 
-Kliknięcie karty zadania otwiera **arkusz z treścią zadania**: nagłówek („Zadanie 1”), tytuł, opis i dwie akcje —
-„Rozpocznij zadanie” (primary) oraz „Zamknij” (w naszym DS Button `ghost`, czyli trzeci wariant). Uczestnik ma
-instrukcję pod ręką także w prototypie, nie tylko w Useberry. Treści zadań są przepisane z różowych naklejek
-„Treść” z tablicy 11:757 i **tablica pozostaje źródłem prawdy** — gdy Maciej je zmieni, aktualizujemy `TASKS`
-w `app/app.stubs.js`.
+Kliknięcie karty zadania otwiera **arkusz z treścią zadania**, rozłożony na cztery części: nagłówek
+(„Zadanie 1”), krótki tytuł, scenariusz w jednym zdaniu i **punktowaną listę wymagań** pod etykietą
+„W tym zadaniu”. Punktatorem jest zielony tick, więc od razu widać, że to lista rzeczy do zrobienia —
+to znaczniki, nie pola do klikania, żeby nie dawać uczestnikowi kolejnej rzeczy do obsłużenia. Akcje to
+„Rozpocznij zadanie” i „Zamknij” (w naszym DS Button `ghost`, czyli trzeci wariant; osobnego `tertiary`
+ten system nie ma).
+
+Arkusz końca zadania jest **celowo prosty**: tick, co wylądowało w koszyku, jedno zdanie i dwie drogi dalej.
+Bez powtarzania wymagań — uczestnik ma je już za sobą.
+
+Scenariusze i wymagania są rozpisane z różowych naklejek „Treść” z tablicy 11:757 i **tablica pozostaje
+źródłem prawdy** — gdy Maciej je zmieni, aktualizujemy `TASKS` w `app/app.stubs.js`.
 
 Po dodaniu do koszyka w trakcie zadania pojawia się **arkusz „Zadanie wykonane”**: zielony tick, nazwa produktu,
 zdanie o tym, że można jeszcze poklikać i wrócić przyciskiem w zakładce Koszyk, oraz akcje „Przejdź do kolejnego

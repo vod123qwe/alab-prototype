@@ -65,13 +65,18 @@
   // Każde zadanie ma własny adres i startuje od zera: pusty koszyk, brak klubu, realizacja = Punkt Pobrań.
   // Treści zadań z tablicy badawczej (różowe naklejki „Treść" w 11:757). Źródłem prawdy jest tablica —
   // gdy Maciej zmieni treść, zmieniamy ją tutaj. Ten sam tekst uczestnik widzi w Useberry.
+  // Każde zadanie: nagłówek, krótki tytuł, scenariusz i wymagania jako punktowana lista. Punkty są znacznikami
+  // (zielony tick), nie polami do zaznaczania — mają porządkować treść, a nie dawać uczestnikowi kolejnej rzeczy do klikania.
   const TASKS = [
     ['1', 'Zadanie 1', 'Zamów badania moczu',
-      'Wyobraź sobie, że mieszkasz w Warszawie i chcesz w aplikacji sieci diagnostycznej zamówić sobie badanie. Spróbuj zamówić ogólne badanie moczu.'],
+      'Mieszkasz w Warszawie i chcesz zamówić badanie w aplikacji sieci diagnostycznej.',
+      ['Zamów ogólne badanie moczu.']],
     ['2', 'Zadanie 2', 'Zamów Pakiet Sport',
-      'Sprawdź, ile badań wchodzi w skład Pakietu Sport. Następnie zamów ten pakiet.'],
+      'Szukasz gotowego zestawu badań dla osób aktywnych.',
+      ['Sprawdź, ile badań wchodzi w skład Pakietu Sport.', 'Zamów ten pakiet.']],
     ['3', 'Zadanie 3', 'Zamów badanie krwi do domu',
-      'Załóżmy, że chcesz wykonać badanie morfologii krwi u siebie w domu — specjalista przyjedzie do Ciebie i je wykona. Zwróć uwagę, po jakim czasie będzie dostępny wynik badania, i zamów takie badanie.'],
+      'Chcesz wykonać badanie morfologii krwi u siebie w domu — specjalista przyjedzie do Ciebie i je wykona.',
+      ['Sprawdź, po jakim czasie będzie dostępny wynik.', 'Zamów to badanie z pobraniem w domu.']],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
@@ -136,9 +141,11 @@
   // Uczestnik ma instrukcję pod ręką także w prototypie, nie tylko w Useberry.
   const taskSheet = (n) => {
     const t = taskOf(n); if (!t) return;
+    const items = t[4].map(it => `<li class="taskSheet__item">${DS.icon('check-circle-fill', 20)}<span>${esc(it)}</span></li>`).join('');
     const sheet = DS.presentSheet({ title: t[1], content:
       `<div class="taskSheet">
         <div class="taskSheet__text"><p class="taskSheet__title">${esc(t[2])}</p><p class="taskSheet__desc">${esc(t[3])}</p></div>
+        <div class="taskSheet__list"><p class="taskSheet__label">W tym zadaniu</p><ul class="taskSheet__items">${items}</ul></div>
         <div class="taskSheet__actions">
           ${DS.Button({ label: 'Rozpocznij zadanie', block: true, attrs: { 'data-task-start': n } })}
           ${DS.Button({ label: 'Zamknij', type: 'ghost', block: true, attrs: { 'data-action': 'sheet-close' } })}
@@ -147,7 +154,9 @@
     sheet.wrap.addEventListener('click', (e) => { if (!e.target.closest('[data-task-start]')) return; sheet.close(false); APP.go('zadanie/' + n); });
   };
 
-  // Koniec zadania: po dodaniu do koszyka arkusz z potwierdzeniem, a adres zmienia się na `/app/koniec/<produkt>/<tryb klubu>`,
+  // Koniec zadania: arkusz sukcesu jest CELOWO prosty — tick, co wylądowało w koszyku i dwie drogi dalej.
+  // Bez powtarzania wymagań zadania: uczestnik ma je już za sobą, a nie kolejną listę do czytania.
+  // Adres zmienia się na `/app/koniec/<produkt>/<tryb klubu>`,
   // żeby w Useberry dało się rozdzielić zakup z ALAB club i bez (uwaga Maćka z tablicy). Arkusz nie zamyka
   // eksploracji: uczestnik może zostać w aplikacji i wrócić tu zakładką Koszyk albo iść do kolejnego zadania.
   const doneSheet = (p) => {
