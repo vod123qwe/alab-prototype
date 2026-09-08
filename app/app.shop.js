@@ -414,7 +414,9 @@
       st().added[id] = (+st().added[id] || 0) + 1; st().cart++;
       refreshCartBadge(); DS.haptic('light'); snack(`Dodano do koszyka: ${p.title}`, 'success', 110);
     },
-    'change-point': () => go('punkt-pobran'),
+    // Wybór Punktu Pobrań i adresu domowego jest poza zakresem prototypu (Moduł 4) — mówimy to wprost
+    // snackbarem, zamiast prowadzić na zaślepkę, która wyglądała tak samo dla każdego sposobu realizacji.
+    'change-point': () => info('Ta funkcja nie jest dostępna w prototypie'),
     'open-category': (el) => go('category/' + el.dataset.cat),
     'all-categories': () => categorySheet(),
     'show-all': (el) => go('list/' + el.dataset.kind),

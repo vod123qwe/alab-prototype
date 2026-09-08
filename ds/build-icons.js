@@ -13,6 +13,8 @@ const ICONS = {
   'eye': 'ic_outline_eye.svg',
   'scan': 'ic_line_scan.svg',
   'info-square': 'ic_outline_info_square.svg',
+  'x-circle': 'ic_outline_x_circle.svg',              // snackbar błędu (746:9396)
+  'warning': 'ic_outline_warning_triangle.svg',       // snackbar ostrzeżenia (746:9404)
   'x-close': 'ic_outline_x_close.svg',
   'x': 'ic_outline_x.svg',
   'tag': 'ic_outline_tag.svg',

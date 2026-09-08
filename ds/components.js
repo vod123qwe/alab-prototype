@@ -258,8 +258,11 @@
   };
 
   // ---------- Snackbar ----------
+  // Warianty 1:1 z dokumentacją „Snackbar" 746:9380 w DS: sukces to zielona plama z białym tekstem,
+  // a błąd, informacja i ostrzeżenie siedzą na białej powierzchni z obwódką i kolorowaną ikoną.
+  const SNACK_ICON = { success: 'check-circle', error: 'x-circle', info: 'info-square', warning: 'warning' };
   DS.Snackbar = ({ text = 'Message text', type = 'success', icon, attrs: a } = {}) =>
-    `<div class="${cls('ds', 'ds-Snackbar', 'ds-Snackbar--' + type)}" role="status" ${attrs(a)}>${DS.icon(icon || (type === 'success' ? 'check-circle' : 'info-square'), 20)}<p>${esc(text)}</p></div>`;
+    `<div class="${cls('ds', 'ds-Snackbar', 'ds-Snackbar--' + type)}" role="status" ${attrs(a)}>${DS.icon(icon || SNACK_ICON[type] || SNACK_ICON.info, 20)}<p>${esc(text)}</p></div>`;
 
   DS.Divider = () => `<div class="ds ds-Divider" role="separator"></div>`;
 

@@ -310,6 +310,20 @@ W katalogu jest **jedno** badanie morfologii — „Morfologia krwi” (21,70 z�
 bo dwie bardzo podobne pozycje rozmywały obraz w zadaniu 3. Morfologia leży **czwarta** na liście w podkategorii
 Krew (po OB, CRP i glukozie), więc nie wpada w oko od razu — uczestnik ma ją znaleźć, a nie zobaczyć na wierzchu.
 
+### Snackbar 1:1 z DS i „funkcja niedostępna” (2026-09-08)
+
+Komórka z adresem pod paskiem (Punkt Pobrań, adres dla ALAB w domu) oraz przycisk „Zmień punkt” **nie prowadzą
+już na zaślepkę** — pokazują snackbar „Ta funkcja nie jest dostępna w prototypie”. Wcześniej każdy sposób
+realizacji trafiał na ten sam ekran Punktu Pobrań, co wprowadzało w błąd. Ekran `/app/punkt-pobran` został
+w kodzie i w panelu prototypu jako podgląd, ale nic już do niego nie prowadzi.
+
+Przy tej okazji snackbar wyrównany do dokumentacji „Snackbar” 746:9380 z DS: padding 16, gap 8, promień 12,
+cień `0 2 8 rgba(0,0,0,.05)`. Sukces to zielona plama z białym tekstem i białą ikoną, a **błąd, informacja
+i ostrzeżenie siedzą na białej powierzchni z obwódką**, mają ciemny tekst i ikonę w kolorze funkcjonalnym
+(czerwony `x-circle`, niebieski `info-square`, pomarańczowy trójkąt). Wcześniej błąd był czerwoną, a informacja
+grafitową plamą — to było nasze założenie z czasów, gdy w DS istniał tylko wariant Success. Doszły dwie ikony
+z DS (`ic_outline_x_circle`, `ic_outline_warning_triangle`) i token `--functional-warning: #ff9500`.
+
 ### Brak wyników w wybranym sposobie realizacji (2026-09-08)
 
 Wzór 2546:109588 (wyszukiwarka) i 2265:66501 (listing): gdy w wybranym sposobie realizacji nic nie ma, nie

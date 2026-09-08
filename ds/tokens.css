@@ -43,6 +43,7 @@
   /* --- Functional --- */
   --functional-success: #228738;
   --functional-error: #dd3d2f;
+  --functional-warning: #ff9500;   /* z wariantu Warning snackbara w DS (746:9404) */
 
   /* --- Brand gradient (ALAB club) --- */
   --gradient-brand: linear-gradient(0deg, #461ba6 0%, #7512c3 100%);
