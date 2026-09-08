@@ -438,7 +438,11 @@ Jak to działa:
 - **GitHub Pages** nie umie przepisać adresu na plik aplikacji, więc jest `404.html` w korzeniu: zapamiętuje
   ścieżkę ekranu, wraca do katalogu aplikacji, a skrypt w `app/index.html` odtwarza adres przez `replaceState`.
   Link do konkretnego ekranu działa więc i tam, tylko z jednym przeskokiem. **Do badania używamy Netlify** —
-  tam adres ekranu jest oddawany od razu (reguła 200), bez przekierowania i bez sztuczek.
+  tam adres ekranu jest oddawany od razu (reguła 200), bez przekierowania i bez sztuczek. Na Pages w konsoli
+  widać kilkanaście nieudanych żądań przy każdym wejściu: statyczny `<base href="/app/">` jest dobrany pod
+  Netlify, a Pages stoi w podkatalogu `/alab-prototype/`, więc preloader przeglądarki najpierw pyta o zły
+  adres, a skrypt zaraz poprawia bazę i pliki wczytują się prawidłowo. Nic to nie psuje — to koszt trzymania
+  jednego pliku dla dwóch hostingów.
 - **Awaryjnie**: pod `file://` (bez serwera) router wraca do starych adresów z hashem, żeby prototyp
   dał się w ogóle otworzyć. Do badań używamy wersji z serwera.
 - **Ścieżki do plików liczone raz na starcie, jako absolutne** (`DS.ASSETS`, `APP.file()` w `app/app.js`).
