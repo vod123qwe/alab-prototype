@@ -374,3 +374,13 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* Prototyp bez elementów UI systemu: pasek statusu trzyma wysokość, kreska gestu jest ukryta również na desktopie */
 .ds-StatusBar--blank { justify-content: flex-start; }
 .phone .ds-HomeIndicator__bar { display: none; }
+
+/* akcja w karcie zaślepki (np. „Zakończ zadanie” w Koszyku) — karta ma wyłączone zdarzenia, przycisk je włącza */
+.stub__action { width: 100%; padding: 0 20px; pointer-events: auto; }
+.stub__action .ds-Button { width: 100%; }
+
+/* ekran wyboru zadań (start badania) */
+.tasks__body { gap: 12px; padding: 32px 20px 40px; }
+.tasks__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; margin: 0; }
+.tasks__lead { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.tasks__list { display: flex; flex-direction: column; gap: 4px; margin-top: 20px; }

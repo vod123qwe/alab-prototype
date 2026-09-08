@@ -300,3 +300,17 @@ Tapnięcie w komórkę adresu na ekranie sklepu (oraz CTA „Zmień punkt” na 
 otwiera zaślepkę Punktu Pobrań pod adresem `#/punkt-pobran`: belka z krzyżykiem, szkielet listy punktów
 i karta z komunikatem, w której drugie zdanie brzmi „Wróć do poprzedniego ekranu.” Wcześniej był tam snackbar.
 
+### Zadania badawcze: wybór zadań i koniec zadania
+
+- `#/zadania` — ekran wyboru zadań („Wybierz zadanie”, trzy neutralne pozycje bez nazw produktów, żeby nie
+  podpowiadać kolejnego zadania). Bez dolnej nawigacji.
+- `#/zadanie/1`, `#/zadanie/2`, `#/zadanie/3` — wejście w zadanie. Adres zostaje w pasku (narzędzie badawcze widzi
+  wejście), a na ekranie renderuje się Start z zaślepką. Wejście czyści stan: pusty koszyk, brak ALAB club,
+  sposób realizacji ustawiony na Punkt Pobrań, wyczyszczone filtry i przeczytane wyniki.
+- Zaślepka Koszyka ma pod tekstem przycisk **„Zakończ zadanie”**, który prowadzi na ekran wyboru zadań.
+  Drugie zdanie w karcie brzmi „Jeśli zadanie jest skończone, kliknij poniżej.”
+
+Otwarte: pytanie 1.1 z planu badawczego („ile zapłacisz za to badanie”) nie ma odpowiedzi w koszyku, bo koszyk
+został zaślepką. Uczestnik musi odczytać kwotę z karty produktu, gdzie widnieje cena i dopisek „+ opłata za pobranie”
+bez kwoty. Do rozstrzygnięcia: pokazać kwotę opłaty na karcie produktu albo zmienić treść pytania.
+

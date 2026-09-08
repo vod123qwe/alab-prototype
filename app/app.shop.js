@@ -328,8 +328,8 @@
   // Pasek żyje poza przewijanymi ekranami (#tabbar w ramce telefonu), więc nie jedzie razem z przejściem ekranu —
   // tak jak UITabBar w iOS i NavigationBar w Androidzie. Przerysowujemy go tylko wtedy, gdy zmienia się aktywna
   // zakładka albo licznik, a na ekranach pełnoekranowych (wyszukiwarka, webview, dodatkowe informacje) zjeżdża w dół.
-  const BAR_ROUTES = (r) => r === 'dashboard' || r === 'results' || r === 'results-empty' || r.startsWith('tab/') || /^(category|list|product|result)\//.test(r);
-  const activeTabFor = (r) => r === 'tab/start' ? 'start' : r === 'tab/cart' ? 'cart'
+  const BAR_ROUTES = (r) => r === 'dashboard' || r === 'results' || r === 'results-empty' || r.startsWith('tab/') || /^(category|list|product|result|zadanie)\//.test(r);
+  const activeTabFor = (r) => (r === 'tab/start' || r.startsWith('zadanie/')) ? 'start' : r === 'tab/cart' ? 'cart'
     : (r === 'tab/results' || r === 'results-empty' || /^(result|rinfo)\//.test(r)) ? 'results' : 'shop';
   function syncTabBar(route) {
     const host = $('#tabbar'); if (!host) return;
