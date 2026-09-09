@@ -321,3 +321,78 @@ Wtedy projektant nadpisuje **tylko kwotę**, zdanie jedzie z wariantu i przełą
 
 Bez tego: po samym republishu znika podwojenie linijki i cena główna przestaje ginąć, ale **zdanie
 nadal nie przełączy się samo** — trzeba je poprawiać ręcznie po każdej zmianie wariantu.
+
+---
+
+## Runda 5: `PriceRow` na propertiesach — rozbicie linijki klubowej (2026-09-09)
+
+Jarek dodał do `PriceRow` dwa pola TEXT: **`✏️ Price`** (→ warstwa `Basic`) i **`✏️ Old price`**
+(→ warstwa `Old price`), obecne we wszystkich wariantach. Figma **sama przeniosła** istniejące
+override'y kwot do tych pól — czyli ceny na ekranach są już „w propertiesach", nie w surowym tekście.
+
+### Dlaczego same dwa pola nie wystarczały
+
+**72 z 85** wierszy `PriceRow` na `├ Sklep` to warianty `ALAB club member = No`, w których zdanie
+klubowe **ma w sobie kwotę** („189,05 zł ekstra -5% w klubie"). Reset override'ów wstawiłby tam
+demo-kwotę z DS na 72 kartach. A ponieważ Jarek słusznie zabronił wpisywania tej linijki ręcznie,
+brakowało **trzeciego pola**.
+
+### Zrobione w DS: `Discount` = dwie warstwy
+
+Warstwa `Discount` jest teraz **poziomym auto layoutem** z dwiema warstwami:
+
+| Warstwa | Skąd bierze treść | `No` | `Yes` |
+| --- | --- | --- | --- |
+| `Club price` | **property `✏️ Club price`** | widoczna | **ukryta** |
+| `Club phrase` | **tekst wariantu** — nigdy nie nadpisywany | „ekstra -5% w klubie" / „taniej -40% w klubie" | „Aktywne ekstra -5% w klubie" / „Aktywne −40% w klubie" |
+
+Efekt: projektant nadpisuje **tylko kwoty, i to przez pola**, a zdanie jedzie z wariantu — więc
+przełącznik `ALAB club member` **realnie przełącza copy**. Komplet własności `PriceRow`:
+`✏️ Price` · `✏️ Old price` · `✏️ Club price` · `👁️ Collection fee` · `Discount` · `ALAB club member`.
+
+### Reguła odtworzenia kwoty klubowej
+
+Sprawdzona na ~25 wierszach, zgadza się wszędzie:
+
+- `Discount = Special` → **kwota klubowa = cena × 0,6** (−40%)
+- `Discount = Code` / `No code` → **kwota klubowa = cena × 0,95** (−5%)
+
+Zaokrąglenie do groszy w górę od połowy (70,70 → 67,17; 21,70 → 20,62). Dzięki tej regule
+przebudowa **nie potrzebuje kopii starych tekstów** — kwoty klubowe liczę z pola `✏️ Price`.
+
+### Plan przebudowy masterów na `├ Sklep` (429:4), 91 cellek
+
+Procedura przetestowana na jednej cellce (`2024:8142`), zero błędów, wszystko wróciło na miejsce:
+
+1. **zapamiętaj** własności cellki, własności wszystkich zagnieżdżonych instancji i wszystkie teksty,
+2. **`resetOverrides()`** na cellce,
+3. **przywróć warianty** (cellki, potem zagnieżdżonego `PriceRow`),
+4. **wpisz wartości przez pola**: `✏️ Price`, `✏️ Old price`, `✏️ Club price`,
+5. **przywróć pozostałe teksty** (nazwa badania, „Liczba badań", materiał, omnibus, kod) — **z pominięciem
+   `Club phrase`**, która ma zostać czysta.
+
+Wymaga **republishu biblioteki** po stronie Jarka, żeby `✏️ Club price` i nowa struktura dotarły
+do pliku Design.
+
+### Anomalie do naprawy przy przebudowie (znalezione przy inwentaryzacji)
+
+| Węzeł | Co jest | Co ma być |
+| --- | --- | --- |
+| `I1888:379;777:6363` | `✏️ Price` = **„189,05 zł ekstra -5% w klubie"** — zdanie klubowe w polu ceny | `199,00 zł` |
+| `I724:36297;656:7730;777:6363` | to samo | `199,00 zł` |
+| `I1951:652;777:6332` | `No code/Yes`, cena = demo `1369,00 zł`, kwota klubowa `13,30 zł` | Price `13,30 zł`, Old price `14,00 zł` |
+| `I724:33761;702:13960;777:6332` | to samo | to samo |
+| `I1921:43688;777:6332` | `No code/Yes`, Price `35,24 zł`, Old price `120,00 zł` (nie pasuje) | Old price `37,10 zł` |
+
+**Zostawiam jako placeholdery:** 6 wierszy z kompletem demo-kwot (`1369,00` / `1190,00` / `904,40`)
+w ramkach `[Zachowanie] Scroll` — to karty poglądowe, nie realne dane.
+
+### Do rozstrzygnięcia: dwie konwencje dla `Code + klubowicz`
+
+Na masterach są obok siebie dwa różne modele liczenia:
+
+- `I1921:43708` → cena `29,79 zł` = regularna −20% (kod) −**5% (klub)** — klub **wliczony**
+- `I1897:54981` → cena `145,20 zł` = regularna −20% (kod), **bez** klubowych 5%
+
+Master `PriceRow Code/Yes` idzie drugą drogą (952,00 = 1190 −20%). Trzeba wybrać jedną —
+inaczej „Aktywne ekstra -5% w klubie" mówi o rabacie, którego w liczbach nie ma.
