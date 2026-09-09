@@ -94,8 +94,11 @@
     window.history.pushState(null, '', url(route));
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
-  // podmiana adresu bez nowego wpisu w historii — krok onboardingu to przesunięcie taśmy, nie nowy ekran
+  // Podmiana adresu bez nowego wpisu w historii: krok onboardingu to przesunięcie taśmy, a wyniki wyszukiwania
+  // zastępują ekran wyszukiwarki, bo to przystanek — cofnięcie z wyników ma wracać do kroku PRZED wyszukiwaniem.
+  let replacing = false;
   const replaceRoute = (route) => {
+    replacing = true;
     if (!PATHS_OK) { location.replace('#/' + toPath(route)); return; }
     window.history.replaceState(null, '', url(route));
     window.dispatchEvent(new PopStateEvent('popstate'));
@@ -393,13 +396,15 @@
   }
   function route() {
     const r = current();
+    const wasReplace = replacing; replacing = false;
     // warianty zapisane w adresie (np. /app/sklep/w-domu/w-klubie) muszą być w stanie, zanim ekran się narysuje;
     // zdejmujemy je od końca, bo segmentów może być kilka, a `set` rozpoznaje je po wartości
     for (let p = pathNow(), i = p.lastIndexOf('/'); i > 0 && variant.match(p.slice(i + 1)); p = p.slice(0, i), i = p.lastIndexOf('/')) variant.set(p.slice(i + 1), r);
     // krok onboardingu → tylko przesuń taśmę
     if (onbIndex(r) && onbIndex(lastRoute) && $('#onb-track')) { stack[stack.length - 1] = r; lastRoute = r; onbSync(); return; }
     const isBack = stack.length >= 2 && stack[stack.length - 2] === r;
-    if (isBack) stack.pop(); else if (stack[stack.length - 1] !== r) stack.push(r);   // bez duplikatów: ta sama trasa z innym wariantem
+    if (wasReplace && stack.length) stack[stack.length - 1] = r;   // ekran-przystanek nie zostaje w historii
+    else if (isBack) stack.pop(); else if (stack[stack.length - 1] !== r) stack.push(r);   // bez duplikatów: ta sama trasa z innym wariantem
     // fade: do tras „korzeniowych” (splash, start, dashboard, zakładki, wyszukiwarka) oraz ze splasha/onboardingu; z korzenia w głąb = push jak w iOS
     const dir = isBack ? 'back' : ((FADE_ROUTES.has(r) || lastRoute === 'splash' || onbIndex(lastRoute) || !lastRoute) ? 'fade' : 'fwd');
     lastRoute = r; render_(dir);
@@ -587,7 +592,7 @@
     }, { passive: true });
   }
 
-  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav, slugs, url, toPath, fromPath, routeVariant, syncUrl, setHome, DARK_ROUTES, BASE, dir: DIR, file, rememberClub, recallClub,
+  window.APP = { setThemeColor, hideOnScrollDown, SCREENS, ACTIONS, FADE_ROUTES, ROUTES, go, back, snack, current, layout, afterRender: [], get S() { return S; }, renderNav, slugs, url, toPath, fromPath, routeVariant, syncUrl, setHome, DARK_ROUTES, BASE, dir: DIR, file, replace: replaceRoute, rememberClub, recallClub,
     rerender: (dir) => render_(dir) };   // przerysowanie tej samej trasy (ekran ładowania zadania → Start)
 
   // ---------------- panel deweloperski ----------------

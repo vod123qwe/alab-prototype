@@ -99,11 +99,11 @@
       (cats.length > HOME_TILES ? DS.CategoryTile({ icon: 'plus-square', label: 'Wszystkie kategorie', all: true, attrs: { 'data-action': 'all-categories' } }) : '');
   };
   // granatowy nagłówek z hero, polem szukania i chipami (wspólny dla strony głównej i listingów)
-  const shopHead = ({ title, bar = false, query } = {}) => `<header class="shop__head" id="shop-head">
+  const shopHead = ({ title, bar = false, query, filters = false } = {}) => `<header class="shop__head" id="shop-head">
         <div class="shop__fill"><div class="shop__bg"><img src="${A}img_shop_bg.png" alt=""><div class="shop__bgOverlay"></div></div></div>
         <div class="${bar ? 'shop__nav shop__nav--bar' : 'shop__nav'}">${bar ? DS.TopBar({ transparent: true, light: true, title }) : DS.StatusBar({ light: true })}</div>
         <div class="shop__searchWrap">
-          <div class="shop__searchRow">${DS.SearchField({ style: 'oncolor', placeholder: query || 'Szukaj badania...', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania', class: query ? 'has-query' : '' } })}${bar ? DS.IconButton({ icon: 'settings', variant: 'onscrim', size: 'medium', label: 'Filtry', attrs: { 'data-action': 'filters' } }) : ''}</div>
+          <div class="shop__searchRow">${DS.SearchField({ style: 'oncolor', placeholder: query || 'Szukaj badania...', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania', class: query ? 'has-query' : '' } })}${filters ? DS.IconButton({ icon: 'settings', variant: 'onscrim', size: 'medium', label: 'Filtry', attrs: { 'data-action': 'filters' } }) : ''}</div>
           <div class="shop__chipsWrap" id="shop-chips"><div class="shop__chips">${chips('oncolor')}</div></div>
         </div>
         <div class="shop__corner"></div>
@@ -175,7 +175,7 @@
       <div class="screen__body search__body" id="search-results">${searchResults(st().query)}</div></div>`;
 
   // ---------------- Listing (kategoria / wyniki / wszystkie pakiety lub badania) ----------------
-  const KINDS = [['all', 'Badania i pakiety'], ['tests', 'Badania'], ['packages', 'Pakiety badań']];
+  const KINDS = [['all', 'Wszystko'], ['tests', 'Badania'], ['packages', 'Pakiety badań']];
   function listingItems(ctx, t = type()) {
     let items = forType(t);
     if (ctx.cat) items = items.filter(p => p.cat === ctx.cat.id);
@@ -208,20 +208,13 @@
     return alts.length ? emptyWithAlts(`${what} ${DELIVERY[type()].loc}`, 'Zmień sposób realizacji, żeby je zobaczyć.', alts)
       : DS.SearchEmpty({ icon: 'file-note-search', title: 'Brak badań dla wybranych filtrów', hint: 'Zmień sposób realizacji, kategorię lub rodzaj produktu' });
   }
-  const filtersRow = (ctx) => {
-    if (ctx.fixedKind) return '';
-    const subs = ctx.cat ? subsFor(ctx.cat.id) : [];
-    return `<div class="shop__filters ds-FilterRow ds-FilterRow">${DS.ChipDropdown({ label: KINDS.find(k => k[0] === st().kind)[1], attrs: { 'data-action': 'kind-menu' } })}` +
-      (subs.length ? `<span class="ds-FilterRow__sep"></span>${subs.map(([name, n]) => DS.FilterChip({ label: name, count: n, selected: st().sub[ctx.cat.id] === name, attrs: { 'data-sub': name, 'data-cat': ctx.cat.id } })).join('')}` : '') + `</div>`;
-  };
   const listingScreen = (ctx) => `<div class="screen shop shop--listing" data-tab="shop">
-      ${shopHead({ title: ctx.title, bar: true, query: ctx.query })}
+      ${shopHead({ title: ctx.title, bar: true, query: ctx.query, filters: !ctx.fixedKind })}
       <div class="screen__body shop__scroll" id="shop-scroll">
         <div class="shop__spacer" id="shop-spacer"></div>
         <div class="shop__content shop__content--listing">
           <section class="shop__section shop__section--filters">
             <div id="shop-loc" class="shop__swap">${locCell()}</div>
-            <div id="shop-filters">${filtersRow(ctx)}</div>
           </section>
           <div id="listing-body" class="shop__listing shop__swap">${listingBody(ctx)}</div>
         </div>
@@ -359,16 +352,52 @@
       content: `<div class="ds-BottomSheet__scroll" style="gap:8px">${cats.map(c => DS.Cell({ icon: c.icon, title: c.label, subtitle: plural(catCount(c), 'badanie', 'badania', 'badań'), attrs: { 'data-action': 'open-category', 'data-cat': c.id } })).join('')}</div>` });
     sheet.wrap.addEventListener('click', (e) => { if (e.target.closest('[data-action="open-category"]')) setTimeout(() => sheet.close(false), 120); });
   }
-  function kindSheet(ctx) {
-    const sheet = DS.presentSheet({ title: 'Pokaż', content: `<div class="ds-BottomSheet__scroll" style="gap:4px">${KINDS.map(([id, label]) => DS.Cell({ icon: id === 'all' ? 'view-list' : id === 'tests' ? 'test-tube' : 'file-check', title: label, trailing: st().kind === id ? 'check-circle' : null, attrs: { 'data-kind-pick': id, class: st().kind === id ? 'is-selected' : '' } })).join('')}</div>` });
-    sheet.wrap.addEventListener('click', (e) => { const k = e.target.closest('[data-kind-pick]'); if (!k) return; st().kind = k.dataset.kindPick; sheet.close(); APP.syncUrl({ push: true }); refreshListing(); });
+  // Arkusz „Filtry" 1:1 z 724:34766 (wyniki wyszukiwania: sam typ) i 724:32918 (kategoria: typ + zawężenie
+  // w kategorii oraz „Wyczyść"). Rząd filtrów zniknął z ekranu — cały wybór siedzi pod ikoną filtrów, a wynik
+  // zatwierdza przycisk z liczbą trafień. Wybór jest brudnopisem: zapisujemy go dopiero na „Pokaż…".
+  function filtersSheet() {
+    const ctx = listingCtx(current()); if (!ctx || ctx.fixedKind) return;
+    const cat = ctx.cat;
+    let kind = st().kind || 'all', sub = cat ? (st().sub[cat.id] || null) : null;
+    // liczby liczymy dla brudnopisu, żeby chipy i przycisk pokazywały to, co uczestnik właśnie wybiera
+    const base = (s) => {
+      let items = forType();
+      if (cat) items = items.filter(p => p.cat === cat.id);
+      if (ctx.query) items = items.filter(p => hits(haystack(p), ctx.query));
+      if (cat && s) items = items.filter(p => p.sub === s);
+      return items;
+    };
+    const nKind = (k, s) => { const it = base(s); return k === 'tests' ? it.filter(p => p.kind === 'test').length : k === 'packages' ? it.filter(p => p.kind === 'package').length : it.length; };
+    const nSub = (name) => nKind(kind, name);
+    const body = () => `<div class="filters">
+        <div class="filters__group"><p class="filters__label">Wybierz typ</p><div class="filters__chips">` +
+      KINDS.map(([id, label]) => DS.FilterChip({ label, count: id === 'all' ? null : nKind(id, sub), selected: kind === id, attrs: { 'data-kind-pick': id } })).join('') +
+      `</div></div>` +
+      (cat ? `<div class="filters__group"><p class="filters__label">Zawęź w kategorii: ${esc(cat.label)}</p><div class="filters__rows">` +
+        subsFor(cat.id).map(([name]) => `<button type="button" class="filters__row" data-sub-pick="${esc(name)}">${DS.Checkbox({ checked: sub === name })}<span>${esc(name)}<span class="filters__count"> • ${nSub(name)}</span></span></button>`).join('') +
+        `</div></div>` : '') +
+      `<div class="filters__actions">` +
+      (cat ? DS.Button({ label: 'Wyczyść', type: 'secondary', attrs: { 'data-filters-clear': '1' } }) : '') +
+      DS.Button({ label: `Pokaż ${plural(nKind(kind, sub), 'wynik', 'wyniki', 'wyników')}`, block: true, attrs: { 'data-filters-apply': '1' } }) +
+      `</div></div>`;
+    const sheet = DS.presentSheet({ title: 'Filtry', content: body() });
+    const redraw = () => { const host = sheet.wrap.querySelector('.filters'); if (host) { host.outerHTML = body(); DS.enhance(sheet.wrap); } };
+    sheet.wrap.addEventListener('click', (e) => {
+      const k = e.target.closest('[data-kind-pick]'); if (k) { kind = k.dataset.kindPick; redraw(); return; }
+      const s = e.target.closest('[data-sub-pick]'); if (s) { sub = sub === s.dataset.subPick ? null : s.dataset.subPick; redraw(); return; }
+      if (e.target.closest('[data-filters-clear]')) { kind = 'all'; sub = null; redraw(); return; }
+      if (e.target.closest('[data-filters-apply]')) {
+        st().kind = kind; if (cat) st().sub[cat.id] = sub;
+        sheet.close(); APP.syncUrl({ push: true }); refreshListing();
+      }
+    });
   }
 
   // ---------------- odświeżanie w miejscu (zmiana sposobu realizacji / filtrów) ----------------
   const swap = (el, html) => { if (!el) return; el.classList.add('is-swapping'); setTimeout(() => { el.innerHTML = html; el.classList.remove('is-swapping'); DS.enhance(el); }, 120); };
   function refreshListing() {
     const ctx = listingCtx(current()); if (!ctx) return;
-    swap($('#listing-body'), listingBody(ctx)); const f = $('#shop-filters'); if (f) f.innerHTML = filtersRow(ctx);
+    swap($('#listing-body'), listingBody(ctx));
   }
   function refreshDelivery() {
     const r = current();
@@ -406,7 +435,8 @@
     'open-search': () => { st().query = ''; go('search'); },
     'search-cancel': () => back(),
     'search-pick': (el) => { st().query = el.dataset.q; const i = $('#search-input'); if (i) { i.value = el.dataset.q; i.closest('.ds-SearchField').classList.add('has-value'); } $('#search-results').innerHTML = searchResults(el.dataset.q); i?.focus({ preventScroll: true }); },
-    'search-submit': (el) => { st().query = (el && el.dataset.q) || st().query; if (st().query.trim()) go('results'); },
+    // wyniki ZASTĘPUJĄ wyszukiwarkę w historii, więc „wstecz” z wyników wraca do ekranu przed szukaniem
+    'search-submit': (el) => { st().query = (el && el.dataset.q) || st().query; if (st().query.trim()) APP.replace('results'); },
     'open-product': (el) => openProduct(el.dataset.open),
     'add-to-cart': (el) => {
       const id = el.dataset.product || el.closest('.ds-ProductCard')?.dataset.product; const p = byId(id); if (!p) return;
@@ -421,8 +451,7 @@
     'all-categories': () => categorySheet(),
     'show-all': (el) => go('list/' + el.dataset.kind),
     'package-details': (el) => { const id = el.closest('.ds-ProductCard')?.dataset.product; if (id) openProduct(id); },
-    'kind-menu': () => kindSheet(),
-    'filters': () => info('Filtry (P02) — w kolejnym etapie'),
+    'filters': () => filtersSheet(),
     'full-desc': () => info('Pełny opis — treść z API w kolejnym etapie'),
     'faq': () => info('FAQ badania — w kolejnym etapie'),
     'copy-code': (el) => { const code = el.dataset.code; (navigator.clipboard?.writeText(code) || Promise.resolve()).then(() => snack(`Skopiowano kod ${code}`, 'success', 110), () => info(`Kod: ${code}`)); },
@@ -433,12 +462,11 @@
   document.addEventListener('click', (e) => {
     const tab = e.target.closest('[data-tab]'); if (tab && !tab.classList.contains('screen')) { const t = TABS.find(x => x.id === tab.dataset.tab); if (t) { const sc = $('#screen .shop__scroll'); if (sc) st().scroll[current()] = sc.scrollTop; if (current() !== t.route) go(t.route); } return; }
     const chip = e.target.closest('[data-delivery]'); if (chip) { if (st().delivery !== chip.dataset.delivery) { st().delivery = chip.dataset.delivery; APP.syncUrl({ push: true }); refreshDelivery(); } return; }
-    const sub = e.target.closest('[data-sub]'); if (sub) { const cat = sub.dataset.cat; st().sub[cat] = st().sub[cat] === sub.dataset.sub ? null : sub.dataset.sub; APP.syncUrl({ push: true }); refreshListing(); return; }
     // karta / wiersz z data-open otwiera produkt (kliknięcia w przyciski wewnątrz karty mają własne akcje)
     const open = e.target.closest('[data-open]'); if (open && !e.target.closest('button:not([data-open]), [data-action]')) openProduct(open.dataset.open);
   });
   document.addEventListener('ds:search', (e) => { st().query = e.detail.value; const r = $('#search-results'); if (r) r.innerHTML = searchResults(e.detail.value); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'search-input') { e.target.blur(); const q = e.target.value.trim(); if (q) { st().query = q; go('results'); } } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'search-input') { e.target.blur(); const q = e.target.value.trim(); if (q) { st().query = q; APP.replace('results'); } } });
 
   // Sposób realizacji jest SEGMENTEM ścieżki (`/app/sklep/w-domu`), a nie parametrem `?dostawa=dom`:
   // narzędzia badawcze i analityczne potrafią traktować dwa adresy różniące się tylko query jako ten sam ekran,

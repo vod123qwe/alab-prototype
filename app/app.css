@@ -145,7 +145,8 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .club__title { font: 700 var(--headline-xlarge-font-size)/var(--headline-xlarge-line-height) var(--font-family-primary); letter-spacing: -.01em; }
 .club__lead { font: 600 var(--body-small-font-size)/var(--body-small-line-height) var(--font-family-primary); color: var(--content-on-scrim-secondary); margin-top: 8px; }
 .club__carouselwrap { position: relative; display: flex; flex-direction: column; gap: 14px; align-items: center; width: 100%; }
-.club__carousel { display: flex; gap: 8px; padding: 0 20px; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+/* scroll-padding trzyma margines po swipie — bez niego karta dojeżdżała do samej krawędzi ekranu */
+.club__carousel { display: flex; gap: 8px; padding: 0 20px; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px; scroll-snap-stop: always; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .club__carousel::-webkit-scrollbar { display: none; }
 .club__carousel > * { scroll-snap-align: start; }
 .club__dots { width: 87px; }
@@ -460,3 +461,17 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .taskSheet__item { display: flex; align-items: flex-start; gap: var(--space-2xl); }
 .taskSheet__item > .ds-icon { flex: 0 0 auto; width: 20px; height: 20px; margin-top: 2px; }
 .taskSheet__item > span { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+
+/* Arkusz „Filtry” (724:34766 dla wyników wyszukiwania, 724:32918 dla kategorii): wybór typu chipami,
+   zawężenie w kategorii checkboxami, na dole „Wyczyść” i przycisk z liczbą trafień. */
+.filters { display: flex; flex-direction: column; gap: var(--space-5xl); width: 100%; padding-bottom: var(--space-2xl); }
+.filters__group { display: flex; flex-direction: column; gap: var(--space-xl); }
+.filters__label { font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.filters__chips { display: flex; flex-wrap: wrap; gap: var(--space-md); }
+.filters__rows { display: flex; flex-direction: column; }
+.filters__row { display: flex; align-items: center; gap: var(--space-2xl); width: 100%; padding: 12px 0; text-align: left; background: none; border: 0; }
+.filters__row > .ds-Checkbox { flex: 0 0 auto; }
+.filters__row > span { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+.filters__count { color: var(--content-on-surface-tertiary); }
+.filters__actions { display: flex; gap: var(--space-md); }
+.filters__actions .ds-Button--secondary { flex: 0 0 auto; }

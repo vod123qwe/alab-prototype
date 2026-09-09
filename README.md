@@ -310,6 +310,23 @@ W katalogu jest **jedno** badanie morfologii — „Morfologia krwi” (21,70 z�
 bo dwie bardzo podobne pozycje rozmywały obraz w zadaniu 3. Morfologia leży **czwarta** na liście w podkategorii
 Krew (po OB, CRP i glukozie), więc nie wpada w oko od razu — uczestnik ma ją znaleźć, a nie zobaczyć na wierzchu.
 
+### Filtry pod ikoną, nie na ekranie (2026-09-09)
+
+Z listingów zniknął rząd filtrów — chip „Badania i pakiety” i chipy podkategorii. Cały wybór siedzi teraz
+w arkuszu **„Filtry”** pod ikoną w pasku wyszukiwania, w dwóch wariantach z Figmy:
+
+- **wyniki wyszukiwania** (724:34766): tylko „Wybierz typ” (Wszystko / Badania / Pakiety badań z licznikami)
+  i przycisk „Pokaż N wyników”,
+- **listing kategorii** (724:32918): to samo plus „Zawęź w kategorii: <nazwa>” z checkboxami podkategorii
+  i licznikami, a na dole „Wyczyść” obok „Pokaż N wyników”.
+
+Wybór w arkuszu jest brudnopisem: liczniki chipów i liczba na przycisku przeliczają się na bieżąco, ale stan
+listingu i adres zmieniają się dopiero po „Pokaż N wyników”. Na ekranach „Wszystkie badania” i „Wszystkie
+pakiety” ikony filtrów nie ma — tam rodzaj jest z definicji ustawiony, więc nie byłoby czego filtrować.
+
+Wyniki wyszukiwania **zastępują ekran wyszukiwarki w historii**: cofnięcie z wyników wraca do kroku przed
+szukaniem (np. do listingu kategorii), a nie do pola wyszukiwania. Wyszukiwarka jest przystankiem, nie ekranem.
+
 ### Snackbar 1:1 z DS i „funkcja niedostępna” (2026-09-08)
 
 Komórka z adresem pod paskiem (Punkt Pobrań, adres dla ALAB w domu) oraz przycisk „Zmień punkt” **nie prowadzą
