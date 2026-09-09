@@ -151,6 +151,35 @@ wbrew regule CIX („klub z małej"). Nie ruszyłem, bo to nie było na liście.
 
 ---
 
+## Runda po publikacji biblioteki (2026-09-09)
+
+Jarek opublikował bibliotekę DS. Kontrola po publikacji — i domknięcie reguły **„ALAB club" zawsze
+z małą literą w „club"** (CIX).
+
+| Miejsce | Co poprawione | Ile |
+| --- | --- | --- |
+| `├ 🟢 Sklep` | „Niższa cena z ALAB **Club**" → „ALAB club" | **19** |
+| `├ Sklep` (Master files) | to samo | **11** |
+| `├ Sklep` (Master files) | opis korzyści klubu: „**Promocje**, oferta urodzinowa…" → „Oferta urodzinowa…" | **3** |
+| `├ Logowanie i rejestracja` (Master files) | zgoda marketingowa „Chcę informację o **promocjach** i nowościach" → „Chcę informacje o ofertach i nowościach" | **2** |
+| Prototyp, `storybook/stories.shop.js` | „ALAB Club", „zniżka -40%", „w wybranym punkcie", dywiz w badge'u kodu, „49 zł" | **5** |
+
+Zgoda marketingowa dostała brzmienie z kanonu mapy M1 — przy okazji naprawia też liczbę
+(„informację" → „informacje").
+
+**Stan końcowy na czterech stronach pliku Design:** zero „ALAB Club", zero „zniżka/rabat", zero kwot
+bez groszy.
+
+### Zostawione świadomie: trzy etykiety na tablicy wariantów
+
+Na stronie `├ 🟢 Sklep` nad kolumnami wariantów stoją podpisy **„Promocja z kodem"**,
+**„Promocja specjalna ALAB"**, **„Promocja standardowa"**. To **adnotacje tablicy**, nie copy produktu —
+dokładnie tak jak „promocja klubowa" żyje w naszym leksykonie jako nazwa typu. Nie ruszyłem, bo
+przemianowanie podpisów to decyzja Jarka. Jeśli klient oglada ten plik, warto je przemianować na
+„Oferta z kodem", „Oferta specjalna ALAB", „Oferta standardowa".
+
+---
+
 ## Co z tego wynika
 
 1. **Ścieżka DS → ekrany działa.** Trzy pozycje zeszły same na 10 ekranów Approved w Sklepie.
