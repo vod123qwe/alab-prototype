@@ -426,12 +426,10 @@
     // licznik przy podkategorii mowi, ile jest w NIEJ przy wybranym typie — niezależnie od pozostałych zaznaczeń,
     // żeby liczby nie skakały pod palcem, gdy uczestnik dokręca kolejne podkategorie
     const nSub = (name) => nKind(kind, [name]);
-    // Przycisk nazywa produkty, nie „wyniki": słowo „wyniki" należy do wyników badań (leksykon 1, mapa M3 P02).
-    const showLabel = (k, subs) => {
-      const it = base(subs), pk = k !== 'tests' ? it.filter(x => x.kind === 'package').length : 0,
-            ts = k !== 'packages' ? it.filter(x => x.kind === 'test').length : 0;
-      return countLabel({ pk, ts }) || plural(0, 'badanie', 'badania', 'badań');
-    };
+    // „Pokaż N wyników" wbrew leksykonowi (słowo „wyniki" jest zarezerwowane dla wyników badań, kanon M3 P02
+    // mówi „Pokaż 2 pakiety i 1 badanie") — decyzja Jarka 2026-09-09: rozbicie na pakiety i badania nie mieściło
+    // się na przycisku. Wyjątek A3 w docs/copy-odstepstwa-2026-09-09.md.
+    const showLabel = (k, subs) => plural(nKind(k, subs), 'wynik', 'wyniki', 'wyników');
     const body = () => `<div class="filters">
         <div class="filters__group"><p class="filters__label">Typ</p><div class="filters__chips">` +
       KINDS.map(([id, label]) => DS.FilterChip({ label, count: id === 'all' ? null : nKind(id, sel), selected: kind === id, attrs: { 'data-kind-pick': id } })).join('') +

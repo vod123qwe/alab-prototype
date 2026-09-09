@@ -1,6 +1,6 @@
 # Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
 
-Stan na 2026-09-09, wersja prototypu **2026.09.09-104**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+Stan na 2026-09-09, wersja prototypu **2026.09.09-106**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
 (mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
 Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
 
@@ -9,7 +9,7 @@ i żeby Kasper widział w jednym miejscu, co u nas nie zgadza się z kanonem i d
 
 Jak czytać sekcje:
 
-- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra. Dziś dwa: wiersz ceny klubowej (A1) i notacja liczników (A2).
+- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra. Dziś trzy: wiersz ceny klubowej (A1), notacja liczników (A2) i przycisk arkusza filtrów (A3).
 - **B. Odstępstwa z natury prototypu** — nie są tematem do zatwierdzania, ale trzeba o nich wiedzieć, żeby nie mylić ich z błędem.
 - **C. Rozjazdy w samych mapach** — odwzorowane dosłownie, bo prototyp wykonuje mapy; decyzja po stronie autora map.
 - **D. Poza kanonem** — teksty, których mapy nie obejmują. Nasze propozycje, nie kanon.
@@ -109,6 +109,33 @@ doklejonego do etykiety** na chipie, w wierszu listy i w przycisku.
 dużej kropce, trzeba poprawić regułę nr 1 mapy M3 i leksykon 234, żeby przestały sobie przeczyć.
 Zmiana to trzy komponenty: `DS.FilterChip`, `DS.ProductCard` (wiersz składowych) i etykieta przycisku
 „Pokaż wszystkie…" w `app/app.shop.js`.
+
+### A3 · Przycisk arkusza filtrów: „Pokaż N wyników" · **SUGEROWANY WYJĄTEK**
+
+**Kanon (mapa M3, P02):** `Akcja główna | Pokaż 5 wyników | Pokaż 2 pakiety i 1 badanie (licznik nazywa to,
+co pacjent zobaczy) | podmień` — bo słowo „wyniki" należy w tej aplikacji do **wyników badań**, nie do
+trafień na liście (leksykon 1).
+
+**Co jest w prototypie:** „Pokaż 11 wyników".
+
+**Powód (decyzja Jarka 2026-09-09).** Rozbicie na dwie liczby nie mieści się na przycisku: „Pokaż 4 pakiety
+i 7 badań" zajmuje całą szerokość obok „Wyczyść" i przy dłuższych liczebnikach zaczyna łamać się na dwie
+linie. Krótka forma trzyma przycisk w jednej linii w każdym stanie filtrów.
+
+**Koszt wyjątku.** Wraca słowo „wyniki" w znaczeniu trafień — dokładnie to, czego leksykon 1 nie chce,
+żeby zakładka „Wyniki" znaczyła jedno. Łagodzi to fakt, że **ten sam dług wisi już w kanonie**: pusty stan
+wyszukiwarki („Brak wyników dla „X”") mapa przyjmuje świadomie (LXXVI, rozjazd C4). Po tej decyzji obie
+formy są spójne między sobą, choć niespójne z leksykonem.
+
+**Alternatywy, gdyby klient nie chciał słowa „wyniki":**
+
+- „Pokaż 11 badań i pakietów" — dłuższe od formy kanonicznej, więc nie rozwiązuje problemu miejsca,
+- „Pokaż 11 pozycji" — krótkie i neutralne, ale „pozycja" to słownik koszyka, nie katalogu,
+- **„Pokaż wszystkie • 11"** — najkrótsze, używa notacji licznika, którą już mamy w przyciskach
+  („Pokaż wszystkie pakiety • 16"), i nie nazywa trafień żadnym słowem. Do rozważenia, jeśli „wyniki" padną.
+
+**Status:** wprowadzone w prototypie 2026-09-09, do rozstrzygnięcia z Kasprem. Zmiana to jedna linia
+(`showLabel` w `app/app.shop.js`).
 
 ---
 

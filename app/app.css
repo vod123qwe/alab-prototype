@@ -181,11 +181,14 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* Tło nagłówka 1:1 z Top Nav 3185:44676. ProductBackground ma w projekcie stałe 375×468 i jest przyklejony do
    prawej krawędzi — trzymamy to samo, bo środek zdjęcia liczy się od jego połowy (50% + 287.34px). Przy szerszym
    telefonie z lewej zostaje sam --main-primary, dokładnie jak w projekcie. */
-.shop__bg { position: absolute; right: 0; top: 0; width: 375px; height: 389px; overflow: hidden; pointer-events: none; }
+/* Skaluje się PROPORCJONALNIE na szerokość: obraz jest sizerem (`width: 100%`, `height: auto`), więc przy
+   szerszym ekranie rośnie też wysokość i grafika się nie ucina. Wcześniej blok miał stałe 375px przy prawej
+   krawędzi (jak w projekcie) i na większych rozdzielczościach zostawał pas tła bez zdjęcia. */
+.shop__bg { position: absolute; left: 0; right: 0; top: 0; overflow: hidden; pointer-events: none; }
 /* Gotowy eksport z Figmy (@3x, 1125×1167 = 375×389): zdjęcie, PROGRESYWNE rozmycie i gradient w jednym
    pliku. Rozmycia nie da się wiernie odtworzyć w CSS — Figma wygasza „background blur” alfą warstwy Content
    Background, więc narasta ono razem z gradientem, a `backdrop-filter` rozmywa równo całą powierzchnię. */
-.shop__bg img { position: absolute; inset: 0; width: 375px; height: 389px; }
+.shop__bg img { display: block; width: 100%; height: auto; }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; margin: 0 -20px; }
@@ -266,14 +269,16 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    przy ciągnięciu w dół (rubber band) zostaje na miejscu.
    Gotowy eksport z Figmy (ProductBackground @3x, 1125×1404 = 375×468): zdjęcie, progresywne rozmycie
    i gradient 182.41° z granatu do koloru strony w jednym pliku. Ma stałe 375×468 przy prawej krawędzi;
-   `.product__bgFill` dokłada ten sam gradient na pełną szerokość, żeby na szerszym telefonie nie było szwu. */
+   Grafika skaluje się PROPORCJONALNIE na szerokość (obraz jest sizerem), więc przy szerszym ekranie rośnie
+   też wysokość hero — tak jak wyglądałby ten sam projekt na większym telefonie. `.product__bgFill` trzyma
+   gradient pod grafiką, żeby dolna część tła miała kolor strony, gdy grafika nie sięga końca ekranu. */
 .screen.product { background: var(--background-surface-secondary); }
 .product__scroll { background: transparent; position: relative; z-index: 1; }
 .product__bg { position: absolute; inset: 0; z-index: 0; background: var(--background-surface-secondary); will-change: transform; }
 .product__bgFill { position: absolute; left: 0; right: 0; top: 0; height: 468px;
   background: linear-gradient(182.41deg, var(--main-primary) 1.62%, var(--background-surface-secondary) 82.43%); }
-.product__bgImg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; }
-.product__bgImg img { position: absolute; inset: 0; width: 375px; height: 468px; }
+.product__bgImg { position: absolute; left: 0; right: 0; top: 0; overflow: hidden; }
+.product__bgImg img { display: block; width: 100%; height: auto; }
 .product__heroSpacer { flex: 0 0 468px; height: 468px; }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
 .product__main { gap: 24px; padding: 36px 24px 36px; /* +12 dp góra/dół vs pozostałe karty */ border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
