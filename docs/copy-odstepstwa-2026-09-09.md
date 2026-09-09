@@ -154,6 +154,39 @@ To nasze propozycje, nie kanon. Zgłaszam je, zamiast dopisywać do leksykonu je
 | D5 | Nazwy alergenów w wyniku | „Trawy — mieszanka (gx)", „Kot — nabłonek (e1)" | Dane przykładowe z em dashem. Realne nazwy ALAB używają dywizu; do wyrównania, gdy przyjdą z API |
 | D6 | Wyjście do logowania na intro i hubie | **przycisk** „Masz już konto? Zaloguj się" | Kanon M1 (K3) mówi „tekst z linkiem, jak stopka logowania". Podmieniłem same słowa; zamiana przycisku na link zmienia hierarchię ekranu, zwłaszcza na hubie, gdzie to przycisk `oncolor`. **Decyzja Jarka.** Skill zgłasza dodatkowo, że pytanie w etykiecie przycisku to słaby wzorzec CTA |
 
+### D7 · Plus tylko na jednym z dwóch przycisków tej samej akcji · **PYTANIE OTWARTE**
+
+Zauważone przez Jarka 2026-09-09. Ta sama akcja — dodanie produktu do koszyka, w kodzie jedno
+`data-action="add-to-cart"` — ma w kanonie **dwie różne etykiety, i plus tylko w jednej**:
+
+| Gdzie | Kanon | Akcja w kodzie |
+| --- | --- | --- |
+| Kafelek na liście | „**+** Dodaj" (decyzja F2) | `add-to-cart` |
+| Karta produktu, przycisk główny | „Kup badanie" · „Kup pakiet" (M3 3.2, „zostaje") | `add-to-cart` |
+| Karta produktu, przyklejone CTA | „Kup badanie • 29,45 zł" | `add-to-cart` |
+
+Uzasadnienie F2 brzmi: *„plus mówi, co się stanie"*. Jeśli to prawda, to na karcie produktu, gdzie ta sama
+akcja nazywa się „Kup badanie", plusa brakuje. Jeśli plus nie jest potrzebny przy „Kup", nie jest potrzebny
+przy „Dodaj". Dodatkowo **czasownik jest inny w obu miejscach** — raz „dodaj", raz „kup" — więc produkt uczy
+dwóch nazw jednej czynności.
+
+Trzy drogi, każda spójna wewnętrznie:
+
+1. **Akcja to dodawanie do koszyka.** Kafelek „Dodaj do koszyka" (kandydat z webu klienta), karta produktu
+   to samo. Plus zbędny, bo dopełnienie mówi wszystko. Minus: dłuższa etykieta na wąskim kafelku.
+2. **Akcja to kupowanie.** Kafelek „Kup", karta produktu „Kup badanie" / „Kup pakiet". Krótko, spójnie,
+   bez plusa. Minus: „Kup" na kafelku sugeruje przejście do płatności, a lądujemy w koszyku.
+3. **Plus jako IKONA, nie znak w tekście.** Kafelek: ikona `plus` w `leadingIcon` plus etykieta „Dodaj";
+   karta produktu bez zmian. Wtedy plus jest elementem interfejsu, nie stringiem — nie trzeba go tłumaczyć,
+   a czytnik ekranu nie odczyta „plus Dodaj" jako treści.
+
+**Rekomendacja: droga 1.** „Dodaj do koszyka" nazywa akcję i cel, nie potrzebuje plusa, jest kandydatem
+z webu klienta (więc zgodna z hierarchią źródeł) i spełnia wzorzec CTA „czasownik + obiekt", którego
+„+ Dodaj" nie spełnia. Karta produktu zostaje przy „Kup badanie", bo tam przycisk jest głównym działaniem
+ekranu i ma inną wagę — ale wtedy warto to rozstrzygnąć wprost, a nie zostawiać jako przypadek.
+
+**Status:** w prototypie został kanon F2 („+ Dodaj"), bo to świeżo rozstrzygnięty wiersz. Czeka na decyzję.
+
 Poprawione już przy tym przebiegu, bez czekania na decyzję, bo kanon jest jednoznaczny:
 
 - toast po dołączeniu do klubu: „Witaj w ALAB club. Ceny klubowe są już aktywne." → **„Witaj w ALAB club · od teraz 5% taniej"** (leksykon 330)

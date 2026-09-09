@@ -435,8 +435,12 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .tasks__list .ds-Cell__trailing { width: 20px; height: 20px; }
 
 /* PDP: ikony wierszy w kartach („Opis badania”, „Pełny opis”, „FAQ”) w kolorze akcentu — tak jak wiersze
-   CellInfo pod nimi. Zawężone do karty produktu, żeby nie zmieniać Cell w arkuszach i na listach. */
-.product .ds-Surface .ds-Cell > .ds-icon { color: var(--main-accent); }
+   CellInfo pod nimi. Zawężone do karty produktu, żeby nie zmieniać Cell w arkuszach i na listach.
+   Akcent należy WYŁĄCZNIE do ikony wiodącej po lewej; szewron po prawej jest nawigacją, nie treścią, więc
+   idzie w tertiary (decyzja Jarka 2026-09-09) — wcześniej reguła akcentu łapała oba, bo szewron też jest
+   bezpośrednim dzieckiem .ds-Cell i wygrywał specyficznością z domyślną barwą .ds-Cell__trailing. */
+.product .ds-Surface .ds-Cell > .ds-icon:not(.ds-Cell__trailing) { color: var(--main-accent); }
+.product .ds-Cell__trailing { color: var(--content-on-surface-tertiary); }
 
 /* Odznaka nad tytułem na karcie produktu (warianty 2726:16353): wyrównana do lewej, nie rozciąga się na kartę */
 .product__badge { display: flex; flex: 0 0 auto; }
