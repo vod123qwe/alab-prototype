@@ -137,7 +137,7 @@
   const popularSections = () => [['package', 'Popularne pakiety', 'packages', 'Pokaż wszystkie pakiety'], ['test', 'Popularne badania', 'tests', 'Pokaż wszystkie badania']].map(([kind, title, k, btn]) => { const items = popular(kind), all = forType().filter(x => x.kind === kind).length; return items.length ? `<section class="shop__section">
             ${DS.SectionHeader({ title, action: 'Pokaż wszystkie', actionAttrs: { 'data-action': 'show-all', 'data-kind': k } })}
             <div class="shop__cards">${items.map(card).join('')}</div>
-            ${DS.Button({ label: `${btn} (${all})`, type: 'secondary', block: true, attrs: { 'data-action': 'show-all', 'data-kind': k } })}
+            ${DS.Button({ label: `${btn} • ${all}`, type: 'secondary', block: true, attrs: { 'data-action': 'show-all', 'data-kind': k } })}
           </section>` : ''; }).join('');
   SCREENS.dashboard = () => `<div class="screen shop" data-tab="shop">
       ${shopHead()}
@@ -437,7 +437,7 @@
       KINDS.map(([id, label]) => DS.FilterChip({ label, count: id === 'all' ? null : nKind(id, sel), selected: kind === id, attrs: { 'data-kind-pick': id } })).join('') +
       `</div></div>` +
       (cat && subsFor(cat.id).length > 1 ? `<div class="filters__group"><p class="filters__label">Kategorie</p><div class="filters__rows">` +
-        subsFor(cat.id).map(([name]) => `<button type="button" class="filters__row" data-sub-pick="${esc(name)}" aria-pressed="${sel.includes(name)}">${DS.Checkbox({ checked: sel.includes(name) })}<span class="filters__text">${esc(name)}<span class="filters__count">(${nSub(name)})</span></span></button>`).join('') +
+        subsFor(cat.id).map(([name]) => `<button type="button" class="filters__row" data-sub-pick="${esc(name)}" aria-pressed="${sel.includes(name)}">${DS.Checkbox({ checked: sel.includes(name) })}<span class="filters__text">${esc(name)}<span class="filters__count">• ${nSub(name)}</span></span></button>`).join('') +
         `</div></div>` : '') +
       `<div class="filters__actions">` +
       (cat ? DS.Button({ label: 'Wyczyść', type: 'secondary', attrs: { 'data-filters-clear': '1' } }) : '') +

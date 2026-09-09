@@ -9,7 +9,7 @@ i żeby Kasper widział w jednym miejscu, co u nas nie zgadza się z kanonem i d
 
 Jak czytać sekcje:
 
-- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra.
+- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra. Dziś dwa: wiersz ceny klubowej (A1) i notacja liczników (A2).
 - **B. Odstępstwa z natury prototypu** — nie są tematem do zatwierdzania, ale trzeba o nich wiedzieć, żeby nie mylić ich z błędem.
 - **C. Rozjazdy w samych mapach** — odwzorowane dosłownie, bo prototyp wykonuje mapy; decyzja po stronie autora map.
 - **D. Poza kanonem** — teksty, których mapy nie obejmują. Nasze propozycje, nie kanon.
@@ -66,6 +66,49 @@ Półpauza też nie, bo czyta się jako minus.
 
 **Status:** wprowadzone w prototypie decyzją Jarka 2026-09-09, do rozstrzygnięcia z Kasprem i klientem.
 Zmiana to jedna linia (`app/app.shop.js`, `clubOffer` i `clubActive`).
+
+### A2 · Liczniki przy etykietach: duża kropka, nie nawias · **SUGEROWANY WYJĄTEK**
+
+**Kanon (mapa M3 wiersze 69 i 166, leksykon 234):** licznik w nawiasie, uzasadniony spójnością z licznikami
+w przyciskach.
+
+> wiersz 69: `Składowe pakietu | Zobacz składowe pakietu • 4 | Zobacz składowe pakietu (4) | podmień (licznik w nawiasie, jak „Pokaż wszystkie pakiety (6)")`
+>
+> wiersz 166: `Chipy podkategorii | Tarczyca • 2 | Tarczyca (2) | podmień separator na nawias, jak liczniki w przyciskach`
+
+**Co jest w prototypie:** licznik po **dużej kropce** `•`, z odstępem 4px z każdej strony.
+
+| Miejsce | Kanon | Prototyp |
+| --- | --- | --- |
+| Chipy typu i podkategorii | „Tarczyca (6)" | **„Tarczyca • 6"** |
+| Wiersz składowych na karcie | „Zobacz składowe pakietu (4)" | **„Zobacz składowe pakietu • 4"** |
+| Wiersze w arkuszu filtrów | „Tarczyca (6)" | **„Tarczyca • 6"** |
+| Przyciski „Pokaż wszystkie…" | „Pokaż wszystkie pakiety (16)" | **„Pokaż wszystkie pakiety • 16"** |
+| Nagłówki sekcji | — (kanon ich nie rusza) | „Pakiety badań • 3" (bez zmian, tak było od początku) |
+
+**Powód (decyzja Jarka 2026-09-09).** Kropka środkowa `·`, którą mapa narzuca jako separator w linii, jest
+**za mała przy naszym foncie i skali interfejsu** — na ekranie telefonu gubi się między etykietą a liczbą
+i przestaje pełnić rolę separatora. Nawias z kolei domyka liczbę jako przypis do etykiety, co działa
+w przycisku, ale na chipie i w wierszu listy czyta się ciszej niż powinno: licznik jest tam informacją,
+której uczestnik szuka wzrokiem, a nie dopiskiem.
+
+**Konsekwencja spójności, która przemawia za wyjątkiem:** nagłówki sekcji („Pakiety badań • 3") miały dużą
+kropkę od początku i kanon ich nie dotyka. Przy nawiasach w chipach i przyciskach mielibyśmy w jednym
+ekranie **dwie notacje tej samej liczby**. Po tej decyzji jest jedna, wszędzie.
+
+**Koszt wyjątku.** Dwa odstępstwa naraz, oba do przyjęcia albo odrzucenia łącznie:
+
+1. **forma** — duża kropka zamiast nawiasu (mapa M3, wiersze 69 i 166; leksykon 234),
+2. **glif** — `•` zamiast `·`, wbrew regule nr 1 mapy M3: *„Separator w jednej linii to kropka środkowa • Tak: Pakiet · 4 badania • Nie: •"*.
+
+Reguła została w mocy tam, gdzie separator rozdziela **słowa**, nie liczniki: meta karty to nadal
+„Pakiet · 4 badania", a dane techniczne „Symbol MORF · Kod ICD C55". Wyjątek dotyczy **wyłącznie licznika
+doklejonego do etykiety** na chipie, w wierszu listy i w przycisku.
+
+**Status:** wprowadzone w prototypie 2026-09-09, do rozstrzygnięcia z Kasprem. Jeśli klient zostanie przy
+dużej kropce, trzeba poprawić regułę nr 1 mapy M3 i leksykon 234, żeby przestały sobie przeczyć.
+Zmiana to trzy komponenty: `DS.FilterChip`, `DS.ProductCard` (wiersz składowych) i etykieta przycisku
+„Pokaż wszystkie…" w `app/app.shop.js`.
 
 ---
 

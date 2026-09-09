@@ -153,7 +153,7 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | „Szukaj badania**...**" | „Szukaj badania…" (jeden znak) | leksykon 3a |
 | „**-**20%" (dywiz) · „z kodem**:**" | „−20%" (znak minus) · „z kodem" | leksykon 109 |
 | „Pokaż wszystkie pakiety" | „… pakiety (16)" | mapa M3, P01 |
-| chipy i wiersze filtrów „Tarczyca • 6" | „Tarczyca (6)" | mapa M3, P01 |
+| chipy i wiersze filtrów „Tarczyca • 6" | ~~„Tarczyca (6)"~~ — **cofnięte 2026-09-09**, duża kropka zostaje (wyjątek A2 w rejestrze) | mapa M3, P01 |
 | baner klubu „Twój klub na całe życie" · CTA „Sprawdź" | „Bezpłatny program dla Pacjentów" · „Dołącz do ALAB club" | mapa M3 3.4, decyzja F4 |
 | ekran klubu: „Trzy korzyści, jedna decyzja." · sheet kategorii z podtytułem | zdjęte | M1 A14, decyzja F3 |
 | „1 podpowiedzi" · etykieta pola „Wpisz kraj..." | odmiana po liczbie · „Kraj" | polszczyzna, reguła 3a |

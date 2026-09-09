@@ -68,7 +68,7 @@
     return `<article class="${cls('ds', 'ds-ProductCard', 'ds-ProductCard--' + kind)}" ${attrs(a)} ${id ? `data-product="${esc(id)}"` : ''}>` +
       `<div class="ds-ProductCard__surface"><div class="ds-ProductCard__text">${badgeHtml}<div class="ds-ProductCard__heading"><p class="ds-ProductCard__meta">${esc(meta)}</p><p class="ds-ProductCard__title">${esc(title)}</p></div>${priceHtml}</div>` +
       `<button type="button" class="${cls('ds-ButtonTiny', 'ds-ButtonTiny--' + ctaVariant, 'ds-ProductCard__cta')}" data-action="${ctaVariant === 'primary' ? 'add-to-cart' : 'change-point'}" data-title="${esc(title)}"><span class="ds-ButtonTiny__label">${esc(cta)}</span></button></div>` +
-      (footer ? `<button type="button" class="ds-ProductCard__footer" data-action="package-details"><span>${esc(footer.label)}</span><span class="ds-ProductCard__footerCount">&nbsp;(${esc(footer.count)})</span>${DS.icon('chevron-right', 16)}</button>` : '') + `</article>`;
+      (footer ? `<button type="button" class="ds-ProductCard__footer" data-action="package-details"><span>${esc(footer.label)}</span><span class="ds-ProductCard__footerCount">&nbsp;• ${esc(footer.count)}</span>${DS.icon('chevron-right', 16)}</button>` : '') + `</article>`;
   };
 
   // ---------- Karta produktu („Produkt • Badanie / Pakiet” 1183:19461-19462) ----------
