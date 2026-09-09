@@ -13,7 +13,7 @@ po wysłaniu, poprawka idzie do nowej wersji.
 1. `README-czytaj-najpierw.md`: ten plik.
 2. `ux-writing-lexicon-ADDENDUM-FM-2026-09-09.md`: **jeśli masz czytać jedno, to to.**
    Aneks do `ux-writing-lexicon.md` w Twoim formacie tabel (Element · Kanon · NIE · Źródło),
-   gotowy do wklejenia. 16 wierszy plus trzy reguły procesu. Wiersze oznaczone ⚠ KONFLIKT
+   gotowy do wklejenia. 14 wierszy plus jedna reguła procesu. Wiersze oznaczone ⚠ KONFLIKT
    trzeba rozstrzygnąć, bo produkt mówi dziś coś, czego kanon zabrania.
 3. `leksykon-propozycje-zmian-2026-09-09.md`: uzasadnienia do aneksu. 13 punktów, każdy w układzie
    „kanon dziś · co stoi w produkcie · powód · o co prosimy · koszt". Punkty **L1, L3 i L5 są

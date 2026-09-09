@@ -7,7 +7,8 @@ Aneks nie zmienia hierarchii źródeł: nic tu nie dotyka ustaleń klienta.
 Trzy wiersze oznaczone **⚠ KONFLIKT** to miejsca, gdzie produkt mówi dziś coś, czego kanon wprost
 zabrania. Nie da się być zgodnym z jednym i drugim, więc te trzy proszę rozstrzygnąć jako pierwsze.
 Uzasadnienia, koszty i alternatywy: `leksykon-propozycje-zmian-2026-09-09.md` w tej samej paczce,
-punkty L1 do L13.
+punkty L1 do L13. Wiersze o mechanice komponentów i o naszych wpadkach
+zostały z tego aneksu wyjęte - trzymamy je u siebie.
 
 ---
 
@@ -35,32 +36,17 @@ punkty L1 do L13.
 | **Wielokropek** | jeden znak `…` | trzy kropki `...` | L9. 2 wystąpienia w hi-fi |
 | **Cudzysłów** | otwierający `„` i zamykający `”` | zamykający jako prosty `"` | L9. 1 wystąpienie w hi-fi |
 | **Spacja na końcu warstwy tekstowej** | **zero** | spacja końcowa - niewidoczna w Figmie, psuje wyśrodkowanie i przechodzi do developmentu | L9. 48 warstw, w tym `-20% ` ×15; źródło było w komponentach DS |
-| **Treść demo w komponentach** | podlega leksykonowi **tak samo jak copy produktu** | domyślne wartości typu „1190 zł" bez groszy, badge „ALAB **Club**" | L8. Te dwie wartości zeszły biblioteką na około 200 węzłów pliku Design; stara domyślna treść `BadgePremium` była **źródłem** frazy „Aktywna zniżka klubowa", którą gasiliśmy ręcznie na kilkudziesięciu ekranach |
-| **Zakres reguły „nagłówek sekcji bez czasownika"** | tylko nagłówki i etykiety sekcji; **przyciski i linki zachowują czasownik** | skracanie CTA tą regułą - „Zobacz składowe pakietu" → „Składowe pakietu" | L12. Nasza wpadka, wyłapana przy przebiegu skillem `/ux-writer` |
 | **Cena dla czytnika ekranu** | kanon jest („63 złote 65 groszy"), brak wdrożenia i brak ustalenia, kto generuje odmianę liczebnika | traktowanie tego jako stringu do napisania - odmiana „złoty/złote/złotych" to logika, nie tekst | L13 |
 
 ---
 
-## Do sekcji 6 (utrzymanie) - trzy reguły procesu
+## Do sekcji 6 (utrzymanie) - jedna reguła procesu
 
-Wyszły z rzeczy, które przy wdrażaniu copy **wyglądały jak błąd copy, a były błędem struktury pliku**.
-Pełny opis: `zasady-i-format-propozycje-2026-09-09.md`, punkty Z1 do Z6.
+Wyszła z rzeczy, która przy wdrażaniu copy **wyglądała jak błąd copy, a była błędem struktury pliku**.
+Pełny opis: `zasady-i-format-propozycje-2026-09-09.md`, punkt Z1.
 
-**1. Override blokuje propagację z biblioteki.** Każdy tekst wpisany ręcznie na instancji zostaje
+**Override blokuje propagację z biblioteki.** Każdy tekst wpisany ręcznie na instancji zostaje
 stary - także override **wewnątrz mastera DS** (master `CellTest` nadpisywał cenę, więc poprawka
 w `PriceRow` nie miała jak dojść do kart). Wniosek dla mapy copy: wiersz „podmień" musi mówić
 **gdzie** - `main` / `property` (z nazwą pola) / `instancja`. Bez tego wykonawca zmienia komponent,
 widzi „gotowe", a na ekranach nic się nie rusza. Zdarzyło się nam na 12 pozycjach.
-
-**2. Zdanie z wartością zmienną nie może siedzieć w jednej warstwie z tą wartością.** Linijka
-„189,05 zł ekstra -5% w klubie" była jedną warstwą, więc realna cena wymagała override'u, a override
-**zamrażał całe zdanie**: przełącznik „Pacjent w klubie" zmieniał warianty, a napis zostawał -
-72 z 85 wierszy pokazywało komunikat sprzeczny ze stanem. Naprawione rozbiciem na `Club price`
-(pole komponentu) i `Club phrase` (tekst wariantu, nigdy nie nadpisywany). **Wniosek dla kanonu:
-zapisujmy takie zdania jako dwa pola - wartość osobno, fraza osobno.** To samo ryzyko siedzi
-w „Najniższa cena z 30 dni: …", „Kraków 109 zł", licznikach składowych i timerze.
-
-**3. Cytowanie leksykonu.** Leksykon nie ma numerowanych reguł. W trakcie pracy cytowaliśmy
-„leksykon 109", „322", „234" - **te numery były nasze i nie ma ich w pliku**, co utrudnia
-weryfikację. Proponujemy jeden sposób w obie strony: **sekcja + wpis `decisions-log`**
-(np. „sek. 3a, CXXIV.L, decyzja F1"), albo wprowadzenie numeracji reguł w leksykonie.
