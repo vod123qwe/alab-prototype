@@ -11,15 +11,19 @@ po wysłaniu, poprawka idzie do nowej wersji.
 ## Pliki i kolejność czytania
 
 1. `README-czytaj-najpierw.md`: ten plik.
-2. `leksykon-propozycje-zmian-2026-09-09.md`: **rzecz najważniejsza.** 13 punktów, każdy w układzie
+2. `ux-writing-lexicon-ADDENDUM-FM-2026-09-09.md`: **jeśli masz czytać jedno, to to.**
+   Aneks do `ux-writing-lexicon.md` w Twoim formacie tabel (Element · Kanon · NIE · Źródło),
+   gotowy do wklejenia. 16 wierszy plus trzy reguły procesu. Wiersze oznaczone ⚠ KONFLIKT
+   trzeba rozstrzygnąć, bo produkt mówi dziś coś, czego kanon zabrania.
+3. `leksykon-propozycje-zmian-2026-09-09.md`: uzasadnienia do aneksu. 13 punktów, każdy w układzie
    „kanon dziś · co stoi w produkcie · powód · o co prosimy · koszt". Punkty **L1, L3 i L5 są
    konfliktami z kanonem**, nie propozycjami kosmetycznymi.
-3. `zasady-i-format-propozycje-2026-09-09.md`: 6 punktów o procesie i o formacie mapy copy. Wyszły
+4. `zasady-i-format-propozycje-2026-09-09.md`: 6 punktów o procesie i o formacie mapy copy. Wyszły
    z mechanik Figmy, które przy wdrażaniu copy kosztowały najwięcej czasu i dwa razy wyglądały
    jak błąd copy, a były błędem struktury.
-4. `wdrozenie-2026-09-09.md`: co faktycznie podmienione, w jakiej skali i gdzie.
-5. `pytania-otwarte-2026-09-09.md`: pytania do Ciebie, do ALAB i do devów, z rekomendacjami.
-6. `zrodla-fm/`: nasze dzienniki robocze, gdyby trzeba było wejść w szczegół.
+5. `wdrozenie-2026-09-09.md`: co faktycznie podmienione, w jakiej skali i gdzie.
+6. `pytania-otwarte-2026-09-09.md`: pytania do Ciebie, do ALAB i do devów, z rekomendacjami.
+7. `zrodla-fm/`: nasze dzienniki robocze, gdyby trzeba było wejść w szczegół.
 
 ## Jedna rzecz do przeczytania od razu
 
