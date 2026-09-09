@@ -1,6 +1,6 @@
 # Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
 
-Stan na 2026-09-09, wersja prototypu **2026.09.09-103**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+Stan na 2026-09-09, wersja prototypu **2026.09.09-104**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
 (mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
 Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
 
@@ -118,7 +118,7 @@ Zmiana to trzy komponenty: `DS.FilterChip`, `DS.ProductCard` (wiersz składowych
 | --- | --- | --- | --- | --- |
 | B1 | Odliczanie ponownego wysłania kodu | 0:59 | **0:29** | API blokuje wysłanie na minutę, ale w prototypie uczestnik nie ma po co czekać minuty na ekranie, którego i tak nie testujemy |
 | B2 | Komunikaty o samym prototypie | leksykon zakazuje em dasha | „Pełny opis **—** treść z API w kolejnym etapie", „FAQ badania — w kolejnym etapie", „Pobieranie PDF — poza prototypem", „Udostępnianie wyniku — systemowy arkusz, poza prototypem" | To nie jest copy produktu, tylko informacja, że dalej nic nie ma. Do decyzji, czy leksykon obejmuje tę warstwę; jeśli tak, zamieniamy pauzy na dwukropek |
-| B3 | Liczniki w tekstach | mapy podają przykłady z POC („Pokaż wszystkie pakiety (6)") | „(16)", „(53)" | Nasz katalog ma 73 pozycje, POC 25 — liczby w copy są wyliczane, nie wpisane |
+| B3 | Liczniki w tekstach | mapy podają przykłady z POC („Pokaż wszystkie pakiety (6)") | „• 16", „• 53" | Nasz katalog ma 73 pozycje, POC 25 — liczby w copy są wyliczane, nie wpisane. Notacja licznika: patrz wyjątek A2 |
 | B4 | Ekrany autentykacji | trzynaście ekranów M1 | ukryte w badaniu | Badanie zaczyna się od hubu zadań; copy M1 doprowadziliśmy do kanonu, ale uczestnik go nie zobaczy |
 | B5 | Zestaw wysyłkowy | POC ma 5 badań w 3 kategoriach | to samo, ale nasze nazwy | Przypisania kanałów wyrównane do zasady POC 2026-09-09; nazwy produktów są nasze, bo katalog jest większy |
 
