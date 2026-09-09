@@ -96,10 +96,21 @@
           </div>
           <p class="tasks__lead">Każde zadanie zaczyna się od nowa,<br>z pustym koszykiem.</p>
         </div>
-        <div class="tasks__list">${TASKS.map(([n, title, sub]) => DS.Cell({ icon: null, title, subtitle: sub, trailing: 'chevron-right-20', attrs: { 'data-action': 'start-task', 'data-task': n } })).join('')}</div>
+        <div class="tasks__bottom">
+          <div class="tasks__list">${TASKS.map(([n, title, sub]) => DS.Cell({ icon: null, title, subtitle: sub, trailing: 'chevron-right-20', attrs: { 'data-action': 'start-task', 'data-task': n } })).join('')}</div>
+          <button type="button" class="tasks__reset" data-action="reset-proto">Resetuj prototyp</button>
+        </div>
       </div>
       ${DS.HomeIndicator({ light: true })}
     </div>`;
+  // „Resetuj prototyp" czyści cały stan sesji — także członkostwo w ALAB club, które normalnie przechodzi między
+  // zadaniami. Uczestnik zaczyna dokładnie jak nowy: pusty koszyk, Punkt Pobrań, poza klubem. Zamiast zakładać,
+  // że się udało, sprawdzamy stan po resecie — w prywatnym oknie `sessionStorage` może być niedostępny.
+  APP.ACTIONS['reset-proto'] = () => {
+    APP.reset();
+    const s = APP.S, ok = !s.shop && !s.clubJoined && !APP.recallClub();
+    APP.snack(ok ? 'Prototyp zresetowany' : 'Nie udało się zresetować prototypu', ok ? 'success' : 'error', 44);
+  };
   APP.FADE_ROUTES.add('zadania');      // ekran korzeniowy — wchodzi i wychodzi przejściem fade
   APP.DARK_ROUTES.add('zadania');      // granatowy: tło dokumentu i theme-color jak na splashu
 

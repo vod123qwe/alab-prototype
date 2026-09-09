@@ -110,7 +110,7 @@
   };
   // granatowy nagłówek z hero, polem szukania i chipami (wspólny dla strony głównej i listingów)
   const shopHead = ({ title, bar = false, query, filters = false } = {}) => `<header class="shop__head" id="shop-head">
-        <div class="shop__fill"><div class="shop__bg"><img src="${A}img_shop_bg.png" alt=""></div><div class="shop__bgOverlay"></div></div>
+        <div class="shop__fill"><div class="shop__bg"><img src="${A}img_shop_bg_blur.png" alt=""></div></div>
         <div class="${bar ? 'shop__nav shop__nav--bar' : 'shop__nav'}">${bar ? DS.TopBar({ transparent: true, light: true, title }) : DS.StatusBar({ light: true })}</div>
         <div class="shop__searchWrap">
           <div class="shop__searchRow">${DS.SearchField({ style: 'oncolor', placeholder: query || 'Szukaj badania...', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania', class: query ? 'has-query' : '' } })}${filters ? DS.IconButton({ icon: 'settings', variant: 'onscrim', size: 'medium', label: 'Filtry', attrs: { 'data-action': 'filters' } }) : ''}</div>
@@ -273,7 +273,7 @@
     const buyAttrs = un ? { 'data-action': 'change-point' } : { 'data-action': 'add-to-cart', 'data-product': p.id, 'data-title': p.title };
     return `<div class="screen shop product" data-tab="shop">
       <header class="product__head" id="prod-head">${DS.TopBar({ transparent: true, light: true, title: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania' })}</header>
-      <div class="product__bg" id="prod-bg"><div class="product__bgImg"><img src="${A}img_shop_bg.png" alt=""></div><div class="product__bgOverlay"></div></div>
+      <div class="product__bg" id="prod-bg"><div class="product__bgFill"></div><div class="product__bgImg"><img src="${A}img_product_bg.png" alt=""></div></div>
       <div class="screen__body shop__scroll product__scroll" id="prod-scroll">
         <div class="product__heroSpacer"></div>
         <div class="product__content">

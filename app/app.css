@@ -182,13 +182,13 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    prawej krawędzi — trzymamy to samo, bo środek zdjęcia liczy się od jego połowy (50% + 287.34px). Przy szerszym
    telefonie z lewej zostaje sam --main-primary, dokładnie jak w projekcie. */
 .shop__bg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; pointer-events: none; }
-/* kwadrat 840.74 obrócony o 75°, środek w (50% + 287.34px, 162.84px) — BEZ własnego rozmycia */
-.shop__bg img { position: absolute; width: 840.738px; height: 840.738px; left: calc(50% + 287.34px); top: 162.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; }
-/* Content Background: sama warstwa gradientu, BEZ rozmycia — zdjęcie w tle zostaje ostre. Pas ma stałe 331px
-   i liczy się od dołu NAGŁÓWKA (w projekcie jest dzieckiem Top Nav, nie ProductBackground), więc leży
-   w .shop__fill, nie w .shop__bg. Gradient wprost z Figmy. */
-.shop__bgOverlay { position: absolute; left: 0; right: 0; bottom: 0; height: 331px;
-  background: linear-gradient(181.69deg, rgba(4,56,125,0) 6.09%, var(--background-surface-inverse) 98.39%); }
+/* Grafika jest WYPALONA (tools/bake-bg.py): zdjęcie w geometrii z Figmy (kwadrat 840.738 obrócony o 75°,
+   środek w 50% + 287.34px / 162.84px) plus PROGRESYWNE rozmycie narastające ku dołowi. Rozmycia nie da się
+   wiernie zrobić w CSS: Figma wygasza „background blur” alfą warstwy, a `backdrop-filter` rozmywa równo
+   całą powierzchnię. Plik ma 3× (1125×1404), źródło zostało w `img_shop_bg.png`.
+   Gradient też jest w grafice: nasz nagłówek jest niższy niż Top Nav w Figmie (195-251 vs 266), więc pas
+   liczony w CSS od jego dołu wjechał granatem na bąbel i gasił go u samej góry. */
+.shop__bg img { position: absolute; inset: 0; width: 375px; height: 468px; }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; margin: 0 -20px; }
@@ -267,22 +267,17 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .product__head.is-scrolled .ds-StatusBar--light { color: var(--content-on-surface); }
 /* Tło hero leży POD przewijaną treścią jako osobna warstwa: przy scrollu w górę JS przesuwa je razem z treścią,
    przy ciągnięciu w dół (rubber band) zostaje na miejscu.
-   Składamy je 1:1 z ProductBackground z karty produktu (I1183:19461;574:1884), z tego samego zdjęcia źródłowego
-   co nagłówek sklepu — wcześniej był tu spłaszczony eksport 375×468 rozciągany na szerokość ekranu.
-   Różnice wobec nagłówka sklepu: środek zdjęcia wyżej i bardziej w prawo, rozmycie 50 (nie 46) i gradient, który
-   kończy się kolorem strony (#f6f7f8), a nie granatem — dlatego hero płynnie wchodzi w tło pod białą kartą. */
+   Grafika WYPALONA (tools/bake-bg.py) wg ProductBackground z karty produktu (I1183:19461;574:1884): zdjęcie
+   środkiem w 50% + 251.34px / 213.84px, progresywne rozmycie 50 i gradient 182.41° z granatu 30% do koloru
+   strony na 82.43%. Ma stałe 375×468 przy prawej krawędzi, bo środek zdjęcia liczy się od połowy tego bloku;
+   `.product__bgFill` dokłada ten sam gradient na pełną szerokość, żeby na szerszym telefonie nie było szwu. */
 .screen.product { background: var(--background-surface-secondary); }
 .product__scroll { background: transparent; position: relative; z-index: 1; }
 .product__bg { position: absolute; inset: 0; z-index: 0; background: var(--background-surface-secondary); will-change: transform; }
-/* ProductBackground: stałe 375×468 przy prawej krawędzi (środek zdjęcia liczy się od jego połowy) */
-.product__bgImg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; background: var(--main-primary); }
-.product__bgImg img { position: absolute; width: 840.738px; height: 840.738px; left: calc(50% + 251.34px); top: 213.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; }
-/* Content Background: gradient na całej wysokości hero (0 → 473px), pełna szerokość ekranu, z rampą alfy
-   wprost z Figmy (granat 30% → kolor strony). Tu świadomie BEZ `backdrop-filter`: nad przewijanym tłem, które
-   jedzie transformem, Chromium gubi kompozycję warstwy z rozmyciem i przemalowuje kartę. Nic na tym nie tracimy —
-   w projekcie rozmycie na karcie produktu działa tam, gdzie gradient jest już prawie kryjący, więc i tak go nie widać. */
-.product__bgOverlay { position: absolute; left: 0; right: 0; top: 0; height: 473px;
-  background: linear-gradient(182.41deg, rgba(4,56,125,.3) 1.62%, var(--background-surface-secondary) 82.43%); }
+.product__bgFill { position: absolute; left: 0; right: 0; top: 0; height: 468px;
+  background: linear-gradient(182.41deg, var(--main-primary) 1.62%, var(--background-surface-secondary) 82.43%); }
+.product__bgImg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; }
+.product__bgImg img { position: absolute; inset: 0; width: 375px; height: 468px; }
 .product__heroSpacer { flex: 0 0 468px; height: 468px; }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
 .product__main { gap: 24px; padding: 36px 24px 36px; /* +12 dp góra/dół vs pozostałe karty */ border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }
@@ -428,6 +423,13 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* lista zadań: w Figmie to trzy instancje CellTestResult, w kodzie najbliższy jest DS.Cell. Trzymamy je w JEDNYM
    białym bloku (obrys i zaokrąglenie na kontenerze), a między wierszami jest tylko delikatny divider wcięty
    o padding karty — zamiast przerwy i podwójnych obrysów. Wysokość wiersza 84 wychodzi z paddingu 20 + treści 44. */
+/* lista zadań i link resetu idą razem, żeby 80px odstępu z .tasks__content zostało między tekstem i tą parą */
+.tasks__bottom { display: flex; flex-direction: column; align-items: center; gap: var(--space-xl); width: 100%; }
+/* maly link na granacie — wyjście awaryjne dla uczestnika, więc czytelne, ale nie konkuruje z zadaniami */
+.tasks__reset { padding: 8px 12px; background: none; border: 0; color: var(--content-on-scrim-secondary);
+  font: 700 var(--label-medium-font-size)/var(--label-medium-line-height) var(--font-family-primary);
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.tasks__reset:active { color: var(--content-on-scrim); }
 .tasks__list { display: flex; flex-direction: column; width: 100%; background: var(--background-surface); border: 1px solid var(--outline-border); border-radius: var(--radius-extralarge); overflow: hidden; }
 .tasks__list .ds-Cell { position: relative; min-height: 84px; padding: 20px 24px; gap: 16px; background: transparent; border: 0; border-radius: 0; }
 .tasks__list .ds-Cell + .ds-Cell::before { content: ""; position: absolute; left: 24px; right: 24px; top: 0; height: 1px; background: var(--outline-border); }

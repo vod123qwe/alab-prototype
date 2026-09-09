@@ -430,15 +430,23 @@ Karta produktu miała **spłaszczony eksport 375×468** (`img_product_bg.png`) r
 ani rozmycia z projektu. Teraz składamy je z tego samego zdjęcia źródłowego co nagłówek sklepu, wg
 **ProductBackground z 1183:19461** (`I1183:19461;574:1884`) — spłaszczony eksport usunięty z assetów.
 
-**Zdjęcie w tle zostaje ostre — nie odtwarzamy „background blur” (2026-09-09).** W Figmie rozmycie tła jest
-wygaszane alfą warstwy Content Background, więc u góry, gdzie gradient jest przezroczysty, zdjęcie zostaje ostre.
-CSS `backdrop-filter` rozmywa równo całą powierzchnię elementu — stąd bezkształtna mazia u góry nagłówka.
-Odtworzenie tego maską alfy (rozmycie narastające ku dołowi) też poszło do kosza — **decyzja Jarka: na zdjęciach
-w tle nie ma progresywnego rozmycia**. Zostało samo zdjęcie i gradient z Figmy, w obu miejscach. Na karcie produktu
-doszedł do tego drugi powód: nad tłem, które jedzie transformem przy przewijaniu, Chromium gubi kompozycję warstwy
-z `backdrop-filter` i przemalowuje białą kartę.
+**Tła są WYPALONYMI grafikami z progresywnym rozmyciem** (`tools/bake-bg.py` → `ds/assets/img_shop_bg_blur.png`
+i `img_product_bg.png`, 3× = 1125×1404). W Figmie „background blur” jest wygaszany alfą warstwy Content
+Background, więc rozmycie **narasta razem z gradientem**: u góry zero, u dołu pełne. CSS tego nie zrobi —
+`backdrop-filter` rozmywa równo całą powierzchnię elementu (góra nagłówka robi się mazią), a wygaszanie maską
+alfy dawało osobne artefakty i na karcie produktu wywracało kompozycję w Chromium (nad tłem jadącym transformem
+przemalowywało białą kartę). Składamy więc raz, offline, i wrzucamy jako gotową grafikę — dokładnie tak, jak
+działał wcześniejszy eksport z Figmy na karcie produktu.
 
-Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):
+Skrypt bierze zdjęcie źródłowe `img_shop_bg.png` (to samo, które Figma oddaje dla obu ekranów), ustawia je
+w geometrii z projektu, mieszczy ostry i rozmyty wariant tą samą rampą, która nosi gradient, i dokłada gradient.
+Dwa gotchas z bake'u, oba dawały czarne tło: zdjęcie ma **kanał alfa** (`convert('RGB')` zamieniał przezroczystość
+w czerń) i `rotate(expand=True)` wypełnia narozniki czernią, więc obrót musi iść na RGBA i wklejenie przez maskę.
+
+W nagłówku sklepu gradient też jest wypalony, mimo że w projekcie pas ma 331px liczone od dołu Top Nav: nasz
+nagłówek jest niższy (195-251 vs 266), więc pas liczony w CSS wjechał granatem na bąbel i gasił go u samej góry.
+
+Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):
 
 | | Nagłówek sklepu (3185:44676) | Karta produktu (1183:19461) |
 | --- | --- | --- |
@@ -631,6 +639,17 @@ W tym samym momencie adres zmienia się na **`/app/koniec/<produkt>/<tryb klubu>
 `/app/koniec/badanie-ogolne-moczu/w-klubie`. To jest ten warunek ukończenia zadania, o który prosił Maciej:
 osobny adres per produkt i per wersja z klubem oraz bez. „Przeglądaj dalej” cicho wraca adresem na kartę produktu,
 a wejście wprost na adres końca (odświeżenie, wklejony link) rysuje kartę produktu z tym samym arkuszem.
+
+### „Resetuj prototyp" na ekranie startowym (2026-09-09)
+
+Pod listą zadań siedzi mały link **„Resetuj prototyp"** (`.tasks__reset`, podkreślony, na granacie). Czyści cały
+stan sesji — także **członkostwo w ALAB club**, które normalnie przechodzi między zadaniami — więc uczestnik
+zaczyna dokładnie jak nowy: pusty koszyk, Punkt Pobrań, poza klubem, bez filtrów. Potrzebne, gdy ktoś testuje
+kilka razy z rzędu albo gdy moderator chce zacząć sesję od czystego stanu.
+
+Po resecie pokazujemy snackbar. Nie zakładamy, że się udało: sprawdzamy stan po `APP.reset()` (brak `shop`, brak
+klubu w pamięci i w `sessionStorage`) i dopiero wtedy dajemy „Prototyp zresetowany" w wariancie success —
+w prywatnym oknie `sessionStorage` może być niedostępny, wtedy leci wariant error.
 
 ### Ekran startowy i wejście w zadanie
 
