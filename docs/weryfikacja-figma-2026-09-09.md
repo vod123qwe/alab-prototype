@@ -483,3 +483,54 @@ nie zmieni, bo istniejące override'y trzymają się id węzłów. Republish jes
    ale kwoty trzeba przestawić ręcznie. Jeśli to ma działać jednym kliknięciem, potrzebne jest
    trzecie pole „cena regularna" i stałe znaczenie każdego z nich.
 3. **Znak minus**: `-5%` z dywizem, `−40%` ze znakiem minus (leksykon 109 mówi: znak minus).
+
+---
+
+## Runda 7: audyt copy sekcji `🟢 Approved` na `├ 🟢 Sklep` (2026-09-09)
+
+Zakres: sekcja `2546:107869` — 10 podsekcji (Wyszukiwarka, Product page, Podstrony, Sklep, Listing,
+Wyniki wyszukiwania, Typ usługi, trzy tablice wariantów), **1513 widocznych węzłów tekstowych**,
+**85 wierszy `PriceRow`**.
+
+### Czysto (0 trafień)
+
+„ALAB Club" z wielkiej · kwoty bez groszy · em dash · „Email" · podwójne spacje · „zł" bez spacji ·
+małe „pacjent" / „punkt pobrań" / „konto pacjenta" / „centrum wiedzy".
+
+### Naprawione
+
+| Ile | Co | Jak |
+| --- | --- | --- |
+| **2** | zakazane „**oszczędzasz**" — nagłówek PDP pakietu „Kupując w pakiecie, oszczędzasz" | → **„W pakiecie taniej"** |
+| **2** | wielokropek jako trzy kropki `...` w skróconym opisie | → jeden znak **`…`** |
+| **1** | mieszany cudzysłów `„Morfologia"` | → `„Morfologia”` |
+| **14** | kwota klubowa nie zgadzała się z ceną — po rozbiciu linijki część kart wróciła do demo `821,40 zł` | przeliczone z `✏️ Price` |
+| **12** | spacje na końcu tekstu (override'y instancji) | przycięte |
+| **12** | spacje na końcu **w masterach DS** — `❖ Cells` 7, `❖ Pills` 2, `❖ Cards` 3 | przycięte u źródła |
+
+Kontrola końcowa: **`Club phrase` bez ani jednego override'u**, **kwota klubowa zgodna z ceną w 85/85
+wierszach**, **każde pole `✏️ Price` zawiera kwotę**.
+
+**Zostały 36 spacji na końcu**, które **pochodzą z masterów DS** (`-20% ` ×15 z `BadgeCode`,
+„Dysbioza, badanie genetyczne mikrobioty jelitowej " ×21 z demo w `CellTest`/`CellPackage`).
+Poprawiłem je w DS — **znikną po republishu**. Nie przycinałem ich na instancjach, bo to założyłoby
+override'y i zablokowało propagację.
+
+### Zostało do decyzji Jarka
+
+**1. Dziewięć podpisów tablic wariantów ze słowem „promocja"** (×3 każdy):
+„Promocja z kodem" · „Promocja specjalna ALAB" · „Promocja standardowa".
+Propozycja: **„Oferta z kodem" · „Oferta specjalna ALAB" · „Oferta standardowa"**.
+To adnotacje tablicy, nie copy produktu — ale klient oglada ten plik, a słowo jest u niego zakazane.
+
+**2. Sześć podpisów po angielsku**: „User basic" ×3, „User z ALAB club" ×3.
+Propozycja: **„Pacjent bez klubu"** i **„Pacjent w ALAB club"** (leksykon: „Pacjent" z wielkiej).
+Uwaga: te teksty są też **nazwami warstw**, więc zmieniamy jedno i drugie.
+
+**3. Znak minus** — dalej otwarte: `-5%` i `-20%` z dywizem, `−40%` ze znakiem minus (leksykon 109
+mówi: znak minus U+2212).
+
+### Nie jest błędem
+
+Tekst „**Header**" w sekcji `Podstrony` — siedzi w `FlowPlaceholder` → `TopBar`, czyli w świadomym
+placeholderze ekranu, który nie został jeszcze zaprojektowany. Zostawiam.
