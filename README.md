@@ -120,6 +120,36 @@ Poprawny PESEL testowy: `44051401359`.
 - **Zachowania**: auto-weryfikacja po wpisaniu 6. cyfry, licznik 29 s do ponownej wysyłki, reguły hasła podświetlane na zielono w trakcie pisania,
   scrim + arkusz kraju z filtrem. To interpretacja flow, nie decyzje z Figmy.
 
+## Realna treść z alab.pl na kartach produktów z zadań (2026-09-09)
+
+Trzy produkty, które są celami zadań badawczych, mają treść **przepisaną z alab.pl** (odczyt 2026-09-09),
+żeby uczestnik czytał to samo, co w produkcie: nazwę, symbol, kod ICD, cenę, najniższą cenę z 30 dni, czas
+oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi.
+
+| Zadanie | Produkt | Źródło | Co przyszło z alab.pl |
+| --- | --- | --- | --- |
+| 1 | **Badanie ogólne moczu** | `/badanie/badanie-ogolne-moczu-a01` | symbol MOCZ, ICD A01, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 4 punkty przygotowania |
+| 2 | **Pakiet tarczycowy** | `/pakiet/pakiet-tarczycowy` | symbol PKTARPP, skład FT3 + FT4 + TSH, 153,00 zł, 30 dni 107,10 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
+| 3 | **Morfologia krwi obwodowej** | `/badanie/morfologia-krwi-c55` | symbol MORF, ICD C55, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
+
+**Zadanie 2 to teraz Pakiet tarczycowy, nie Pakiet Sport** — realny produkt z oferty ALAB. Został **poza
+ekranem głównym** (bez `popular`), bo zadanie ma zmusić do przejścia przez kategorie albo wyszukiwarkę; ta
+sama zasada trzymała wcześniej poza nim Pakiet Sport. Skład zmienił się z czterech badań na trzy (wypadło
+anty-TPO), bo tak wygląda pakiet na alab.pl — anty-TPO zostaje w pakiecie rozszerzonym.
+
+Kategorie sprawdzone „z grubsza" wobec alab.pl: Pakiet tarczycowy → Hormony / Tarczyca, Morfologia → Układ
+krążenia i Hematologia / Anemia (plus drugie miejsce w Profilaktyce podstawowej), Badanie ogólne moczu →
+Ciąża i Układ moczowy / Układ moczowy i nerki (plus drugie miejsce w Badaniach z moczu). Zgodne z tym, gdzie
+te produkty stoją w katalogu ALAB.
+
+**Do sprawdzenia przez Jarka:** cena Badania ogólnego moczu odczytała się identycznie jak morfologii
+(31,00 zł / 21,70 zł). Może tak być — to dwa najtańsze badania podstawowe — ale para tych samych liczb
+wygląda też jak wspólny blok promocyjny na stronie. Warto zerknąć na produkcie.
+
+Przy okazji: dane techniczne na karcie produktu mówią teraz **„Symbol MORF · Kod ICD C55"** — kropka środkowa
+i bez dwukropka, jak w mapie M3 3.3. To separator między słowami, więc wyjątek A2 (duża kropka przy licznikach)
+go nie dotyczy.
+
 ## Copy do kanonu map M1/M3 (2026-09-09)
 
 Paczka `ALAB-copy-dla-Jarka-2026-09-09` (mapy copy POC → hi-fi dla modułów M1 i M3 plus leksykon) przyniosła

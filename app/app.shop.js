@@ -79,7 +79,9 @@
       old: club ? zl(p.old || p.price) : (p.old ? zl(p.old) : null),
       club: club ? (hero ? null : clubActive(p)) : clubOffer(p),
       promo: codeApplies(p),   // zielona cena tylko wtedy, gdy działa kod rabatowy
-      lowest: p.old ? `Najniższa cena z 30 dni: ${zl(p.lowest || p.old)}` : null,
+      // Omnibus pokazujemy także bez przekreślonej ceny — alab.pl podaje „najniższą cenę z 30 dni" przy
+      // produktach, które właśnie nie są przecenione (np. Morfologia 31,00 zł i 21,70 zł z 30 dni)
+      lowest: (p.lowest || p.old) ? `Najniższa cena z 30 dni: ${zl(p.lowest || p.old)}` : null,
       note: t === 'wysylka' ? null : '+ opłata za pobranie', // wysyłka: cena stała, bez opłaty za pobranie (inventory P04d)
     };
   };
@@ -321,7 +323,7 @@
           ${DS.Surface({ content: `<div class="ds-Surface__rows">${DS.CellInfo({ icon: 'timer', label: 'Oczekiwanie na wynik', value: p.tat })}${isPkg ? '' : DS.CellInfo({ icon: 'lab-tube', label: 'Pobierany materiał', value: p.material })}${DS.CellInfo({ icon: 'pin', label: 'Sposób realizacji', value: where })}</div>` })}
           ${DS.Surface({ content: DS.CellInfo({ icon: 'file-check-doc', label: 'Przygotowanie do badania', bullets: p.prep }) })}
           ${inPkgs.length ? DS.SectionHeader({ title: 'Pakiety z tym badaniem' }) + `<div class="ds-Carousel">${inPkgs.map(card).join('')}</div>` : ''}
-          ${DS.Surface({ label: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania', content: DS.Divider() + `<div class="ds-Surface__list">${DS.Cell({ icon: 'file-text', title: isPkg ? 'Pełny opis pakietu' : 'Pełny opis badania', attrs: { 'data-action': 'full-desc' } })}${DS.Cell({ icon: 'faq', title: 'Najczęstsze pytania (FAQ)', attrs: { 'data-action': 'faq' } })}</div><p class="ds-Surface__meta">Symbol ${esc(p.symbol)}${p.icd ? ` • Kod ICD: ${esc(p.icd)}` : ''}</p>` })}
+          ${DS.Surface({ label: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania', content: DS.Divider() + `<div class="ds-Surface__list">${DS.Cell({ icon: 'file-text', title: isPkg ? 'Pełny opis pakietu' : 'Pełny opis badania', attrs: { 'data-action': 'full-desc' } })}${DS.Cell({ icon: 'faq', title: 'Najczęstsze pytania (FAQ)', attrs: { 'data-action': 'faq' } })}</div><p class="ds-Surface__meta">Symbol ${esc(p.symbol)}${p.icd ? ` · Kod ICD ${esc(p.icd)}` : ''}</p>` })}
           ${club ? '' : DS.ClubBannerLarge()}
           ${related.length ? `<section class="shop__section">${DS.SectionHeader({ title: isPkg ? 'Pakiety powiązane' : 'Badania powiązane' })}<div class="shop__cards">${related.map(card).join('')}</div></section>` : ''}
         </div>

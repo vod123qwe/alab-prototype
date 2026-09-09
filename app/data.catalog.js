@@ -58,18 +58,43 @@
     t('t-crp', 'CRP – białko C-reaktywne', 'infekcje', 'Infekcje bakteryjne', 28.00, { also: [['ogolne', 'Profilaktyka podstawowa']], popular: true, icd: 'I81', keywords: ['crp', 'stan zapalny', 'zapalenie', 'badanie krwi', 'krew'], desc: 'CRP to białko ostrej fazy, którego stężenie rośnie w stanach zapalnych i infekcjach. Badanie pomaga ocenić nasilenie zapalenia i skuteczność leczenia.' }),
     t('t-glu', 'Glukoza na czczo w surowicy', 'cukrzyca', 'Diagnostyka cukrzycy i insulinooporności', 15.00, { also: [['ogolne', 'Profilaktyka podstawowa']], popular: true, icd: 'L43', keywords: ['glukoza', 'cukier', 'cukrzyca', 'badanie krwi', 'krew'], desc: 'Podstawowe badanie w kierunku cukrzycy i zaburzeń gospodarki węglowodanowej. Wykonuj rano, na czczo, po 8-12 godzinach od ostatniego posiłku.' }),
     // morfologia świadomie NIE na początku listy — zadaniem uczestnika jest ją znaleźć (plan badania, zadanie 3)
-    t('t-morf', 'Morfologia krwi', 'krazenie', 'Anemia / niedokrwistość', 21.70, { also: [['ogolne', 'Profilaktyka podstawowa']], symbol: 'MORF', icd: 'C55',
+    // Treść z alab.pl/badanie/morfologia-krwi-c55 (odczyt 2026-09-09): nazwa, symbol, ICD, cena, czas
+    // oczekiwania, opis i przygotowanie. Badanie jest celem zadania 3, więc karta musi wyglądać realnie.
+    t('t-morf', 'Morfologia krwi obwodowej', 'krazenie', 'Anemia / niedokrwistość', 31.00, { also: [['ogolne', 'Profilaktyka podstawowa']],
+      symbol: 'MORF', icd: 'C55', lowest: 21.70, tat: '1 dzień roboczy',
       keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
-      desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi.' }),
+      desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne, które dostarcza kompleksowej oceny jakościowej i ilościowej komórek krwi: krwinek czerwonych, białych i płytek krwi. Pozwala na wczesne wykrycie wielu schorzeń, monitorowanie stanu zdrowia oraz skuteczności leczenia.',
+      prep: ['Na czczo, 8-12 godzin po ostatnim posiłku — pij tylko czystą, niegazowaną wodę',
+             'Rano, najlepiej między 07:00 a 09:00, po całonocnym wypoczynku',
+             'Odpocznij około 15 minut przed pobraniem',
+             'Wypij szklankę wody (250 ml) około 30 minut przed pobraniem',
+             'Dzień wcześniej odstaw alkohol i unikaj intensywnego wysiłku'] }),
     t('t-krea', 'Kreatynina', 'ciaza', 'Układ moczowy i nerki', 18.00, { icd: 'M37' }),
     t('t-alt', 'ALT – aminotransferaza alaninowa', 'ogolne', 'Profilaktyka rozszerzona', 16.00, { icd: 'I17' }),
-    t('t-mocz', 'Badanie ogólne moczu', 'ciaza', 'Układ moczowy i nerki', 15.00, { also: [['ogolne', 'Badania z moczu']], material: 'Mocz', types: ['punkt'], icd: 'A01' }),
+    // Treść z alab.pl/badanie/badanie-ogolne-moczu-a01 (odczyt 2026-09-09). Cel zadania 1.
+    t('t-mocz', 'Badanie ogólne moczu', 'ciaza', 'Układ moczowy i nerki', 31.00, { also: [['ogolne', 'Badania z moczu']],
+      material: 'Mocz', types: ['punkt'], symbol: 'MOCZ', icd: 'A01', lowest: 21.70, tat: '1 dzień roboczy',
+      keywords: ['mocz', 'badanie moczu', 'ogólne moczu', 'nerki', 'układ moczowy'],
+      desc: 'Badanie ogólne moczu to jedno z podstawowych i najczęściej zlecanych badań laboratoryjnych, służące do oceny ogólnego stanu zdrowia. Dostarcza informacji o funkcjonowaniu nerek i dróg moczowych, a także może wskazywać na zaburzenia w innych układach i narządach. Ocenia cechy fizykochemiczne moczu oraz elementy upostaciowane w osadzie.',
+      prep: ['Pierwszy poranny mocz ze środkowego strumienia, po co najmniej 4 godzinach zalegania w pęcherzu',
+             'Pojemnik transportowy otrzymasz bezpłatnie w Punkcie Pobrań',
+             'Zachowaj dotychczasową dietę i standardową ilość płynów — nadmiar rozcieńcza mocz',
+             'Na 24 godziny przed pobraniem odstaw intensywny wysiłek fizyczny'] }),
     t('t-witd', 'Witamina D 25(OH) – metabolit', 'lifestyle', 'Witaminy i minerały', 89.00, { unavailableAt: 'punkt', popular: true, tat: '2 dni robocze', icd: 'O91',
       desc: 'Oznaczenie 25(OH)D pokazuje zaopatrzenie organizmu w witaminę D. Niedobór jest częsty w Polsce, zwłaszcza od października do kwietnia.' }),
     t('t-b12', 'Witamina B12', 'lifestyle', 'Witaminy i minerały', 39.00, { icd: 'O83' }),
-    p('p-tarcz', 'Pakiet tarczycowy podstawowy', 'hormony', 'Tarczyca', 68.00, ['t-tsh', 't-ft4', 't-ft3', 't-atpo'], { old: 85.00, code: CODE, popular: true, symbol: 'PKTARPO',
-      desc: 'Tarczyca jest niewielkim gruczołem produkującym hormony mające istotny wpływ na przemianę materii i regulację pracy wielu narządów. Pakiet ocenia jej funkcję w podstawowym zakresie.',
-      prep: ['Na czczo, rano - TSH wykazuje rytm dobowy. Leki na tarczycę przyjmij po pobraniu.'] }),
+    // Cel zadania 2 (zamiast Pakietu Sport). Treść z alab.pl/pakiet/pakiet-tarczycowy (odczyt 2026-09-09):
+    // skład FT3 + FT4 + TSH, symbol PKTARPP, cena 153,00 zł, najniższa z 30 dni 107,10 zł, opis i przygotowanie.
+    // BEZ `popular`: zadanie ma zmusić do przejścia przez kategorie albo wyszukiwarkę, więc pakiet nie może
+    // stać na ekranie głównym sklepu (ta sama zasada, która wcześniej trzymała poza nim Pakiet Sport).
+    p('p-tarcz', 'Pakiet tarczycowy', 'hormony', 'Tarczyca', 153.00, ['t-ft3', 't-ft4', 't-tsh'], { code: CODE, symbol: 'PKTARPP', lowest: 107.10, tat: '1 dzień roboczy',
+      keywords: ['tarczyca', 'pakiet tarczycowy', 'tsh', 'ft3', 'ft4', 'hormony tarczycy'],
+      desc: 'Tarczyca to niewielki gruczoł, który odgrywa kluczową rolę w regulacji procesów metabolicznych. Pakiet obejmujący badania TSH, FT3 i FT4 jest podstawowym narzędziem diagnostyki funkcji tarczycy. Pozwala na wczesne wykrycie zaburzeń pracy tego gruczołu i monitorowanie skuteczności terapii.',
+      prep: ['Na czczo, 8-12 godzin po ostatnim posiłku — pij tylko czystą, niegazowaną wodę',
+             'Rano, po całonocnym wypoczynku; TSH wykazuje rytm dobowy',
+             'Odpocznij około 15 minut przed pobraniem',
+             'Wypij szklankę wody (250 ml) około 30 minut przed pobraniem',
+             'Leki na tarczycę przyjmij po pobraniu'] }),
     // BEZ morfologii (pakiet jest na ekranie głównym — patrz README „Pod badania z użytkownikami”); suma składowych 178,08 zł
     p('p-zdrowie', 'Pakiet Zdrowie podstawowy', 'ogolne', 'Profilaktyka podstawowa', 149.00, ['t-fe', 't-ob', 't-crp', 't-glu', 't-krea', 't-alt', 't-lip', 't-tsh'], { popular: true }),
     p('p-pods', 'Pakiet badań podstawowych', 'ogolne', 'Profilaktyka podstawowa', 129.00, ['t-morf', 't-ob', 't-crp', 't-glu', 't-lip', 't-krea', 't-alt', 't-tsh', 't-mocz'], { types: ['punkt'] }),
