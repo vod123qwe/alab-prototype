@@ -189,3 +189,75 @@ przemianowanie podpisów to decyzja Jarka. Jeśli klient oglada ten plik, warto 
    są poza zakresem listy, którą przechodziliśmy. **To jedyne pozostałe naruszenie zakazu klienta w DS.**
 4. **Hi-fi autentykacji jest niezaktualizowane w 13 pozycjach**, w tym dwie literówki. Prototyp ma
    je wszystkie poprawione, więc może służyć jako referencja.
+
+---
+
+## Runda 3: „przełączam wariant, a tekst się nie zmienia" (2026-09-09)
+
+Jarek zgłosił to na `CellPackage` (`1897:54981`): po przełączeniu **`ALAB club member` na Yes**
+fioletowa linijka ceny klubowej zostaje w brzmieniu dla **nie-klubowicza**. Potwierdzone i naprawione
+— a przy okazji wyszedł drugi, powiązany błąd.
+
+### Jak działa `PriceRow` (źródło prawdy)
+
+| Discount | ALAB club member | cena główna | przekreślona | fioletowa linijka |
+| --- | --- | --- | --- | --- |
+| Special | No | 1369,00 zł | — | „821,40 zł taniej -40% w klubie" (**oferta**) |
+| Special | Yes | 1369,00 zł | 1190,00 zł | „Aktywne −40% w klubie" (**stan**) |
+| Code | No | 952,00 zł | 1190,00 zł | „904,40 zł ekstra -5% w klubie" |
+| Code | Yes | 952,00 zł | 1190,00 zł | „Aktywne ekstra -5% w klubie" |
+| No code | No | 1369,00 zł | — | „1300,55 zł ekstra -5% w klubie" |
+| No code | Yes | 1300,55 zł | 1369,00 zł | „Aktywne ekstra -5% w klubie" |
+
+Czyli **`No` = obietnica** („dołącz i zapłacisz tyle"), **`Yes` = stan** („zniżka już działa"). Przełącznik
+ma więc zmienić zdanie, nie tylko liczbę.
+
+### Dlaczego przełącznik nie działał — przyczyna źródłowa
+
+**Kwota i zdanie siedzą w jednej warstwie tekstowej** („137,94 zł ekstra -5% w klubie"). Każda realna
+cena produktu wymaga więc **override'u na tej warstwie**, a override **przeżywa zmianę wariantu** — więc po
+przełączeniu na `Yes` Figma pokazuje dalej stary napis. To nie błąd Figmy, to skutek anatomii komponentu.
+
+### Naprawione (10 węzłów)
+
+| Strona | Klasa błędu | Ile |
+| --- | --- | --- |
+| `├ 🟢 Sklep` | wariant `Yes`, a napis w formie oferty → „Aktywne…" | **2** |
+| `├ Sklep` (Master files) | to samo | **1** |
+| `├ Design explorations` | zakazane „zniżka" w linijce klubowej → „taniej" | **1** |
+| `├ 🟢 Sklep` | **kwoty z mastera DS na realnych kartach** | **4** |
+| `├ Sklep` (Master files) | to samo | **2** |
+
+Druga klasa to dokładnie to, co Jarek widział na zrzucie: karta miała realną cenę główną, ale
+**przekreślona cena nigdy nie dostała override'u**, więc po przełączeniu na `Yes` wychodziło
+demo-1190,00 zł z design systemu. Wyliczyłem brakujące kwoty z tych, które na karcie już były:
+
+- Special: cena regularna = cena klubowa / 0,6 → „66,78 zł" ⇒ **111,30 zł**; „33,18 zł" ⇒ **55,30 zł**
+- Code: przekreślona = cena regularna z omnibusa → **39,20 zł**
+
+**Nietknięte świadomie:** 18 (🟢 Sklep) + 8 (Master files) + 11 (explorations) wierszy, w których
+**wszystkie** kwoty są demo z DS — to karty-placeholdery, nie realne ekrany. Podmiana zrobiłaby z nich
+fałszywe dane.
+
+### Stan końcowy
+
+Zero rozjazdów „wariant vs napis" na wszystkich stronach z treścią: `🟢 Sklep` (85 `PriceRow`),
+`Sklep` masters (85), `Design explorations` (103), `Roboczy` (0). Puste: `Wyniki badań`,
+`Koszyk i checkout`, `Profil`, `Dashboard`. Autentykacja — zero linijek klubowych.
+
+### Do decyzji — dwie rzeczy w samym DS
+
+**1. `PriceRow` Special + klubowicz (`777:6273`) jest wewnętrznie sprzeczny.** Cena główna
+**1369,00 zł** jest **wyższa** niż przekreślona **1190,00 zł**, a 1190 nie jest –40% z 1369 (to 821,40).
+Propozycja: główna **821,40 zł**, przekreślona **1369,00 zł** — tak jak w spójnym wariancie `No code + Yes`.
+Nie ruszyłem, bo kwoty były odłożone „na sam koniec".
+
+**2. `PriceRow` Code + klubowicz (`777:6290`) nie pokazuje klubowych 5%.** Główna 952,00 zł to cena
+z kodem, a linijka mówi „Aktywne ekstra -5%" — tych 5% nie ma nigdzie w liczbach. Trzy poziomy ceny
+(regularna → kod → klub) nie wchodzą w dwa pola. To decyzja projektowa, nie literówka.
+
+**3. Trwałe rozwiązanie przełącznika: rozbić fioletową linijkę na dwie warstwy** — `Amount` +
+`Phrase` (albo kwota jako property `✏️ Club price`). Wtedy override dotyka **tylko kwoty**, a zdanie
+jedzie z wariantu i przełącznik działa. Koszt: edycja 6 wariantów `PriceRow`, republish i jeden
+przebieg resetujący override'y na ekranach. Dopóki tego nie zrobimy, **każde przełączenie wariantu
+będzie wymagało ręcznej korekty napisu.**
