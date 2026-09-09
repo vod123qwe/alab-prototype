@@ -130,8 +130,8 @@ budowie arkusza filtrów i pillsów. Podmienione:
 
 | Było | Jest |
 | --- | --- |
-| „X zł ekstra -5% w klubie" · „zniżka -40% w klubie" | „X zł 5% taniej w klubie" · „40% taniej w klubie" |
-| „Aktywna zniżka klubowa ekstra -5%" | „5% taniej, już naliczone" |
+| „X zł ekstra -5% w klubie" · „zniżka -40% w klubie" | ~~„5% taniej w klubie"~~ — **cofnięte 2026-09-09**, patrz sekcja o wierszu ceny |
+| „Aktywna zniżka klubowa ekstra -5%" | ~~„5% taniej, już naliczone"~~ — **cofnięte 2026-09-09** |
 | baner mały: „zyskaj dodatkowe zniżki" | „5% taniej + voucher 20% po pierwszym badaniu" |
 | baner duży i karuzela klubu: „5% dodatkowej zniżki", „Akcje profilaktyczne…" | trzy korzyści wg mapy M3, 3.4 |
 | sekcja PDP „Kupując w pakiecie, oszczędzasz" | „Pakiety z tym badaniem" |
@@ -157,6 +157,31 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | baner klubu „Twój klub na całe życie" · CTA „Sprawdź" | „Bezpłatny program dla Pacjentów" · „Dołącz do ALAB club" | mapa M3 3.4, decyzja F4 |
 | ekran klubu: „Trzy korzyści, jedna decyzja." · sheet kategorii z podtytułem | zdjęte | M1 A14, decyzja F3 |
 | „1 podpowiedzi" · etykieta pola „Wpisz kraj..." | odmiana po liczbie · „Kraj" | polszczyzna, reguła 3a |
+
+### Wiersz ceny klubowej: cofnięta decyzja F1 (2026-09-09)
+
+**Decyzja Jarka po komentarzu klienta: na kartach i w hero PDP wracają poprzednie formy.**
+
+| Stan | Kanon leksykonu 109 (F1) | Co jest w prototypie |
+| --- | --- | --- |
+| Poza klubem | „64,60 zł 5% taniej w klubie" | **„64,60 zł ekstra -5% w klubie"** |
+| Poza klubem, promocja klubowa | „66,78 zł 40% taniej w klubie" | **„66,78 zł zniżka -40% w klubie"** |
+| Klubowicz | „5% taniej, już naliczone" | **„Aktywna zniżka klubowa ekstra -5%"** |
+| Klubowicz, promocja klubowa | „40% taniej, już naliczone" | **„Aktywna zniżka klubowa -40%"** |
+
+**Powód.** Kanon F1 stawia procent bezpośrednio za kwotą, bez żadnego słowa między liczbami: „64,60 zł 5%
+taniej w klubie" czyta się jak wyrażenie matematyczne. Klient zgłaszał to już wcześniej i właśnie dlatego
+poprzednie formy miały przerywnik słowny („ekstra", „zniżka") — to był jego ukryty cel, o którym leksykon
+nie wspomina. F1 rozstrzygało słownictwo, nie typografię wiersza, więc luki nie zamknęło.
+
+**Świadomy koszt.** Wraca słowo „zniżka", którego leksykon 321 zakazuje w interfejsie (prawnicy klienta
+odradzają „rabat" i „zniżkę"). To wyjątek do zalogowania u Kaspra, nie zmiana kierunku: **dotyczy wyłącznie
+wiersza ceny na kartach i w hero PDP**. Reszta produktu nadal mówi „taniej" — mały baner pod ceną, duży baner
+klubu, karuzela na ekranie klubu, webview i rozwinięcia zgód. Sprawdzone po zmianie.
+
+**Alternatywa, gdyby klient nie chciał „zniżki".** Przestawienie kolejności daje ten sam efekt bez zakazanego
+słowa i bez wychodzenia poza słownik F1: „64,60 zł w klubie, 5% taniej" — kwota nadal prowadzi, a między
+liczbami stoi słowo. Kropka środkowa problemu nie rozwiązuje, bo „·" to znak mnożenia.
 
 ### Copy autentykacji (M1) do kanonu (2026-09-09)
 

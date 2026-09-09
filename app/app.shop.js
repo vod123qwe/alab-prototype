@@ -48,19 +48,25 @@
 
   // ---------------- ceny: użytkownik podstawowy vs członek ALAB club ----------------
   // Warianty 1:1 z „Warianty • Banner PDP hero" 2726:16353 oraz kart badania 2726:16368 i pakietu 2726:16383:
-  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł 5% taniej w klubie",
+  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł ekstra -5% w klubie",
   //  • w klubie — cena klubowa staje się główną, podstawowa idzie w przekreślenie, a fioletowa linijka
-  //    zmienia się w POTWIERDZENIE „5% taniej, już naliczone" (na karcie produktu dodatkowo odznaka).
-  // Copy wg decyzji F1 z 2026-09-09 (mapa M3, leksykon 109): nie nazywamy obniżki, tylko ją pokazujemy —
-  // słowa „zniżka", „rabat", „promocja" i „oszczędzasz" nie wchodzą do interfejsu (leksykon 321, zakaz klienta).
+  //    zmienia się w POTWIERDZENIE „Aktywna zniżka klubowa ekstra -5%" (na karcie produktu dodatkowo odznaka).
+  //
+  // COFNIĘTA DECYZJA F1 — decyzja Jarka 2026-09-09, po komentarzu klienta. Kanon leksykonu 109 („5% taniej
+  // w klubie", „5% taniej, już naliczone") stawia procent bezpośrednio za kwotą, bez żadnego słowa między
+  // liczbami — „64,60 zł 5% taniej w klubie" czyta się wtedy jak wyrażenie matematyczne. Wcześniejsze formy
+  // miały przerywnik słowny („ekstra", „zniżka") i to był jego ukryty cel, o którym leksykon nie wspomina.
+  // Świadomy koszt: wraca słowo „zniżka", którego leksykon 321 zakazuje w interfejsie (prawnicy klienta).
+  // Dotyczy WYŁĄCZNIE wiersza ceny na kartach i w hero PDP; reszta produktu mówi „taniej" (banery, karuzela
+  // klubu, webview). Do rozstrzygnięcia z Kasprem — patrz README, sekcja o cenach klubowych.
   // Kod rabatowy ŁĄCZY się ze zniżką klubową −5% (cena z kodem × 0,95), ale NIE z klubową ceną −40%
   // (ustalenie Jarka 2026-09-08). Przy produkcie premium w klubie liczy się tylko −40% od ceny regularnej
   // i nie pokazujemy kodu, żeby nie sugerować kumulacji. Dziś żaden produkt nie ma obu naraz — to zabezpieczenie.
   const inClub = () => !!S().clubJoined;
   const codeApplies = (p) => !!p.code && !(inClub() && p.premium);
   const clubPrice = (p) => p.premium ? (p.old || p.price) * 0.6 : p.price * 0.95;
-  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} 40% taniej w klubie` : `${zl(clubPrice(p))} 5% taniej w klubie`;
-  const clubActive = (p) => p.premium ? '40% taniej, już naliczone' : '5% taniej, już naliczone';
+  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} zniżka -40% w klubie` : `${zl(clubPrice(p))} ekstra -5% w klubie`;
+  const clubActive = (p) => p.premium ? 'Aktywna zniżka klubowa -40%' : 'Aktywna zniżka klubowa ekstra -5%';
   // hero = karta produktu na PDP: tam komunikat o zniżce klubowej niesie ODZNAKA nad tytułem, więc fioletowa
   // linijka pod ceną znika (2726:16358); na kartach listingu odznaki nie ma, więc linijka zostaje (2726:16368).
   const priceVM = (p, t = type(), hero = false) => {
