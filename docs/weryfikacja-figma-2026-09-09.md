@@ -261,3 +261,63 @@ z kodem, a linijka mówi „Aktywne ekstra -5%" — tych 5% nie ma nigdzie w lic
 jedzie z wariantu i przełącznik działa. Koszt: edycja 6 wariantów `PriceRow`, republish i jeden
 przebieg resetujący override'y na ekranach. Dopóki tego nie zrobimy, **każde przełączenie wariantu
 będzie wymagało ręcznej korekty napisu.**
+
+---
+
+## Runda 4: podwojona linijka klubowa — **duplikat nazw warstw w `PriceRow`** (2026-09-09)
+
+Po przełączeniu `ALAB club member` karta „Pakiet Zdrowie podstawowy" pokazała
+**dwa razy „189,05 zł ekstra -5% w klubie"** i **zgubiła cenę główną**.
+
+### Przyczyna: dwie warstwy o tej samej nazwie
+
+Figma przy zmianie wariantu **przenosi override'y dopasowując warstwy po nazwie**. W `PriceRow`
+warianty `Code` i `No code` miały **dwie warstwy nazwane `Label`** — cenę główną i linijkę klubową.
+Nazwy kolidowały, więc override linijki klubowej trafiał na **oba** pola, a cena główna wyparowywała.
+Do tego każdy wariant nazywał warstwy inaczej (`Basic`/`Discount` vs `Label`/`Label`), więc część
+override'ów ginęła przy przejściu Special ↔ Code.
+
+To było w komponencie od początku — nie powstało przy naszych podmianach copy (te szukały warstw
+`Basic`, `Old price` i tekstu z „w klubie").
+
+### Naprawione w DS
+
+**Jeden spójny, unikalny schemat nazw we wszystkich 6 wariantach `PriceRow`:**
+`Basic` (cena główna) · `Old price` (przekreślona) · `Discount` (linijka klubowa) · `Omnibus` ·
+`Opłata za pobranie`. Zmienionych **8 nazw**; kontrola: w każdym wariancie nazwy są unikalne.
+
+**Zresetowane override'y na zagnieżdżonych `PriceRow`** w masterach `CellPackage` (`777:6363`)
+i `CellTest` (`777:6332`) — jedyny override to było „1190 zł" **bez groszy**, które blokowało
+propagację z `PriceRow`. Po resecie mastery biorą „1190,00 zł" z komponentu. Warianty i boolean
+`Collection fee` zachowane. Na stronie `❖ Cells` **zero override'ów** na `PriceRow`.
+
+### Test: reset **nie wystarcza**, żeby przełącznik działał
+
+Na czystej instancji `CellPackage` wpisałem realne dane i przełączyłem `ALAB club member` na `Yes`:
+
+| Krok | Linijka klubowa |
+| --- | --- |
+| override realnych danych, `Code/No` | „189,05 zł ekstra -5% w klubie" |
+| przełączam na `Yes` | „189,05 zł ekstra -5% w klubie" — **bez zmiany** |
+
+**Override na warstwie tekstowej zawsze wygrywa z tekstem wariantu.** Skoro kwota i zdanie są
+w **jednej** warstwie, wpisanie realnej ceny **na zawsze** zamraża brzmienie na tej karcie. Nie da się
+mieć jednocześnie ręcznie wpisanej kwoty i działającego przełącznika — to nie kwestia resetu.
+
+### Co trzeba zrobić, żeby propertiesy działały (do decyzji Jarka)
+
+**Rozbić warstwę `Discount` na dwie:** `Amount` (tylko kwota) + `Phrase` (tylko zdanie), w poziomym
+auto layoucie. `Amount` obecny we wszystkich 6 wariantach, **widoczny w `No`, ukryty w `Yes`**.
+`Phrase` różny per wariant: „ekstra -5% w klubie" / „taniej -40% w klubie" w `No`,
+„Aktywne ekstra -5% w klubie" / „Aktywne −40% w klubie" w `Yes`.
+
+Wtedy projektant nadpisuje **tylko kwotę**, zdanie jedzie z wariantu i przełącznik działa.
+
+**Kolejność prac (wymaga republishu w środku):**
+1. Zapisuję obecne kwoty klubowe ze wszystkich kart (skrypt, ~200 węzłów na 3 stronach).
+2. Rozbijam `Discount` w 6 wariantach `PriceRow`.
+3. **Jarek publikuje bibliotekę.**
+4. Wpisuję zapisane kwoty do nowej warstwy `Amount` na wszystkich kartach.
+
+Bez tego: po samym republishu znika podwojenie linijki i cena główna przestaje ginąć, ale **zdanie
+nadal nie przełączy się samo** — trzeba je poprawiać ręcznie po każdej zmianie wariantu.
