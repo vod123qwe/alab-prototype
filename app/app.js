@@ -180,7 +180,7 @@
       <div class="onb__status">${DS.StatusBar()}</div>
       <div class="onb__skip">${DS.ButtonTiny({ label: 'Pomiń', variant: 'tertiary', attrs: { 'data-go': 'start' } })}</div>
       <div class="onb__dots" id="onb-dots">${DS.StepsIndicator({ steps: 3, current: i, text: false })}</div>
-      <div class="screen__bottom">${DS.BottomActionsBar({ buttons: [DS.Button({ label: 'Dalej', block: true, attrs: { 'data-action': 'onb-next' } }), DS.Button({ label: 'Mam już konto', type: 'secondary', block: true, attrs: { 'data-go': 'login' } })] })}</div></div>`;
+      <div class="screen__bottom">${DS.BottomActionsBar({ buttons: [DS.Button({ label: 'Dalej', block: true, attrs: { 'data-action': 'onb-next' } }), DS.Button({ label: 'Masz już konto? Zaloguj się', type: 'secondary', block: true, attrs: { 'data-go': 'login' } })] })}</div></div>`;
   };
   // Synchronizacja taśmy z hashem bez przerysowania ekranu
   function onbSync() {
@@ -199,7 +199,7 @@
     <div class="start__header"><span class="start__mark">${DS.ICONS['alabek']}</span>${DS.ButtonTiny({ label: 'Wejdź jako gość', variant: 'tertiary', attrs: { 'data-action': 'guest' } })}</div>
     <div class="start__content">
       <div class="start__heading"><p class="start__title">Załóż konto<br>lub zaloguj się</p><p class="start__lead">Twoje dane są bezpieczne. Konto pozwala kupować badania i odbierać wyniki.</p></div>
-      <div class="start__actions">${DS.Button({ label: 'Zarejestruj się', block: true, attrs: { 'data-go': 'register/1' } })}${DS.Button({ label: 'Mam już konto', type: 'oncolor', block: true, attrs: { 'data-go': 'login' } })}</div>
+      <div class="start__actions">${DS.Button({ label: 'Zarejestruj się', block: true, attrs: { 'data-go': 'register/1' } })}${DS.Button({ label: 'Masz już konto? Zaloguj się', type: 'oncolor', block: true, attrs: { 'data-go': 'login' } })}</div>
       <p class="start__legal">Zakładając konto akceptujesz <span class="ds-TextLink">Regulamin</span> i <span class="ds-TextLink">Politykę prywatności</span></p>
     </div>
     <div class="screen__bottom">${DS.HomeIndicator({ light: true })}</div></div>`;
@@ -208,27 +208,31 @@
   SCREENS['register/1'] = () => {
     const ex = S.expanded;
     const consent = (key, title, required, text) => DS.SelectableCell({
-      checked: S.consents[key], title, required, action: 'Więcej', actionAttrs: { 'data-expand': key },
+      checked: S.consents[key], title, required, action: ex[key] ? 'zwiń' : 'rozwiń', actionAttrs: { 'data-expand': key },
       expanded: ex[key] ? text : null, attrs: { 'data-consent': key, id: 'consent-' + key },
     });
     const body = `<div class="stack-32">
       ${DS.StepsIndicator({ steps: 3, current: 1, label: 'Twoje dane' })}
       <p class="screen__title">Zarejestruj się do Konta Pacjenta</p></div>
       <div class="fields">
-        ${DS.TextField({ id: 'f-phone', label: 'Numer telefonu', value: S.phone, type: 'tel', helper: 'Wyślemy SMS z kodem potwierdzającym', leading: { prefix: { flag: S.prefix.flag, code: S.prefix.code, attrs: { 'data-action': 'open-country' } } }, inputAttrs: { inputmode: 'numeric', autocomplete: 'tel-national' }, attrs: { 'data-helper': 'Wyślemy SMS z kodem potwierdzającym' } })}
+        ${DS.TextField({ id: 'f-phone', label: 'Numer telefonu', value: S.phone, type: 'tel', helper: 'Wyślemy SMS z kodem', leading: { prefix: { flag: S.prefix.flag, code: S.prefix.code, attrs: { 'data-action': 'open-country' } } }, inputAttrs: { inputmode: 'numeric', autocomplete: 'tel-national' }, attrs: { 'data-helper': 'Wyślemy SMS z kodem' } })}
         ${S.noPesel ? `<div class="fields">
-            ${DS.TextField({ id: 'f-birth', label: 'Data urodzenia', value: S.birth, helper: 'Wpisz w formacie DD/MM/RRRR', inputAttrs: { inputmode: 'numeric' }, attrs: { 'data-helper': 'Wpisz w formacie DD/MM/RRRR' } })}
-            <div class="stack-12"><div class="stack-12"><p class="field-label">Wybierz płeć</p><div class="row-5">${DS.FilterChip({ label: 'Kobieta', selected: S.sex === 'k', fill: true, attrs: { 'data-sex': 'k' } })}${DS.FilterChip({ label: 'Mężczyzna', selected: S.sex === 'm', fill: true, attrs: { 'data-sex': 'm' } })}</div></div>
-            ${DS.SelectableCell({ title: 'Nie mam numeru PESEL', checked: true, attrs: { 'data-action': 'toggle-pesel' } })}</div></div>`
+            ${DS.TextField({ id: 'f-birth', label: 'Data urodzenia', value: S.birth, helper: 'Wpisz w formacie DD.MM.RRRR', inputAttrs: { inputmode: 'numeric', maxlength: 10 }, attrs: { 'data-helper': 'Wpisz w formacie DD.MM.RRRR' } })}
+            <div class="stack-12"><div class="stack-12"><p class="field-label">Płeć</p><div class="row-5">${DS.FilterChip({ label: 'Kobieta', selected: S.sex === 'k', fill: true, attrs: { 'data-sex': 'k' } })}${DS.FilterChip({ label: 'Mężczyzna', selected: S.sex === 'm', fill: true, attrs: { 'data-sex': 'm' } })}</div></div>
+            ${DS.SelectableCell({ title: 'Brak numeru PESEL', checked: true, attrs: { 'data-action': 'toggle-pesel' } })}</div></div>`
         : `<div class="stack-0">${DS.TextField({ id: 'f-pesel', label: 'PESEL', value: S.pesel, inputAttrs: { inputmode: 'numeric', maxlength: 11 } })}
-            ${DS.SelectableCell({ title: 'Nie mam numeru PESEL', checked: false, attrs: { 'data-action': 'toggle-pesel' } })}</div>`}
+            ${DS.SelectableCell({ title: 'Brak numeru PESEL', checked: false, attrs: { 'data-action': 'toggle-pesel' } })}</div>`}
       </div>
       ${DS.Divider()}
       <div class="stack-0">
         ${consent('terms', 'Akceptuję Regulamin i Politykę prywatności', true, 'Regulamin określa zasady korzystania z aplikacji ALAB laboratoria i Konta Pacjenta. Polityka prywatności opisuje, jak przetwarzamy Twoje dane osobowe.')}
-        ${consent('marketing', 'Chcę informacje o akcjach profilaktycznych i nowościach', false, 'Zgoda na otrzymywanie informacji handlowych drogą elektroniczną. Możesz ją wycofać w każdej chwili w ustawieniach konta.')}
+        ${consent('marketing', 'Chcę informacje o ofertach i nowościach', false, 'Zgoda na otrzymywanie informacji handlowych drogą elektroniczną. Możesz ją wycofać w każdej chwili w ustawieniach konta.')}
       </div>`;
-    return layout({ top: DS.TopBar({}), body, bodyClass: 'screen__body--pb', bottom: DS.BottomActionsBar({ buttons: [DS.Button({ label: 'Dalej', block: true, attrs: { 'data-action': 'register-1-next' } })] }) });
+    // CTA „Zarejestruj się" (K1) i wyjście do logowania pod przyciskiem (K3, za webem klienta)
+    return layout({ top: DS.TopBar({}), body, bodyClass: 'screen__body--pb', bottom: DS.BottomActionsBar({ buttons: [
+      DS.Button({ label: 'Zarejestruj się', block: true, attrs: { 'data-action': 'register-1-next' } }),
+      `<p class="center-13 muted" style="padding:0 24px">Masz już konto? <button type="button" class="ds-TextLink" data-go="login" style="color:var(--content-on-surface);font:inherit;text-decoration-thickness:12%">Zaloguj się</button></p>`,
+    ] }) });
   };
 
   function countrySheet() {
@@ -248,10 +252,10 @@
   let otpTimer, otpLeft = 29;
   SCREENS['register/2'] = () => {
     clearInterval(otpTimer); otpLeft = 29;
-    otpTimer = setInterval(() => { otpLeft--; const el = $('#otp-timer'); if (!el) return clearInterval(otpTimer); if (otpLeft <= 0) { clearInterval(otpTimer); el.outerHTML = `<button type="button" class="center-13 ds-TextLink" id="otp-resend" data-action="otp-resend" style="width:100%">Wyślij kod ponownie</button>`; } else el.textContent = '0:' + String(otpLeft).padStart(2, '0'); }, 1000);
+    otpTimer = setInterval(() => { otpLeft--; const el = $('#otp-timer'); if (!el) return clearInterval(otpTimer); if (otpLeft <= 0) { clearInterval(otpTimer); el.outerHTML = `<button type="button" class="center-13 ds-TextLink" id="otp-resend" data-action="otp-resend" style="width:100%">Wyślij ponownie</button>`; } else el.textContent = '0:' + String(otpLeft).padStart(2, '0'); }, 1000);
     const body = `<div class="stack-32">${DS.StepsIndicator({ steps: 3, current: 2, label: 'Potwierdzenie' })}
         <div class="stack-16"><p class="screen__title">Weryfikacja telefonu</p><p class="screen__lead">Wysłaliśmy 6-cyfrowy kod na numer<br><b>${esc(S.prefix.code.replace(' ', ''))} ${esc(S.phone.replace(/(\d{3})(?=\d)/g, '$1 '))}</b></p></div></div>
-      <div class="stack-16" style="gap:16px">${DS.InputCode({ value: S.code, attrs: { id: 'otp' } })}<p class="center-13 muted-3" id="otp-row">Wyślij ponownie za <b id="otp-timer" style="color:var(--content-on-surface)">0:29</b></p></div>
+      <div class="stack-16" style="gap:16px">${DS.InputCode({ value: S.code, attrs: { id: 'otp', role: 'group', 'aria-label': 'Kod weryfikacyjny' } })}<p class="center-13 muted-3" id="otp-row">Wyślij ponownie za <b id="otp-timer" style="color:var(--content-on-surface)">0:29</b></p></div>
       ${DS.Button({ label: 'Potwierdź', block: true, attrs: { 'data-action': 'register-2-next', id: 'otp-btn' } })}`;
     return layout({ top: DS.TopBar({}), body, bodyClass: 'screen__body--gap24' });
   };
@@ -259,11 +263,11 @@
   // ---- Rejestracja krok 3 ----
   SCREENS['register/3'] = () => {
     const r = pwdRules(S.password);
-    const body = `<div class="stack-32">${DS.StepsIndicator({ steps: 3, current: 3, label: 'Twoje konto' })}<p class="screen__title">Dane podstawowe</p></div>
+    const body = `<div class="stack-32">${DS.StepsIndicator({ steps: 3, current: 3, label: 'Twoje konto' })}<p class="screen__title">Wpisz swoje dane, aby założyć Konto Pacjenta</p></div>
       <div class="fields">
         ${DS.TextField({ id: 'f-name', label: 'Imię', value: S.name, inputAttrs: { autocomplete: 'given-name' } })}
         ${DS.TextField({ id: 'f-surname', label: 'Nazwisko', value: S.surname, inputAttrs: { autocomplete: 'family-name' } })}
-        ${DS.TextField({ id: 'f-email', label: 'Email', value: S.email, type: 'email', inputAttrs: { autocomplete: 'email' } })}
+        ${DS.TextField({ id: 'f-email', label: 'E-mail', value: S.email, type: 'email', inputAttrs: { autocomplete: 'email' } })}
         <div class="stack-16">${DS.TextField({ id: 'f-password', label: 'Hasło', value: S.password, type: 'password', trailing: { icon: 'eye', action: true, label: 'Pokaż hasło', attrs: { 'data-ds': 'toggle-password' } }, inputAttrs: { autocomplete: 'new-password' } })}
           <div class="rules" id="pwd-rules"><b>Hasło powinno zawierać:</b><ul><li class="${r.len ? 'ok' : ''}" data-rule="len">minimum 8 znaków</li><li class="${r.case ? 'ok' : ''}" data-rule="case">mała i wielka litera</li><li class="${r.digit ? 'ok' : ''}" data-rule="digit">cyfra</li></ul></div></div>
       </div>`;
@@ -283,12 +287,12 @@
       </div>
       <div class="stack-32" style="padding:0 20px 140px">
         <div class="stack-0">
-          ${DS.SelectableCell({ checked: S.club.terms, title: 'Zapoznałem/-am się z Regulaminem Programu “ALAB club” i akceptuje jego postanowienia', required: true, action: 'Więcej', actionAttrs: { 'data-expand': 'clubTerms' }, expanded: ex.clubTerms ? 'Regulamin Programu ALAB club określa zasady przyznawania i wykorzystania korzyści dla uczestników programu.' : null, attrs: { 'data-club': 'terms', id: 'club-terms' } })}
-          ${DS.SelectableCell({ checked: S.club.rodo, title: 'Wyrażam zgodę na przetwarzanie moich danych osobowych przez ALAB laboratoria Sp. z.', required: true, action: 'Więcej', actionAttrs: { 'data-expand': 'clubRodo' }, expanded: ex.clubRodo ? 'Zgoda obejmuje przetwarzanie danych w celu realizacji Programu ALAB club, w tym naliczania zniżek i komunikacji o korzyściach.' : null, attrs: { 'data-club': 'rodo', id: 'club-rodo' } })}
+          ${DS.SelectableCell({ checked: S.club.terms, title: 'Zapoznałem/-am się z Regulaminem Programu „ALAB club” i akceptuję jego postanowienia', required: true, action: ex.clubTerms ? 'zwiń' : 'rozwiń', actionAttrs: { 'data-expand': 'clubTerms' }, expanded: ex.clubTerms ? 'Regulamin Programu ALAB club określa zasady przyznawania i wykorzystania korzyści dla uczestników programu.' : null, attrs: { 'data-club': 'terms', id: 'club-terms' } })}
+          ${DS.SelectableCell({ checked: S.club.rodo, title: 'Wyrażam zgodę na przetwarzanie moich danych osobowych przez ALAB laboratoria Sp. z o.o.', required: true, action: ex.clubRodo ? 'zwiń' : 'rozwiń', actionAttrs: { 'data-expand': 'clubRodo' }, expanded: ex.clubRodo ? 'Zgoda obejmuje przetwarzanie danych w celu realizacji Programu ALAB club, w tym naliczania korzyści i komunikacji o nich.' : null, attrs: { 'data-club': 'rodo', id: 'club-rodo' } })}
         </div>
         ${DS.Divider()}
-        <div class="club__text"><p class="clamp ${ex.t1 ? 'open' : ''}"><b>Dane osobowe będą przetwarzane:</b><br>w celu realizacji Programu „ALAB club” – na podstawie art. 6 ust. 1 lit. b RODO (wykonanie umowy), w celach marketingowych – na podstawie zgody (art. 6 ust. 1 lit. a RODO), w celu ustalenia i dochodzenia roszczeń – na podstawie uzasadnionego interesu administratora.</p><button type="button" data-expand="t1">${ex.t1 ? 'Mniej' : 'Więcej'}</button></div>
-        <div class="club__text"><p class="clamp ${ex.t2 ? 'open' : ''}"><b>Podanie danych jest dobrowolne, ale niezbędne do udziału w programie.</b> Dane mogą być przekazywane podmiotom wspierającym administratora (np. dostawcom IT).<br>Dane będą przechowywane przez okres uczestnictwa w programie oraz do czasu przedawnienia roszczeń lub do momentu cofnięcia zgody (w przypadku marketingu).<br><br>Przysługuje Państwu prawo do: dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz wniesienia sprzeciwu i skargi do Prezesa UODO.</p><button type="button" data-expand="t2">${ex.t2 ? 'Mniej' : 'Więcej'}</button></div>
+        <div class="club__text"><p class="clamp ${ex.t1 ? 'open' : ''}"><b>Dane osobowe będą przetwarzane:</b><br>w celu realizacji Programu „ALAB club” – na podstawie art. 6 ust. 1 lit. b RODO (wykonanie umowy), w celach marketingowych – na podstawie zgody (art. 6 ust. 1 lit. a RODO), w celu ustalenia i dochodzenia roszczeń – na podstawie uzasadnionego interesu administratora.</p><button type="button" data-expand="t1">${ex.t1 ? 'zwiń' : 'rozwiń'}</button></div>
+        <div class="club__text"><p class="clamp ${ex.t2 ? 'open' : ''}"><b>Podanie danych jest dobrowolne, ale niezbędne do udziału w programie.</b> Dane mogą być przekazywane podmiotom wspierającym administratora (np. dostawcom IT).<br>Dane będą przechowywane przez okres uczestnictwa w programie oraz do czasu przedawnienia roszczeń lub do momentu cofnięcia zgody (w przypadku marketingu).<br><br>Przysługuje Państwu prawo do: dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz wniesienia sprzeciwu i skargi do Prezesa UODO.</p><button type="button" data-expand="t2">${ex.t2 ? 'zwiń' : 'rozwiń'}</button></div>
       </div>`;
     return `<div class="screen"><div class="screen__body" style="padding:0;gap:11px">${body}</div><div class="screen__bottom">${DS.BottomActionsBar({ buttons: [DS.Button({ label: 'Dołącz do ALAB club', block: true, attrs: { 'data-action': 'club-join' } }), DS.Button({ label: 'Nie teraz', type: 'secondary', block: true, attrs: { 'data-action': 'club-skip' } })] })}</div></div>`;
   };
@@ -301,19 +305,19 @@
 
   // ---- Logowanie ----
   SCREENS.login = () => {
-    const body = `<div class="screen__heading"><p class="screen__title">Zaloguj się</p><p class="screen__lead">Wpisz dane, których używasz w aplikacji ALAB</p></div>
-      <div class="fields fields--12">${DS.TextField({ id: 'l-email', label: 'Email', value: S.loginEmail, type: 'email', inputAttrs: { autocomplete: 'email' } })}
+    const body = `<div class="screen__heading"><p class="screen__title">Zaloguj się</p><p class="screen__lead">Wpisz dane, których używasz w aplikacji.</p></div>
+      <div class="fields fields--12">${DS.TextField({ id: 'l-email', label: 'E-mail', value: S.loginEmail, type: 'email', inputAttrs: { autocomplete: 'email' } })}
         ${DS.TextField({ id: 'l-password', label: 'Hasło', value: S.loginPassword, type: 'password', trailing: { icon: 'eye', action: true, label: 'Pokaż hasło', attrs: { 'data-ds': 'toggle-password' } }, inputAttrs: { autocomplete: 'current-password' } })}</div>
-      <button type="button" class="center-13 ds-TextLink" data-go="reset" style="width:100%">Nie pamiętam hasła</button>
+      <button type="button" class="center-13 ds-TextLink" data-go="reset" style="width:100%">Nie pamiętasz hasła?</button>
       <div class="stack-12">${DS.Button({ label: 'Zaloguj się', block: true, attrs: { 'data-action': 'login', id: 'login-btn' } })}${DS.Button({ label: 'Zaloguj się z Face ID', type: 'secondary', leadingIcon: 'scan', block: true, attrs: { 'data-action': 'login-faceid' } })}</div>`;
-    const bottom = `<div class="stack-0" style="gap:24px;align-items:center"><p class="center-13 muted" style="padding:0 24px">Nie masz jeszcze konta? <button type="button" class="ds-TextLink" data-go="register/1" style="color:var(--content-on-surface);font:inherit;text-decoration-thickness:12%">Załóż konto</button></p>${DS.HomeIndicator()}</div>`;
+    const bottom = `<div class="stack-0" style="gap:24px;align-items:center"><p class="center-13 muted" style="padding:0 24px">Nie masz konta? <button type="button" class="ds-TextLink" data-go="register/1" style="color:var(--content-on-surface);font:inherit;text-decoration-thickness:12%">Załóż konto</button></p>${DS.HomeIndicator()}</div>`;
     return layout({ top: DS.TopBar({}), body, bodyClass: 'screen__body--gap24', bottom });
   };
 
   // ---- Reset hasła ----
   SCREENS.reset = () => layout({ top: DS.TopBar({ leading: 'x-close', leadingAttrs: { 'data-go': 'login' } }), bodyClass: 'screen__body--gap24',
-    body: `<div class="screen__heading"><p class="screen__title">Reset hasła</p><p class="screen__lead">Wpisz email użyty przy rejestracji. Jeśli istnieje konto, wyślemy link do ustawienia nowego hasła.</p></div>
-      ${DS.TextField({ id: 'r-email', label: 'Email', value: S.resetEmail, type: 'email', state: S.resetEmail ? 'default' : 'focused', inputAttrs: { autocomplete: 'email', autofocus: true } })}
+    body: `<div class="screen__heading"><p class="screen__title">Reset hasła</p><p class="screen__lead">Wpisz e-mail użyty przy rejestracji. Jeśli istnieje konto, wyślemy link do ustawienia nowego hasła.</p></div>
+      ${DS.TextField({ id: 'r-email', label: 'E-mail', value: S.resetEmail, type: 'email', state: S.resetEmail ? 'default' : 'focused', inputAttrs: { autocomplete: 'email', autofocus: true } })}
       ${DS.Button({ label: 'Wyślij link', block: true, attrs: { 'data-action': 'reset-send', id: 'reset-btn' } })}` });
 
   let resendTimer, resendLeft = 29;
@@ -323,7 +327,7 @@
       if (resendLeft <= 0) { clearInterval(resendTimer); b.outerHTML = DS.Button({ label: 'Wyślij ponownie', type: 'secondary', block: true, attrs: { id: 'resend-btn', 'data-action': 'reset-resend' } }); }
       else b.querySelector('.ds-Button__label').textContent = 'Wyślij ponownie za 0:' + String(resendLeft).padStart(2, '0'); }, 1000);
     return `<div class="screen"><div class="screen__top">${DS.TopBar({})}</div>
-      <div style="position:absolute;left:0;right:0;top:174px">${DS.ScreenState({ asset: A + 'il_mail_sent.png', title: 'Sprawdź skrzynkę', body: 'Jeśli ten email jest w naszej bazie, wysłaliśmy link do ustawienia nowego hasła.\n\nLink działa 1 godzinę. Sprawdź folder spam.', buttons: [DS.Button({ label: 'Wyślij ponownie za 0:29', type: 'secondary', state: 'disabled', block: true, attrs: { id: 'resend-btn' } })] })}</div>
+      <div style="position:absolute;left:0;right:0;top:174px">${DS.ScreenState({ asset: A + 'il_mail_sent.png', title: 'Sprawdź skrzynkę', body: 'Jeśli ten e-mail jest w naszej bazie, wysłaliśmy link do ustawienia nowego hasła.\n\nLink działa 1 godzinę. Sprawdź też folder spam.', buttons: [DS.Button({ label: 'Wyślij ponownie za 0:29', type: 'secondary', state: 'disabled', block: true, attrs: { id: 'resend-btn' } })] })}</div>
       <div class="screen__bottom">${DS.HomeIndicator()}</div></div>`;
   };
 
@@ -480,7 +484,10 @@
     const club = t.closest('[data-club]'); if (club && !t.closest('.ds-SelectableCell__action')) { const k = club.dataset.club; S.club[k] = !S.club[k]; toggleCell(club, S.club[k]); return; }
     const act = t.closest('[data-action]'); if (act) ACTIONS[act.dataset.action]?.(act, e);
   });
-  document.addEventListener('input', (e) => { if (e.target.matches('.ds-TextField__input, .ds-InputCode__hidden')) syncInputs(); if (e.target.id === 'f-password') { const r = pwdRules(e.target.value); $$('#pwd-rules li').forEach(li => li.classList.toggle('ok', r[li.dataset.rule])); } });
+  // Data urodzenia: separator wstawiamy automatycznie (decyzja 5.1 mapy M1) — Pacjent wpisuje same cyfry.
+  const maskDate = (el) => { const d = el.value.replace(/\D/g, '').slice(0, 8);
+    el.value = d.length > 4 ? `${d.slice(0, 2)}.${d.slice(2, 4)}.${d.slice(4)}` : d.length > 2 ? `${d.slice(0, 2)}.${d.slice(2)}` : d; };
+  document.addEventListener('input', (e) => { if (e.target.id === 'f-birth') maskDate(e.target); if (e.target.matches('.ds-TextField__input, .ds-InputCode__hidden')) syncInputs(); if (e.target.id === 'f-password') { const r = pwdRules(e.target.value); $$('#pwd-rules li').forEach(li => li.classList.toggle('ok', r[li.dataset.rule])); } });
   document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('.ds-TextField__input')) { const btn = $('#screen .screen__bottom .ds-Button, #screen .ds-Button--primary'); btn?.click(); } });
   document.addEventListener('ds:code', (e) => { S.code = e.detail.value; if (e.detail.complete) setTimeout(() => ACTIONS['register-2-next']($('#otp-btn')), 150); });
   $('#club-carousel');
@@ -507,12 +514,12 @@
       if (!/^\d{9}$/.test(S.phone)) { fieldError(phone, 'Numer telefonu nieprawidłowy'); ok = false; }
       else if (S.phone === '600000000') { fieldError(phone, 'Numer już zarejestrowany. Zaloguj się lub zresetuj hasło.'); ok = false; }
       if (!S.noPesel) { if (!peselValid(S.pesel)) { fieldError($('#f-pesel'), 'PESEL niepoprawny'); ok = false; } }
-      else { if (!/^\d{2}\/\d{2}\/\d{4}$/.test(S.birth)) { fieldError($('#f-birth'), 'Wpisz datę w formacie DD/MM/RRRR'); ok = false; } if (!S.sex) { ok = false; snack('Wybierz płeć', 'error'); } }
+      else { if (!/^\d{2}\.\d{2}\.\d{4}$/.test(S.birth)) { fieldError($('#f-birth'), 'Data urodzenia w formacie DD.MM.RRRR'); ok = false; } if (!S.sex) { ok = false; snack('Wybierz płeć', 'error'); } }
       if (!S.consents.terms) { $('#consent-terms')?.classList.add('is-error'); $('#consent-terms .ds-Checkbox')?.classList.add('is-error'); if (ok) snack('Brak zgody wymaganej', 'error'); ok = false; }
       if (!ok) { $('#screen .is-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
       S.code = ''; go('register/2');
     },
-    'otp-resend': () => { otpLeft = 29; $('#otp-resend').outerHTML = `<p class="center-13 muted-3" id="otp-row">Wyślij ponownie za <b id="otp-timer" style="color:var(--content-on-surface)">0:29</b></p>`; SCREENS['register/2'].timerRestart?.(); snack('Kod wysłany ponownie', 'success', 313);
+    'otp-resend': () => { otpLeft = 29; $('#otp-resend').outerHTML = `<p class="center-13 muted-3" id="otp-row">Wyślij ponownie za <b id="otp-timer" style="color:var(--content-on-surface)">0:29</b></p>`; SCREENS['register/2'].timerRestart?.(); snack('Wysłaliśmy nowy kod', 'success', 313);
       clearInterval(otpTimer); otpTimer = setInterval(() => { otpLeft--; const el = $('#otp-timer'); if (!el) return clearInterval(otpTimer); if (otpLeft <= 0) { clearInterval(otpTimer); el.parentElement.outerHTML = `<button type="button" class="center-13 ds-TextLink" id="otp-resend" data-action="otp-resend" style="width:100%">Wyślij kod ponownie</button>`; } else el.textContent = '0:' + String(otpLeft).padStart(2, '0'); }, 1000); },
     'register-2-next': () => {
       const ic = $('#otp'); const v = ic.querySelector('.ds-InputCode__hidden').value;

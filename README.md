@@ -158,6 +158,48 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | ekran klubu: „Trzy korzyści, jedna decyzja." · sheet kategorii z podtytułem | zdjęte | M1 A14, decyzja F3 |
 | „1 podpowiedzi" · etykieta pola „Wpisz kraj..." | odmiana po liczbie · „Kraj" | polszczyzna, reguła 3a |
 
+### Copy autentykacji (M1) do kanonu (2026-09-09)
+
+Autentykacja jest w badaniu **ukryta**, ale prototyp jest deklarowanym kanonem dla hi-fi, więc jej copy też
+musi się zgadzać. Przebieg mapą M1 razem ze skillem `/ux-writer` dał **19 podmian** — wykonane są wyłącznie
+wiersze rozstrzygnięte („podmień"), wiersze „do decyzji" zostały nietknięte.
+
+| Ekran | Było | Jest | Źródło |
+| --- | --- | --- | --- |
+| A02, A03 | „Mam już konto" | „Masz już konto? Zaloguj się" | K3 |
+| A04 | „Wpisz dane, których używasz w aplikacji ALAB" | „… w aplikacji." | gołe ALAB, kropka |
+| A04, A07/3, A10 | „Email" | „E-mail" | CX |
+| A04 | „Nie pamiętam hasła" | „Nie pamiętasz hasła?" | K3 |
+| A04 | „Nie masz jeszcze konta?" | „Nie masz konta?" | mapa M1 |
+| A07/1 | „Wyślemy SMS z kodem potwierdzającym" | „Wyślemy SMS z kodem" | mapa M1 |
+| A07/1 | „Nie mam numeru PESEL" | „Brak numeru PESEL" | K4 |
+| A07/1 | „Wpisz w formacie DD/MM/RRRR" | „… DD.MM.RRRR" + separator wstawiany automatycznie | decyzja 5.1 |
+| A07/1 | „Wybierz płeć" | „Płeć" | reguła klienta 3a |
+| A07/1 | „Chcę informacje o akcjach profilaktycznych…" | „… o ofertach i nowościach" | mapa M1, sekcja 6 |
+| A07/1 | CTA „Dalej" | „Zarejestruj się" + wyjście „Masz już konto? Zaloguj się" | K1, K3 |
+| A07/1, A14 | „Więcej" / „Mniej" | „rozwiń" / „zwiń" | leksykon 5 |
+| A08 | „Wyślij kod ponownie" · toast „Kod wysłany ponownie" | „Wyślij ponownie" · „Wysłaliśmy nowy kod" | mapa M1 |
+| A08 | sześć pól bez etykiety | `aria-label` „Kod weryfikacyjny" | mapa M1, a11y |
+| A07/3 | „Dane podstawowe" | „Wpisz swoje dane, aby założyć Konto Pacjenta" | K2 |
+| A10 | „Sprawdź folder spam." | „Sprawdź też folder spam." | mapa M1 |
+| A14 | „… i akceptuje jego postanowienia" · cudzysłów “” | „akceptuję" · „" | mapa M1 |
+| A14 | „ALAB laboratoria Sp. z." | „Sp. z o.o." | mapa M1 (ucięta klauzula) |
+| A14 | rozwinięcie zgody: „naliczania **zniżek**" | „naliczania korzyści i komunikacji o nich" | zakaz klienta |
+
+Ostatni wiersz to **ósme naruszenie zakazu „zniżki"**, przeoczone przy przebiegu M3, bo siedzi w rozwinięciu
+zgody klubowej, nie w cenach.
+
+**Zostawione jako „do decyzji" (mapa M1, sekcja 5):** treść slajdów intro i tagline splasha (5.4, decyzja ALAB),
+ekran biometrii A15 (5.5), przycisk „Zaloguj się z Face ID" (5.6), reguły hasła (5.8), gwiazdka „* Wymagane"
+(5.10), stopka huba (5.11), „Zmień numer" i „Potwierdź" na OTP (5.12).
+
+**Poza kanonem, zgłoszone:** wyjście do logowania na A02 i A03 jest u nas **przyciskiem**, a kanon mówi „tekst
+z linkiem, jak stopka logowania". Podmieniłem same słowa; zamiana przycisku na link to zmiana hierarchii
+ekranu, więc decyzja Jarka. Pusty stan sheeta kraju („Brak wyników" + „Spróbuj wpisać nazwę kraju inaczej.")
+jest trzecią wersją tego zdania obok hi-fi i wyszukiwarki sklepu — mapa mówi „zostaje", ale ujednolicenie
+warto zaplanować razem z długiem na słowie „wyniki". Odliczanie OTP mamy na 0:29, a mapa mówi 0:59, bo API
+blokuje ponowne wysłanie na minutę — u nas krótsze celowo, żeby prototyp nie nudził.
+
 ### Przebieg skillem `/ux-writer` (2026-09-09, po wdrożeniu)
 
 Paczka mówi „pracujesz z Claude i skillem UX writer"; pierwsze wdrożenie poszło bez niego, więc copy
