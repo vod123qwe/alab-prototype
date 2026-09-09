@@ -120,6 +120,65 @@ Poprawny PESEL testowy: `44051401359`.
 - **Zachowania**: auto-weryfikacja po wpisaniu 6. cyfry, licznik 29 s do ponownej wysyłki, reguły hasła podświetlane na zielono w trakcie pisania,
   scrim + arkusz kraju z filtrem. To interpretacja flow, nie decyzje z Figmy.
 
+## Copy do kanonu map M1/M3 (2026-09-09)
+
+Paczka `ALAB-copy-dla-Jarka-2026-09-09` (mapy copy POC → hi-fi dla modułów M1 i M3 plus leksykon) przyniosła
+decyzje z 9 września, których prototyp jeszcze nie miał. Część rozjazdów powstała w prototypie świeżo, przy
+budowie arkusza filtrów i pillsów. Podmienione:
+
+**Zakazane słowa (leksykon 321, zakaz klienta: „zniżka", „rabat", „promocja", „oszczędzasz")**
+
+| Było | Jest |
+| --- | --- |
+| „X zł ekstra -5% w klubie" · „zniżka -40% w klubie" | „X zł 5% taniej w klubie" · „40% taniej w klubie" |
+| „Aktywna zniżka klubowa ekstra -5%" | „5% taniej, już naliczone" |
+| baner mały: „zyskaj dodatkowe zniżki" | „5% taniej + bon 20% po pierwszym badaniu" |
+| baner duży i karuzela klubu: „5% dodatkowej zniżki", „Akcje profilaktyczne…" | trzy korzyści wg mapy M3, 3.4 |
+| sekcja PDP „Kupując w pakiecie, oszczędzasz" | „Pakiety z tym badaniem" |
+| webview klubu: „zasady ALAB club: zniżki, voucher…" | „… 5% taniej, voucher po pierwszym badaniu…" |
+
+**Kanon leksykonu**
+
+| Było | Jest | Źródło |
+| --- | --- | --- |
+| „Liczba badań: 4" · „Materiał: Krew" | „Pakiet · 4 badania" · „Badanie · krew" | leksykon 136 |
+| CTA karty „Do koszyka" | „+ Dodaj" | decyzja F2 |
+| „Zobacz składowe pakietu • 4" | „Składowe pakietu (4)" | leksykon 234 |
+| belka „Wyniki wyszukiwania" | „Znalezione badania i pakiety" | leksykon 238 |
+| „Pokaż 5 wyników" | „Pokaż 3 pakiety i 8 badań" | mapa M3, P02 |
+| „Wybierz typ" · „Zawęź w kategorii: Hormony" | „Typ" · „Kategorie" | etykieta rzeczownikiem |
+| „Gdzie można wykonać" | „Sposób realizacji" | leksykon 60 |
+| „Dziś otwarte 7:00 - 11:00" | „07:00 - 11:00" | leksykon 3 |
+| „Brak badań dla wybranych filtrów" | „Brak badań dla tych filtrów." + „Bez filtrów zobaczysz tu N badań" | mapa M3, P02 |
+| „Szukaj badania**...**" | „Szukaj badania…" (jeden znak) | leksykon 3a |
+| „**-**20%" (dywiz) · „z kodem**:**" | „−20%" (znak minus) · „z kodem" | leksykon 109 |
+| „Pokaż wszystkie pakiety" | „… pakiety (16)" | mapa M3, P01 |
+| chipy i wiersze filtrów „Tarczyca • 6" | „Tarczyca (6)" | mapa M3, P01 |
+| baner klubu „Twój klub na całe życie" · CTA „Sprawdź" | „Bezpłatny program dla Pacjentów" · „Dołącz do ALAB club" | mapa M3 3.4, decyzja F4 |
+| ekran klubu: „Trzy korzyści, jedna decyzja." · sheet kategorii z podtytułem | zdjęte | M1 A14, decyzja F3 |
+| „1 podpowiedzi" · etykieta pola „Wpisz kraj..." | odmiana po liczbie · „Kraj" | polszczyzna, reguła 3a |
+
+### Sprzeczności w mapach — zgłoszone, nierozstrzygnięte
+
+Prototyp wykonuje mapy dosłownie, więc te rozjazdy w nim zostały. Do rozmowy z Kasprem:
+
+1. **„bon 20%" (M3 3.2) vs „Voucher 20%" (M3 3.4, M1 A14)** — dwa słowa na to samo w jednym module. U nas
+   mały baner mówi „bon", duży „Voucher", bo tak stoi w mapach.
+2. **Kolejność korzyści klubu** — M1 A14: 5% → Oferta urodzinowa → Voucher; M3 3.4: 5% → Voucher → Oferta
+   urodzinowa. Ekran klubu trzyma kolejność M1, baner na PDP kolejność M3.
+3. **Ta sama korzyść ma dwie akcje** — M1 A14 „zostaje do odpowiedzi ALAB (K6)", M3 3.4 „podmień wg K6".
+4. **„Niedostępne w wybranym punkcie" (M3 3.1)** przeczy własnej regule „Punkt Pobrań dwiema wielkimi literami
+   we wszystkich formach". Prototyp trzyma regułę: „Niedostępne w wybranym Punkcie Pobrań".
+5. **Słowo „wyniki" ma dwa losy** — w belce P05 wychodzi, w pustym stanie wyszukiwarki zostaje jako dług.
+   Prototyp tak samo: belka „Znalezione badania i pakiety", pusty stan „Brak wyników dla „X”".
+6. **Zakres godzin** ma dywiz („07:00 - 11:00"), gdy ta sama sekcja mapy zakazuje em dasha i narzuca kropkę
+   środkową jako separator w linii. Zakres to typowo półpauza.
+
+### Do decyzji Jarka (mapa M3, sekcja 6, punkt 5)
+
+Etykiety „Wybierz kategorię" nad siatką kafli i „Przeglądaj tylko" nad chipami. W prototypie ich nie ma
+i świadomie nie dopisujemy, dopóki nie ma decyzji.
+
 ## Leksykon UX writing (przejście 2026-09-08)
 
 Copy było wcześniej 1:1 z Figmy, razem z rozjazdami wobec leksykonu. Na prośbę Jarka zostały poprawione:

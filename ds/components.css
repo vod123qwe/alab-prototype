@@ -384,8 +384,7 @@
 /* FilterChip: licznik „Tarczyca • 2” (Listing • Kategoria). Odstępy trzyma sam licznik — chip z licznikiem
    gasi swoje `gap`, bo inaczej etykieta, gap chipa i margines licznika sumowały się w zbyt dużą dziurę. */
 .ds-FilterChip--count { gap: 0; }
-.ds-FilterChip__count { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; color: var(--content-on-surface-secondary); font-weight: 600; }
-.ds-FilterChip__dot { line-height: 1; }
+.ds-FilterChip__count { margin-left: 4px; color: var(--content-on-surface-secondary); font-weight: 600; }
 .ds-FilterChip.is-selected .ds-FilterChip__count { color: inherit; opacity: .8; }
 
 /* presentSheet: gest zamykania jak w iOS */

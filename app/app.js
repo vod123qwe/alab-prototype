@@ -235,7 +235,7 @@
     const list = (q = '') => { const l = COUNTRIES.filter(([n]) => n.toLowerCase().includes(q.toLowerCase())); return l.length
       ? l.map(([n, c, f], i) => (i === 1 ? DS.Divider() : '') + DS.CellSelectCountry({ name: n, code: c, flag: f, checked: S.prefix.code === c, attrs: { 'data-country': c } })).join('')
       : `<div class="ds-ScreenState" style="padding-top:48px"><div class="ds-ScreenState__text"><p class="ds-ScreenState__title" style="font-size:20px;line-height:24px">Brak wyników</p><p class="ds-ScreenState__body">Spróbuj wpisać nazwę kraju inaczej.</p></div></div>`; };
-    const sheet = DS.presentSheet({ title: 'Wybierz kraj', height: '750px', content: DS.TextField({ id: 'f-country', label: 'Wpisz kraj...', leading: { icon: 'search' } }) + `<div class="ds-BottomSheet__scroll">${list()}</div>` });
+    const sheet = DS.presentSheet({ title: 'Wybierz kraj', height: '750px', content: DS.TextField({ id: 'f-country', label: 'Kraj', leading: { icon: 'search' } }) + `<div class="ds-BottomSheet__scroll">${list()}</div>` });
     sheet.wrap.addEventListener('click', (e) => {
       const c = e.target.closest('[data-country]');
       if (c) { const found = COUNTRIES.find(x => x[1] === c.dataset.country); S.prefix = { name: found[0], code: found[1], flag: found[2] }; sheet.close(false); render_(); }
@@ -276,8 +276,8 @@
     const body = `<div class="club__banner">
         <div class="club__photo"><img src="${A}img_club_consent.png" alt=""></div>
         <div style="position:relative;width:100%">${DS.StatusBar({ light: true })}</div>
-        <div class="club__intro"><span class="club__logo">${DS.ICONS['logo-club']}</span><div><p class="club__title">Bezpłatny program<br>dla Pacjentów</p><p class="club__lead">Trzy korzyści, jedna decyzja.</p></div></div>
-        <div class="club__carouselwrap"><div class="club__carousel" id="club-carousel">${DS.CarouselCell({ icon: 'tag', title: '5% dodatkowej zniżki', sub: 'na całą ofertę ALAB laboratoria' })}${DS.CarouselCell({ icon: 'gift', title: 'Oferta urodzinowa', sub: 'Specjalna niespodzianka w Twoim miesiącu' })}${DS.CarouselCell({ icon: 'voucher', title: 'Voucher 20%', sub: 'Po wykonaniu badania na kolejne zakupy' })}</div>
+        <div class="club__intro"><span class="club__logo">${DS.ICONS['logo-club']}</span><div><p class="club__title">Bezpłatny program<br>dla Pacjentów</p></div></div>
+        <div class="club__carouselwrap"><div class="club__carousel" id="club-carousel">${DS.CarouselCell({ icon: 'tag', title: '5% taniej, zawsze', sub: 'Na całą ofertę, w każdym punkcie.' })}${DS.CarouselCell({ icon: 'gift', title: 'Oferta urodzinowa', sub: 'Specjalna oferta w miesiącu urodzin.' })}${DS.CarouselCell({ icon: 'voucher', title: 'Voucher 20% po wykonaniu badań', sub: 'Na kolejne zakupy, po pierwszym badaniu.' })}</div>
           <div class="club__dots" id="club-dots">${DS.StepsIndicator({ steps: 3, current: 1, text: false, onScrim: true })}</div>
           <div class="club__corner"></div></div>
       </div>

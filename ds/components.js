@@ -134,7 +134,7 @@
   // ---------- FilterChip ----------
   DS.FilterChip = ({ label = 'Chip', selected = false, fill = false, style, count, attrs: a } = {}) => {
     const { class: extra, ...rest } = a || {};
-    return `<button type="button" class="${cls('ds', 'ds-FilterChip', style === 'oncolor' && 'ds-FilterChip--oncolor', selected && 'is-selected', fill && 'ds-FilterChip--fill', count != null && 'ds-FilterChip--count', extra)}" aria-pressed="${selected}" ${attrs(rest)}>${esc(label)}${count != null ? `<span class="ds-FilterChip__count"><span class="ds-FilterChip__dot">•</span>${count}</span>` : ''}</button>`;
+    return `<button type="button" class="${cls('ds', 'ds-FilterChip', style === 'oncolor' && 'ds-FilterChip--oncolor', selected && 'is-selected', fill && 'ds-FilterChip--fill', count != null && 'ds-FilterChip--count', extra)}" aria-pressed="${selected}" ${attrs(rest)}>${esc(label)}${count != null ? `<span class="ds-FilterChip__count">(${count})</span>` : ''}</button>`;
   };
 
   // ---------- StepsIndicator ----------

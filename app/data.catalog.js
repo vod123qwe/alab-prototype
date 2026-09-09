@@ -31,7 +31,7 @@
     Wymaz: ['Nie myj zębów i nie jedz 2 h przed pobraniem', 'Pobranie zgodnie z instrukcją w zestawie'],
     Ślina: ['Próbki o wskazanych godzinach dnia', 'Nie jedz i nie pij 30 min przed pobraniem'],
   };
-  const CODE = { discount: '-20%', code: 'JESIEN20' };
+  const CODE = { discount: '−20%', code: 'JESIEN20' };   // znak minus, nie dywiz (leksykon 109)
   const BLOOD = ['punkt', 'dom'];
   // Zestaw wysyłkowy jest w POC OSOBNYM produktem, dlatego badanie wysyłkowe nie ma ani `punkt`, ani `dom`
   // (js/data.js: „badania wysyłkowe nie mają 'punkt' ani 'dom', poza HPV, które ALAB przełącza w koszyku”).

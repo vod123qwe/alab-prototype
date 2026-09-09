@@ -9,7 +9,7 @@
 
   // ---------- SearchField (Style: onColor | Solid; State: Default | Active) ----------
   // onColor = placeholder na granatowym hero (klik otwiera wyszukiwarkę); active = prawdziwe pole z caretem, Clear i „Anuluj”
-  DS.SearchField = ({ style = 'oncolor', state = 'default', value = '', placeholder = 'Szukaj badania...', cancel = true, id = 'search-input', attrs: a, inputAttrs } = {}) => {
+  DS.SearchField = ({ style = 'oncolor', state = 'default', value = '', placeholder = 'Szukaj badania…', cancel = true, id = 'search-input', attrs: a, inputAttrs } = {}) => {
     if (state !== 'active') {
       return `<button type="button" class="${cls('ds', 'ds-SearchField', 'ds-SearchField--' + style)}" ${attrs(a)}>` +
         `<span class="ds-SearchField__field">${DS.icon('search-md', 24)}<span class="ds-SearchField__placeholder">${esc(placeholder)}</span></span></button>`;
@@ -39,7 +39,7 @@
     `<div class="ds ds-SectionHeader"><p class="ds-SectionHeader__title">${esc(title)}${count != null ? `<span class="ds-SectionHeader__count"> • ${count}</span>` : ''}</p>${action ? `<button type="button" class="ds-SectionHeader__action" ${attrs(actionAttrs)}>${esc(action)}</button>` : ''}</div>`;
 
   // ---------- CellOrderTypeStatus (lokalizacja punktu) ----------
-  DS.CellOrderTypeStatus = ({ icon = 'location-check', title = 'Puławska 10, Warszawa', status = 'Dziś otwarte 7:00 - 11:00', attrs: a } = {}) =>
+  DS.CellOrderTypeStatus = ({ icon = 'location-check', title = 'Puławska 10, Warszawa', status = 'Dziś otwarte 07:00 - 11:00', attrs: a } = {}) =>
     `<button type="button" class="${cls('ds', 'ds-CellOrderTypeStatus', !status && 'ds-CellOrderTypeStatus--single')}" ${attrs(a)}>${DS.icon(icon, 24)}<span class="ds-CellOrderTypeStatus__text"><span class="ds-CellOrderTypeStatus__title">${esc(title)}</span>${status ? `<span class="ds-CellOrderTypeStatus__status">${esc(status)}${DS.icon('chevron-right', 16)}</span>` : ''}</span></button>`;
 
   // ---------- Cell (wiersz listy: ikona 24 + tytuł + podtytuł + chevron) ----------
@@ -49,8 +49,8 @@
     return `<button type="button" class="${cls('ds', 'ds-Cell', extra)}" ${attrs(rest)}>${icon ? DS.icon(icon, 24) : ''}<span class="ds-Cell__content"><span class="ds-Cell__title">${titleHtml || esc(title)}</span>${subtitle ? `<span class="ds-Cell__subtitle">${esc(subtitle)}</span>` : ''}</span>${trailing ? DS.icon(trailing, 16, 'ds-Cell__trailing') : ''}</button>`; };
 
   // ---------- Badges ----------
-  DS.BadgePrice = ({ label = '-20%' } = {}) => `<span class="ds ds-BadgePrice">${esc(label)}</span>`;
-  DS.BadgeCode = ({ discount = '-20%', text = 'z kodem JESIEN20' } = {}) => `<span class="ds ds-BadgeCode">${DS.BadgePrice({ label: discount })}<span>${esc(text)}</span></span>`;
+  DS.BadgePrice = ({ label = '−20%' } = {}) => `<span class="ds ds-BadgePrice">${esc(label)}</span>`;
+  DS.BadgeCode = ({ discount = '−20%', text = 'z kodem JESIEN20' } = {}) => `<span class="ds ds-BadgeCode">${DS.BadgePrice({ label: discount })}<span>${esc(text)}</span></span>`;
   // tone: 'solid' = zachęta dla użytkownika bez klubu (gradient), 'soft' = potwierdzenie dla członka klubu
   // (jasny fiolet), wg wariantów „Warianty • Banner PDP hero" 2726:16353 w pliku Alab • Design.
   DS.BadgePremium = ({ text = 'Niższa cena z ALAB club', tone = 'solid' } = {}) =>
@@ -59,7 +59,7 @@
 
   // ---------- ProductCard (CellPackage / CellTest) ----------
   // badge: {code:{discount,text}} | {premium:text} | {basic:text}; price: {current, old, club, lowest, note}
-  DS.ProductCard = ({ id, kind = 'test', meta = '', title = '', badge, price, cta = 'Do koszyka', ctaVariant = 'primary', footer, attrs: a } = {}) => {
+  DS.ProductCard = ({ id, kind = 'test', meta = '', title = '', badge, price, cta = '+ Dodaj', ctaVariant = 'primary', footer, attrs: a } = {}) => {
     const badgeHtml = !badge ? '' : badge.code ? DS.BadgeCode(badge.code) : badge.premium ? DS.BadgePremium({ text: badge.premium }) : DS.BadgeBasic({ text: badge.basic });
     const priceHtml = !price ? '' : `<div class="ds-ProductCard__price">` +
       `<div class="ds-ProductCard__priceMain"><div class="ds-ProductCard__priceRow"><span class="ds-ProductCard__current">${esc(price.current)}</span>${price.old ? `<s class="ds-ProductCard__old">${esc(price.old)}</s>` : ''}</div>` +
@@ -68,7 +68,7 @@
     return `<article class="${cls('ds', 'ds-ProductCard', 'ds-ProductCard--' + kind)}" ${attrs(a)} ${id ? `data-product="${esc(id)}"` : ''}>` +
       `<div class="ds-ProductCard__surface"><div class="ds-ProductCard__text">${badgeHtml}<div class="ds-ProductCard__heading"><p class="ds-ProductCard__meta">${esc(meta)}</p><p class="ds-ProductCard__title">${esc(title)}</p></div>${priceHtml}</div>` +
       `<button type="button" class="${cls('ds-ButtonTiny', 'ds-ButtonTiny--' + ctaVariant, 'ds-ProductCard__cta')}" data-action="${ctaVariant === 'primary' ? 'add-to-cart' : 'change-point'}" data-title="${esc(title)}"><span class="ds-ButtonTiny__label">${esc(cta)}</span></button></div>` +
-      (footer ? `<button type="button" class="ds-ProductCard__footer" data-action="package-details"><span>${esc(footer.label)}</span><span class="ds-ProductCard__footerCount">&nbsp;• ${esc(footer.count)}</span>${DS.icon('chevron-right', 16)}</button>` : '') + `</article>`;
+      (footer ? `<button type="button" class="ds-ProductCard__footer" data-action="package-details"><span>${esc(footer.label)}</span><span class="ds-ProductCard__footerCount">&nbsp;(${esc(footer.count)})</span>${DS.icon('chevron-right', 16)}</button>` : '') + `</article>`;
   };
 
   // ---------- Karta produktu („Produkt • Badanie / Pakiet” 1183:19461-19462) ----------
@@ -83,10 +83,10 @@
     ((lowest || note) ? `<div class="ds-PriceBlock__notes">${lowest ? `<p>${esc(lowest)}</p>` : ''}${note ? `<p class="ds-PriceBlock__note">${esc(note)}${DS.icon('info-circle', 16)}</p>` : ''}</div>` : '') + `</div>`;
   // CodeBox: kod rabatowy z przyciskiem kopiowania
   DS.CodeBox = ({ discount = '-20%', code = 'B26SIER' } = {}) =>
-    `<div class="ds ds-CodeBox">${DS.BadgePrice({ label: discount })}<span class="ds-CodeBox__text">z kodem: <b>${esc(code)}</b></span>` +
+    `<div class="ds ds-CodeBox">${DS.BadgePrice({ label: discount })}<span class="ds-CodeBox__text">z kodem <b>${esc(code)}</b></span>` +
     `<button type="button" class="ds-CodeBox__copy" aria-label="Kopiuj kod ${esc(code)}" data-action="copy-code" data-code="${esc(code)}">${DS.icon('copy', 24)}</button></div>`;
   // ClubPromo: fioletowa zachęta „Dołącz do ALAB club / zyskaj dodatkowe zniżki”
-  DS.ClubPromo = ({ title = 'Dołącz do ALAB club', subtitle = 'zyskaj dodatkowe zniżki', attrs: a } = {}) =>
+  DS.ClubPromo = ({ title = 'Dołącz do ALAB club', subtitle = '5% taniej + bon 20% po pierwszym badaniu', attrs: a } = {}) =>
     `<button type="button" class="ds ds-ClubPromo" ${attrs(a || { 'data-action': 'club-promo' })}>${DS.icon('alabek', 24)}<span class="ds-ClubPromo__text"><span class="ds-ClubPromo__title">${esc(title)}</span><span class="ds-ClubPromo__subtitle">${esc(subtitle)}</span></span>${DS.icon('chevron-right', 16)}</button>`;
   // CellInfo: ikona + etykieta + wartość (albo lista punktów) — wiersze „Oczekiwanie na wynik”, „Pobierany materiał”, „Przygotowanie do badania”
   DS.CellInfo = ({ icon = 'timer', label = '', value = '', bullets, attrs: a } = {}) =>
@@ -94,15 +94,17 @@
     (bullets ? `<ul class="ds-CellInfo__bullets">${bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : `<p class="ds-CellInfo__value">${esc(value)}</p>`) + `</div></div>`;
   // ClubBannerLarge („AlabBannerLarge” 574:1900): granat, padding 32, radius 28; zdjęcie rodziny u góry po prawej
   // (top -16.36%, bottom 45.23%, środek 50%+71.5px), dwa fioletowe bloby, gradient granat → przezroczysty fiolet (70%);
-  // treść: tytuł 20/24, logo 98×21, lista (ikona 16, tytuł 14/20, opis 12/18), ButtonTiny tertiary „Sprawdź”.
+  // treść: tytuł 20/24, logo 98×21, lista (ikona 16, tytuł 14/20, opis 12/18), ButtonTiny tertiary.
+  // CTA „Dołącz do ALAB club” wg decyzji F4 (mapa M3, 3.4): baner wylicza korzyści, więc przycisk nazywa akcję,
+  // do której prowadzi — „Sprawdź” nie mówiło, że to zapis do klubu.
   DS.ClubBannerLarge = ({ attrs: a } = {}) =>
     `<section class="ds ds-ClubBanner" ${attrs(a)}><div class="ds-ClubBanner__bg" aria-hidden="true">` +
     `<img class="ds-ClubBanner__img" src="${DS.ASSETS}img_club_banner.jpg" alt="">` +
     `<img class="ds-ClubBanner__blob ds-ClubBanner__blob--1" src="${DS.ASSETS}il_club_blob_1.svg" alt=""><img class="ds-ClubBanner__blob ds-ClubBanner__blob--2" src="${DS.ASSETS}il_club_blob_2.svg" alt="">` +
     `<div class="ds-ClubBanner__grad"></div></div>` +
-    `<div class="ds-ClubBanner__content"><h2 class="ds-ClubBanner__title">Twój klub<br>na całe życie</h2><img class="ds-ClubBanner__logo" src="${DS.ASSETS}il_club_logo_banner.svg" alt="ALAB club">` +
-    `<ul class="ds-ClubBanner__list">${[['5% dodatkowej zniżki', 'na całą ofertę ALAB laboratoria'], ['Voucher 20%', 'w prezencie, do wykorzystania na kolejne zakupy po wykonaniu badań'], ['Oferty tylko dla klubowiczów', 'Akcje profilaktyczne, oferta urodzinowa i inne niespodzianki w ciągu roku']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 16)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul></div>` +
-    DS.ButtonTiny({ label: 'Sprawdź', variant: 'tertiary', trailingIcon: 'chevron-right', attrs: { 'data-action': 'club-promo', class: 'ds-ClubBanner__cta' } }) + `</section>`;
+    `<div class="ds-ClubBanner__content"><h2 class="ds-ClubBanner__title">Bezpłatny program<br>dla Pacjentów</h2><img class="ds-ClubBanner__logo" src="${DS.ASSETS}il_club_logo_banner.svg" alt="ALAB club">` +
+    `<ul class="ds-ClubBanner__list">${[['5% taniej, zawsze', 'Na całą ofertę, w każdym punkcie.'], ['Voucher 20% po wykonaniu badań', 'Na kolejne zakupy, po pierwszym badaniu.'], ['Oferta urodzinowa', 'Specjalna oferta w miesiącu urodzin.']].map(([t, d]) => `<li>${DS.icon('check-circle-outline', 16)}<span><b>${esc(t)}</b><span>${esc(d)}</span></span></li>`).join('')}</ul></div>` +
+    DS.ButtonTiny({ label: 'Dołącz do ALAB club', variant: 'tertiary', trailingIcon: 'chevron-right', attrs: { 'data-action': 'club-promo', class: 'ds-ClubBanner__cta' } }) + `</section>`;
   // ChipDropdown: chip z chevronem otwierający wybór (Listing: „Badania i pakiety ⌵”)
   DS.ChipDropdown = ({ label = 'Badania i pakiety', attrs: a } = {}) =>
     `<button type="button" class="ds ds-FilterChip ds-ChipDropdown" ${attrs(a)}>${esc(label)}${DS.icon('chevron-right', 16, 'ds-ChipDropdown__chevron')}</button>`;

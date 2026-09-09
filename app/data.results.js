@@ -95,7 +95,7 @@
   const WEBVIEWS = {
     desc: { title: 'Opis badania', about: 'pełny opis badania: po co się je wykonuje, jak przygotować się do pobrania i jak czytać wynik' },
     faq: { title: 'Najczęstsze pytania', about: 'odpowiedzi na pytania, które Pacjenci zadają najczęściej: przygotowanie, czas oczekiwania i interpretacja wyniku' },
-    club: { title: 'ALAB club', about: 'zasady ALAB club: zniżki, voucher, oferta urodzinowa i warunki uczestnictwa' },
+    club: { title: 'ALAB club', about: 'zasady ALAB club: 5% taniej, voucher po pierwszym badaniu, oferta urodzinowa i warunki uczestnictwa' },
     terms: { title: 'Regulamin', about: 'Regulamin aplikacji i Politykę prywatności w pełnej wersji' },
   };
 

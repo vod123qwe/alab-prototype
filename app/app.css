@@ -490,7 +490,7 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .filters__row { display: flex; align-items: center; gap: var(--space-2xl); width: 100%; padding: 12px 0; text-align: left; background: none; border: 0; }
 .filters__row > .ds-Checkbox { flex: 0 0 auto; }
 /* tylko etykieta wiersza — reguła na „> span” przemalowywała też ptaszek w checkboxie na kolor treści */
-.filters__text { display: flex; gap: 6px; font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+.filters__text { display: flex; gap: 4px; font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
 .filters__count { color: var(--content-on-surface-tertiary); }
 .filters__actions { display: flex; gap: var(--space-md); }
 .filters__actions .ds-Button--secondary { flex: 0 0 auto; }

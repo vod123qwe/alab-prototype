@@ -16,7 +16,7 @@
   // ---------------- sposoby realizacji ----------------
   // Komórka pod paskiem zmienia się razem z chipem (1:1 z masterami „Sklep • Strona główna”, „Typy • ALAB w domu”, „Typy • Wysyłkowe”)
   const DELIVERY = {
-    punkt: { label: 'Punkt Pobrań', loc: 'w Punkcie Pobrań', cell: { icon: 'location-check', title: 'Puławska 10, Warszawa', status: 'Dziś otwarte 7:00 - 11:00', action: 'change-point' } },
+    punkt: { label: 'Punkt Pobrań', loc: 'w Punkcie Pobrań', cell: { icon: 'location-check', title: 'Puławska 10, Warszawa', status: 'Dziś otwarte 07:00 - 11:00', action: 'change-point' } },
     // Miasto ZMIENIONE względem mastera 1183:26770 („Kraków”) — plan badania stawia Pacjenta w Warszawie,
     // a Punkt Pobrań w prototypie jest na Puławskiej; dwa różne miasta na jednym ekranie myliłyby uczestnika.
     dom: { label: 'ALAB w domu', loc: 'w ALAB w domu', cell: { icon: 'location-check', title: 'Usługa pobrania krwi w domu', status: 'Warszawa 109,00 zł', action: 'change-point' } },
@@ -48,17 +48,19 @@
 
   // ---------------- ceny: użytkownik podstawowy vs członek ALAB club ----------------
   // Warianty 1:1 z „Warianty • Banner PDP hero" 2726:16353 oraz kart badania 2726:16368 i pakietu 2726:16383:
-  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł ekstra -5% w klubie",
+  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł 5% taniej w klubie",
   //  • w klubie — cena klubowa staje się główną, podstawowa idzie w przekreślenie, a fioletowa linijka
-  //    zmienia się w POTWIERDZENIE „Aktywna zniżka klubowa ekstra -5%" (na karcie produktu dodatkowo odznaka).
+  //    zmienia się w POTWIERDZENIE „5% taniej, już naliczone" (na karcie produktu dodatkowo odznaka).
+  // Copy wg decyzji F1 z 2026-09-09 (mapa M3, leksykon 109): nie nazywamy obniżki, tylko ją pokazujemy —
+  // słowa „zniżka", „rabat", „promocja" i „oszczędzasz" nie wchodzą do interfejsu (leksykon 321, zakaz klienta).
   // Kod rabatowy ŁĄCZY się ze zniżką klubową −5% (cena z kodem × 0,95), ale NIE z klubową ceną −40%
   // (ustalenie Jarka 2026-09-08). Przy produkcie premium w klubie liczy się tylko −40% od ceny regularnej
   // i nie pokazujemy kodu, żeby nie sugerować kumulacji. Dziś żaden produkt nie ma obu naraz — to zabezpieczenie.
   const inClub = () => !!S().clubJoined;
   const codeApplies = (p) => !!p.code && !(inClub() && p.premium);
   const clubPrice = (p) => p.premium ? (p.old || p.price) * 0.6 : p.price * 0.95;
-  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} zniżka -40% w klubie` : `${zl(clubPrice(p))} ekstra -5% w klubie`;
-  const clubActive = (p) => p.premium ? 'Aktywna zniżka klubowa -40%' : 'Aktywna zniżka klubowa ekstra -5%';
+  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} 40% taniej w klubie` : `${zl(clubPrice(p))} 5% taniej w klubie`;
+  const clubActive = (p) => p.premium ? '40% taniej, już naliczone' : '5% taniej, już naliczone';
   // hero = karta produktu na PDP: tam komunikat o zniżce klubowej niesie ODZNAKA nad tytułem, więc fioletowa
   // linijka pod ceną znika (2726:16358); na kartach listingu odznaki nie ma, więc linijka zostaje (2726:16368).
   const priceVM = (p, t = type(), hero = false) => {
@@ -83,9 +85,11 @@
       : p.premium ? DS.BadgePremium({ text: 'Niższa cena z ALAB club' }) : '';
   const card = (p) => {
     const un = p.unavailableAt === type();
-    return DS.ProductCard({ id: p.id, kind: p.kind, meta: p.kind === 'package' ? `Liczba badań: ${p.components.length}` : `Materiał: ${p.material}`, title: p.title,
-      badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : 'Do koszyka', ctaVariant: un ? 'secondary' : 'primary',
-      footer: p.kind === 'package' ? { label: 'Zobacz składowe pakietu', count: p.components.length } : null,
+    // meta wg leksykonu 136: przy konkretnym produkcie liczba pojedyncza — „Pakiet · 4 badania", „Badanie · krew"
+    return DS.ProductCard({ id: p.id, kind: p.kind, title: p.title,
+      meta: p.kind === 'package' ? `Pakiet · ${plural(p.components.length, 'badanie', 'badania', 'badań')}` : `Badanie · ${(p.material || 'krew').toLowerCase()}`,
+      badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : '+ Dodaj', ctaVariant: un ? 'secondary' : 'primary',
+      footer: p.kind === 'package' ? { label: 'Składowe pakietu', count: p.components.length } : null,
       attrs: { 'data-open': p.id } });
   };
 
@@ -113,7 +117,7 @@
         <div class="shop__fill"><div class="shop__bg"><img src="${A}img_search_cover_bg@3x.png" alt=""></div></div>
         <div class="${bar ? 'shop__nav shop__nav--bar' : 'shop__nav'}">${bar ? DS.TopBar({ transparent: true, light: true, title }) : DS.StatusBar({ light: true })}</div>
         <div class="shop__searchWrap">
-          <div class="shop__searchRow">${DS.SearchField({ style: 'oncolor', placeholder: query || 'Szukaj badania...', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania', class: query ? 'has-query' : '' } })}${filters ? DS.IconButton({ icon: 'settings', variant: 'onscrim', size: 'medium', label: 'Filtry', attrs: { 'data-action': 'filters' } }) : ''}</div>
+          <div class="shop__searchRow">${DS.SearchField({ style: 'oncolor', placeholder: query || 'Szukaj badania…', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania', class: query ? 'has-query' : '' } })}${filters ? DS.IconButton({ icon: 'settings', variant: 'onscrim', size: 'medium', label: 'Filtry', attrs: { 'data-action': 'filters' } }) : ''}</div>
           <div class="shop__chipsWrap" id="shop-chips"><div class="shop__chips">${chips('oncolor')}</div></div>
         </div>
         <div class="shop__corner"></div>
@@ -121,10 +125,11 @@
 
   // ---------------- Sklep • Strona główna ----------------
   const popular = (kind) => forType().filter(p => p.kind === kind && p.popular);
-  const popularSections = () => [['package', 'Popularne pakiety', 'packages', 'Pokaż wszystkie pakiety'], ['test', 'Popularne badania', 'tests', 'Pokaż wszystkie badania']].map(([kind, title, k, btn]) => { const items = popular(kind); return items.length ? `<section class="shop__section">
+  // przycisk pod sekcją nazywa liczbę tego, co uczestnik zobaczy po przejściu (mapa M3, P01)
+  const popularSections = () => [['package', 'Popularne pakiety', 'packages', 'Pokaż wszystkie pakiety'], ['test', 'Popularne badania', 'tests', 'Pokaż wszystkie badania']].map(([kind, title, k, btn]) => { const items = popular(kind), all = forType().filter(x => x.kind === kind).length; return items.length ? `<section class="shop__section">
             ${DS.SectionHeader({ title, action: 'Pokaż wszystkie', actionAttrs: { 'data-action': 'show-all', 'data-kind': k } })}
             <div class="shop__cards">${items.map(card).join('')}</div>
-            ${DS.Button({ label: btn, type: 'secondary', block: true, attrs: { 'data-action': 'show-all', 'data-kind': k } })}
+            ${DS.Button({ label: `${btn} (${all})`, type: 'secondary', block: true, attrs: { 'data-action': 'show-all', 'data-kind': k } })}
           </section>` : ''; }).join('');
   SCREENS.dashboard = () => `<div class="screen shop" data-tab="shop">
       ${shopHead()}
@@ -175,7 +180,7 @@
     const tail = at >= 0 ? first.title.slice(at + nq.length).split(/[\s–,]/)[0] : '';
     const phrase = first ? DS.Cell({ icon: 'file-note-search', titleHtml: '„' + `<span class="match">${esc(q.trim())}</span>` + esc(tail) + '”', subtitle: countLabel({ pk: pk.length, ts: ts.length }), attrs: { 'data-action': 'search-submit', 'data-q': q.trim() } }) : '';
     const sec = (label, items, icon, mapSub, action, key) => items.length ? `<div class="search__group"><p class="search__label">${label}</p><div class="search__list">${items.map(it => DS.Cell({ icon, titleHtml: highlight(it.title || it.label, q.trim()), subtitle: mapSub(it), attrs: { 'data-action': action, [key]: it.id } })).join('')}</div></div>` : '';
-    return `<p class="search__count">${total + (first ? 1 : 0)} podpowiedzi</p>${phrase}` +
+    return `<p class="search__count">${plural(total + (first ? 1 : 0), 'podpowiedź', 'podpowiedzi', 'podpowiedzi')}</p>${phrase}` +
       [sec('Pakiety badań', pk, 'file-check', p => `${plural(p.components.length, 'badanie', 'badania', 'badań')} • ${zl(p.price)}`, 'open-product', 'data-open'),
        sec('Badania', ts, 'test-tube', t => zl(t.price), 'open-product', 'data-open'),
        sec('Kategorie', cats, 'view-list', c => plural(catCount(c), 'badanie', 'badania', 'badań'), 'open-category', 'data-cat')].filter(Boolean).map(h => DS.Divider() + h).join('');
@@ -206,6 +211,14 @@
     `<div class="shop__or"><span>Lub</span></div><div class="shop__alts">` +
     alts.map(({ t, n }) => DS.Cell({ icon: 'file-note-search', title: `Szukaj ${DELIVERY[t].loc}`, subtitle: countLabel(n), attrs: { 'data-delivery': t } })).join('') + `</div>`;
   // owijka, żeby stan pusty NIE centrował się w całej wysokości (wtedy wiersze wyjścia lądowały pod ekranem)
+  // Podpowiedź pod pustym stanem po filtrach mówi, ile jest bez filtrów (leksykon 5, mapa M3 P02).
+  const filtersHint = (ctx) => {
+    let items = forType();
+    if (ctx.cat) items = items.filter(p => inCat(p, ctx.cat.id));
+    if (ctx.query) items = items.filter(p => hits(haystack(p), ctx.query));
+    return items.length ? `Bez filtrów zobaczysz tu ${plural(items.length, 'badanie', 'badania', 'badań')}`
+      : 'Zmień sposób realizacji albo kategorię';
+  };
   const emptyWithAlts = (title, hint, alts) => `<div class="shop__emptyAlts">` + DS.SearchEmpty({ icon: 'file-note-search', title, hint }) + altRows(alts) + `</div>`;
   function listingBody(ctx) {
     const items = listingItems(ctx), kind = kindOf(ctx);
@@ -219,7 +232,7 @@
       return { pk: k !== 'tests' ? items.filter(p => p.kind === 'package').length : 0, ts: k !== 'packages' ? items.filter(p => p.kind === 'test').length : 0 }; });
     const what = ctx.query ? `Brak wyników dla „${ctx.query}”` : ctx.fixedKind === 'packages' ? 'Brak pakietów' : 'Brak badań w tej kategorii';
     return alts.length ? emptyWithAlts(`${what} ${DELIVERY[type()].loc}`, 'Zmień sposób realizacji, żeby je zobaczyć.', alts)
-      : DS.SearchEmpty({ icon: 'file-note-search', title: 'Brak badań dla wybranych filtrów', hint: 'Zmień sposób realizacji, kategorię lub rodzaj produktu' });
+      : DS.SearchEmpty({ icon: 'file-note-search', title: 'Brak badań dla tych filtrów.', hint: filtersHint(ctx) });
   }
   // Szybkie filtrowanie na PLP kategorii (724:77102): chip rozwijany z typem otwiera arkusz „Filtry", a za
   // separatorem stoją pillsy podkategorii — tapnięcie działa od razu i można zaznaczyć kilka. Wyników
@@ -250,7 +263,7 @@
   const listingCtx = (route) => {
     const [kind, id] = route.split('/');
     if (kind === 'category') { const cat = CATEGORIES.find(c => c.id === id); return cat ? { title: cat.label, cat } : null; }
-    if (kind === 'results') return { title: 'Wyniki wyszukiwania', query: st().query };
+    if (kind === 'results') return { title: 'Znalezione badania i pakiety', query: st().query };
     if (kind === 'list') return id === 'packages' ? { title: 'Pakiety badań', fixedKind: 'packages' } : { title: 'Badania', fixedKind: 'tests' };
     return null;
   };
@@ -266,7 +279,7 @@
     const price = priceVM(p, type(), true);
     const where = TYPES.filter(t => p.types.includes(t)).map(t => DELIVERY[t].label).join(', ');
     const comps = isPkg ? p.components.map(byId).filter(Boolean) : [];
-    // „Kupując w pakiecie, oszczędzasz”: pakiety zawierające to badanie, a gdy brak — pakiety z tej samej kategorii
+    // „Pakiety z tym badaniem”: pakiety zawierające to badanie, a gdy brak — pakiety z tej samej kategorii
     const pkgs = forType().filter(x => x.kind === 'package'); const inPkgs = isPkg ? [] : (pkgs.filter(x => x.components.includes(p.id)).length ? pkgs.filter(x => x.components.includes(p.id)) : pkgs.filter(x => x.cat === p.cat)).slice(0, 3);
     const related = forType().filter(x => x.id !== p.id && x.kind === p.kind && x.cat === p.cat).slice(0, 3);
     const buyLabel = isPkg ? 'Kup pakiet' : 'Kup badanie';
@@ -290,9 +303,9 @@
           </div>
           ${DS.Surface({ label: isPkg ? 'Opis pakietu' : 'Opis badania', content: DS.Cell({ icon: 'file-doc', title: p.desc, attrs: { 'data-action': 'full-desc', class: 'ds-Cell--clamp' } }) })}
           ${isPkg ? DS.SectionHeader({ title: 'Składowe pakietu' }) + DS.Surface({ label: 'Składowe pakietu', content: `<div class="ds-Surface__list">${comps.map(c => DS.Cell({ icon: null, title: c.title, attrs: { 'data-open': c.id } })).join('')}</div>` }) : ''}
-          ${DS.Surface({ content: `<div class="ds-Surface__rows">${DS.CellInfo({ icon: 'timer', label: 'Oczekiwanie na wynik', value: p.tat })}${isPkg ? '' : DS.CellInfo({ icon: 'lab-tube', label: 'Pobierany materiał', value: p.material })}${DS.CellInfo({ icon: 'pin', label: 'Gdzie można wykonać', value: where })}</div>` })}
+          ${DS.Surface({ content: `<div class="ds-Surface__rows">${DS.CellInfo({ icon: 'timer', label: 'Oczekiwanie na wynik', value: p.tat })}${isPkg ? '' : DS.CellInfo({ icon: 'lab-tube', label: 'Pobierany materiał', value: p.material })}${DS.CellInfo({ icon: 'pin', label: 'Sposób realizacji', value: where })}</div>` })}
           ${DS.Surface({ content: DS.CellInfo({ icon: 'file-check-doc', label: 'Przygotowanie do badania', bullets: p.prep }) })}
-          ${inPkgs.length ? DS.SectionHeader({ title: 'Kupując w pakiecie, oszczędzasz' }) + `<div class="ds-Carousel">${inPkgs.map(card).join('')}</div>` : ''}
+          ${inPkgs.length ? DS.SectionHeader({ title: 'Pakiety z tym badaniem' }) + `<div class="ds-Carousel">${inPkgs.map(card).join('')}</div>` : ''}
           ${DS.Surface({ label: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania', content: DS.Divider() + `<div class="ds-Surface__list">${DS.Cell({ icon: 'file-text', title: isPkg ? 'Pełny opis pakietu' : 'Pełny opis badania', attrs: { 'data-action': 'full-desc' } })}${DS.Cell({ icon: 'faq', title: 'Najczęstsze pytania (FAQ)', attrs: { 'data-action': 'faq' } })}</div><p class="ds-Surface__meta">Symbol ${esc(p.symbol)}${p.icd ? ` • Kod ICD: ${esc(p.icd)}` : ''}</p>` })}
           ${club ? '' : DS.ClubBannerLarge()}
           ${related.length ? `<section class="shop__section">${DS.SectionHeader({ title: isPkg ? 'Pakiety powiązane' : 'Badania powiązane' })}<div class="shop__cards">${related.map(card).join('')}</div></section>` : ''}
@@ -375,7 +388,7 @@
   // ---------------- arkusze (iOS-owy gest zamykania w DS.presentSheet) ----------------
   function categorySheet() {
     const cats = catsFor();
-    const sheet = DS.presentSheet({ title: 'Kategorie', subtitle: 'Wybierz kategorię badań, która Cię interesuje', height: '750px',
+    const sheet = DS.presentSheet({ title: 'Kategorie', height: '750px',
       content: `<div class="ds-BottomSheet__scroll" style="gap:8px">${cats.map(c => DS.Cell({ icon: c.icon, title: c.label, subtitle: plural(catCount(c), 'badanie', 'badania', 'badań'), attrs: { 'data-action': 'open-category', 'data-cat': c.id } })).join('')}</div>` });
     sheet.wrap.addEventListener('click', (e) => { if (e.target.closest('[data-action="open-category"]')) setTimeout(() => sheet.close(false), 120); });
   }
@@ -398,16 +411,22 @@
     // licznik przy podkategorii mowi, ile jest w NIEJ przy wybranym typie — niezależnie od pozostałych zaznaczeń,
     // żeby liczby nie skakały pod palcem, gdy uczestnik dokręca kolejne podkategorie
     const nSub = (name) => nKind(kind, [name]);
+    // Przycisk nazywa produkty, nie „wyniki": słowo „wyniki" należy do wyników badań (leksykon 1, mapa M3 P02).
+    const showLabel = (k, subs) => {
+      const it = base(subs), pk = k !== 'tests' ? it.filter(x => x.kind === 'package').length : 0,
+            ts = k !== 'packages' ? it.filter(x => x.kind === 'test').length : 0;
+      return countLabel({ pk, ts }) || plural(0, 'badanie', 'badania', 'badań');
+    };
     const body = () => `<div class="filters">
-        <div class="filters__group"><p class="filters__label">Wybierz typ</p><div class="filters__chips">` +
+        <div class="filters__group"><p class="filters__label">Typ</p><div class="filters__chips">` +
       KINDS.map(([id, label]) => DS.FilterChip({ label, count: id === 'all' ? null : nKind(id, sel), selected: kind === id, attrs: { 'data-kind-pick': id } })).join('') +
       `</div></div>` +
-      (cat && subsFor(cat.id).length > 1 ? `<div class="filters__group"><p class="filters__label">Zawęź w kategorii: ${esc(cat.label)}</p><div class="filters__rows">` +
-        subsFor(cat.id).map(([name]) => `<button type="button" class="filters__row" data-sub-pick="${esc(name)}" aria-pressed="${sel.includes(name)}">${DS.Checkbox({ checked: sel.includes(name) })}<span class="filters__text">${esc(name)}<span class="filters__count">• ${nSub(name)}</span></span></button>`).join('') +
+      (cat && subsFor(cat.id).length > 1 ? `<div class="filters__group"><p class="filters__label">Kategorie</p><div class="filters__rows">` +
+        subsFor(cat.id).map(([name]) => `<button type="button" class="filters__row" data-sub-pick="${esc(name)}" aria-pressed="${sel.includes(name)}">${DS.Checkbox({ checked: sel.includes(name) })}<span class="filters__text">${esc(name)}<span class="filters__count">(${nSub(name)})</span></span></button>`).join('') +
         `</div></div>` : '') +
       `<div class="filters__actions">` +
       (cat ? DS.Button({ label: 'Wyczyść', type: 'secondary', attrs: { 'data-filters-clear': '1' } }) : '') +
-      DS.Button({ label: `Pokaż ${plural(nKind(kind, sel), 'wynik', 'wyniki', 'wyników')}`, block: true, attrs: { 'data-filters-apply': '1' } }) +
+      DS.Button({ label: `Pokaż ${showLabel(kind, sel)}`, block: true, attrs: { 'data-filters-apply': '1' } }) +
       `</div></div>`;
     const sheet = DS.presentSheet({ title: 'Filtry', content: body() });
     const redraw = () => { const host = sheet.wrap.querySelector('.filters'); if (host) { host.outerHTML = body(); DS.enhance(sheet.wrap); } };
