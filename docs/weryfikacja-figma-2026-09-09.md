@@ -1,5 +1,8 @@
 # Weryfikacja: czy zmiany zeszły do pliku Design
 
+> **AKTUALIZACJA 2026-09-09, po naniesieniu poprawek.** Sekcja „Co z tego wynika" na końcu zawiera
+> **korektę pierwotnego wniosku o propagacji** oraz raport z wykonanych zmian.
+
 Plik `Alab • Design` (`Qsc72CoT02rxWM4jF7aIxw`), odczyt 2026-09-09 po podmianach w DS.
 Sprawdzone najpierw **mastery** (strony `🎨 Master files`), potem **flowy i warianty** (sekcje Approved
 na stronach statusowych).
@@ -88,6 +91,63 @@ nie wykonywaliśmy.
 
 - „Twoje dane **sa** bezpieczne" (hub) — brak ogonka
 - „wykonaj w **punkcie pobran**" (slajd intro) — brak ogonków i nazwa własna z małej
+
+---
+
+## Korekta: propagacja z biblioteki DZIAŁA
+
+Pierwotnie napisałem, że nie da się rozstrzygnąć, czy nowe teksty na ekranach to skutek moich podmian.
+Rozstrzygnięte: **działa**. Dowód — zapytanie z pliku Design o tekst w **zdalnym mainie** CellTest
+(`3257:16874`, `remote: true`) zwraca **„952,00 zł"**, czyli moją podmianę z DS. Klucze komponentów też się
+zgadzają (`822da88d63`, `82d2751425`), więc `3257:…` to identyfikatory opublikowanej biblioteki, a `777:…`
+to te same komponenty widziane z wnętrza DS.
+
+**Co naprawdę blokowało resztę: override'y — w tym override'y wewnątrz masterów DS.** Master `CellTest`
+w design systemie sam nadpisuje przekreśloną cenę na „1190 zł", więc poprawka w `PriceRow` nie ma jak
+dojść do kart. To ważniejsze niż override'y na ekranach: **komponent nadpisujący inny komponent łamie
+cały łańcuch propagacji w dół.**
+
+---
+
+## Wykonane poprawki (2026-09-09)
+
+### 1. Banery klubu w DS — strona `❖ Cards`
+
+| Komponent | Było | Jest |
+| --- | --- | --- |
+| AlabBannerLarge (`137:226`) | „5% dodatkowej **zniżki**" | „5% taniej, zawsze" |
+| mały baner klubu (`794:36`, `797:157`) | „zyskaj dodatkowe **zniżki**" | „5% taniej + voucher 20% po pierwszym badaniu" |
+| baner ceny klubowej (`798:293`) | „130,50 zł **zniżka** -40% w klubie" | „130,50 zł taniej −40% w klubie" |
+
+Kontrola: na stronie `❖ Cards` **zero wystąpień słowa „zniżk"**.
+
+### 2. Override'y na ekranach — plik Design
+
+| Strona | „zniżka" poprawione | kwoty poprawione | zostało |
+| --- | --- | --- | --- |
+| `├ 🟢 Sklep` (Approved + Review, 20 ekranów) | **27** | **62** | 0 / 0 |
+| `├ Sklep` (Master files, 15 masterów) | **23 + 1** | **54** | 0 / 0 |
+| `├ 🟠 Logowanie i rejestracja` | 0 | 0 | — nic do poprawy |
+| `├ Logowanie i rejestracja` (Master files) | 0 | 0 | — nic do poprawy |
+
+Razem **171 węzłów tekstowych**: 4 w DS i 167 w pliku Design.
+
+Jeden przypadek wymagał osobnego brzmienia: master hero produktu miał „+5% dodatkowej zniżki na wszystkie
+badania" → **„5% taniej na wszystkie badania"**.
+
+### 3. Kwoty — logika podmiany
+
+Reguła: kwota **całkowita** („85 zł") dostaje „,00"; kwota, która już ma grosze („141,55 zł"), zostaje
+nietknięta. Wzorzec pomija cyfry poprzedzone przecinkiem, więc „29,40 zł" nie zmieniło się w „29,40,00 zł".
+Sprawdzone po podmianie: **zero kwot bez groszy** na obu stronach Sklepu.
+
+**Autentykacja nie miała żadnej kwoty ani „zniżki"** — ani na masterach, ani w Approved. Czyli problem
+z pkt 3 tam nie występuje.
+
+### Nowe znalezisko przy okazji
+
+W mainie `CellTest` w DS badge typu brzmi **„Niższa cena z ALAB Club"** — **„Club" z wielkiej litery**,
+wbrew regule CIX („klub z małej"). Nie ruszyłem, bo to nie było na liście. Do poprawy razem z kolejną rundą.
 
 ---
 
