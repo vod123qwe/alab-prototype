@@ -94,7 +94,7 @@
     // meta wg leksykonu 136: przy konkretnym produkcie liczba pojedyncza — „Pakiet · 4 badania", „Badanie · krew"
     return DS.ProductCard({ id: p.id, kind: p.kind, title: p.title,
       meta: p.kind === 'package' ? `Pakiet · ${plural(p.components.length, 'badanie', 'badania', 'badań')}` : `Badanie · ${(p.material || 'krew').toLowerCase()}`,
-      badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : 'Dodaj do koszyka', ctaVariant: un ? 'secondary' : 'primary',
+      badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : 'Dodaj', ctaIcon: un ? null : 'plus', ctaVariant: un ? 'secondary' : 'primary',
       // „Zobacz" zostaje: to przycisk, nie nagłówek sekcji — mapa M3 3.1 zmienia tu tylko separator na nawias
       // (leksykon 234 mówi o nagłówku składu pakietu na PDP, a nie o tym wierszu na karcie)
       footer: p.kind === 'package' ? { label: 'Zobacz składowe pakietu', count: p.components.length } : null,

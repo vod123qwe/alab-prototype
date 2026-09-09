@@ -59,7 +59,10 @@
 
   // ---------- ProductCard (CellPackage / CellTest) ----------
   // badge: {code:{discount,text}} | {premium:text} | {basic:text}; price: {current, old, club, lowest, note}
-  DS.ProductCard = ({ id, kind = 'test', meta = '', title = '', badge, price, cta = 'Dodaj do koszyka', ctaVariant = 'primary', footer, attrs: a } = {}) => {
+  // ctaIcon: ikona w slocie `iconPlaceholder` ButtonTiny — na kafelku stoi tam plus (CellTest 1897:55043
+  // w „Listing • Kategoria" 653:6660). Plus jest IKONĄ, nie znakiem w etykiecie: nie trzeba go tłumaczyć,
+  // a czytnik ekranu nie odczyta „plus Dodaj" jako treści.
+  DS.ProductCard = ({ id, kind = 'test', meta = '', title = '', badge, price, cta = 'Dodaj', ctaIcon = 'plus', ctaVariant = 'primary', footer, attrs: a } = {}) => {
     const badgeHtml = !badge ? '' : badge.code ? DS.BadgeCode(badge.code) : badge.premium ? DS.BadgePremium({ text: badge.premium }) : DS.BadgeBasic({ text: badge.basic });
     const priceHtml = !price ? '' : `<div class="ds-ProductCard__price">` +
       `<div class="ds-ProductCard__priceMain"><div class="ds-ProductCard__priceRow"><span class="ds-ProductCard__current">${esc(price.current)}</span>${price.old ? `<s class="ds-ProductCard__old">${esc(price.old)}</s>` : ''}</div>` +
@@ -67,7 +70,7 @@
       `<div class="ds-ProductCard__notes">${price.lowest ? `<p>${esc(price.lowest)}</p>` : ''}${price.note ? `<p>${esc(price.note)}</p>` : ''}</div></div>`;
     return `<article class="${cls('ds', 'ds-ProductCard', 'ds-ProductCard--' + kind)}" ${attrs(a)} ${id ? `data-product="${esc(id)}"` : ''}>` +
       `<div class="ds-ProductCard__surface"><div class="ds-ProductCard__text">${badgeHtml}<div class="ds-ProductCard__heading"><p class="ds-ProductCard__meta">${esc(meta)}</p><p class="ds-ProductCard__title">${esc(title)}</p></div>${priceHtml}</div>` +
-      `<button type="button" class="${cls('ds-ButtonTiny', 'ds-ButtonTiny--' + ctaVariant, 'ds-ProductCard__cta')}" data-action="${ctaVariant === 'primary' ? 'add-to-cart' : 'change-point'}" data-title="${esc(title)}"><span class="ds-ButtonTiny__label">${esc(cta)}</span></button></div>` +
+      `<button type="button" class="${cls('ds-ButtonTiny', 'ds-ButtonTiny--' + ctaVariant, 'ds-ProductCard__cta')}" data-action="${ctaVariant === 'primary' ? 'add-to-cart' : 'change-point'}" data-title="${esc(title)}">${ctaIcon ? DS.icon(ctaIcon, 16) : ''}<span class="ds-ButtonTiny__label">${esc(cta)}</span></button></div>` +
       (footer ? `<button type="button" class="ds-ProductCard__footer" data-action="package-details"><span>${esc(footer.label)}</span><span class="ds-ProductCard__footerCount">&nbsp;• ${esc(footer.count)}</span>${DS.icon('chevron-right', 16)}</button>` : '') + `</article>`;
   };
 

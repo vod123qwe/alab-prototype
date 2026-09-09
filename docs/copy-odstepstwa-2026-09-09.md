@@ -1,6 +1,6 @@
 # Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
 
-Stan na 2026-09-09, wersja prototypu **2026.09.09-107**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+Stan na 2026-09-09, wersja prototypu **2026.09.09-108**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
 (mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
 Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
 
@@ -181,7 +181,7 @@ To nasze propozycje, nie kanon. Zgłaszam je, zamiast dopisywać do leksykonu je
 | D5 | Nazwy alergenów w wyniku | „Trawy — mieszanka (gx)", „Kot — nabłonek (e1)" | Dane przykładowe z em dashem. Realne nazwy ALAB używają dywizu; do wyrównania, gdy przyjdą z API |
 | D6 | Wyjście do logowania na intro i hubie | **przycisk** „Masz już konto? Zaloguj się" | Kanon M1 (K3) mówi „tekst z linkiem, jak stopka logowania". Podmieniłem same słowa; zamiana przycisku na link zmienia hierarchię ekranu, zwłaszcza na hubie, gdzie to przycisk `oncolor`. **Decyzja Jarka.** Skill zgłasza dodatkowo, że pytanie w etykiecie przycisku to słaby wzorzec CTA |
 
-### D7 · Plus przy „Dodaj" · **ROZSTRZYGNIĘTE 2026-09-09: „Dodaj do koszyka", bez plusa**
+### D7 · Plus przy „Dodaj" · **ROZSTRZYGNIĘTE 2026-09-09: plus jako IKONA + etykieta „Dodaj"**
 
 Zauważone przez Jarka 2026-09-09. Ta sama akcja — dodanie produktu do koszyka, w kodzie jedno
 `data-action="add-to-cart"` — ma w kanonie **dwie różne etykiety, i plus tylko w jednej**:
@@ -212,17 +212,23 @@ z webu klienta (więc zgodna z hierarchią źródeł) i spełnia wzorzec CTA „
 „+ Dodaj" nie spełnia. Karta produktu zostaje przy „Kup badanie", bo tam przycisk jest głównym działaniem
 ekranu i ma inną wagę — ale wtedy warto to rozstrzygnąć wprost, a nie zostawiać jako przypadek.
 
-**Decyzja Jarka 2026-09-09: droga 1 — kafelek mówi „Dodaj do koszyka", bez plusa.** Etykieta mieści się
-z zapasem (121 z 285 px, jedna linia w każdym stanie karty). To **odstępstwo od decyzji F2** („+ Dodaj"),
-ale zgodne z hierarchią źródeł: „Dodaj do koszyka" to brzmienie z webu klienta, które F2 odrzuciło na rzecz
-formy z POC. Koszt jest żaden — żadna reguła leksykonu nie zostaje złamana, więc to **nie jest wyjątek
-z sekcji A**, tylko powrót do kandydata, który lepiej spełnia własne reguły leksykonu (etykieta CTA jako
-czasownik z dopełnieniem).
+**Decyzja Jarka 2026-09-09: droga 3 — plus jest ikoną, etykieta brzmi „Dodaj".** Jarek dodał to wprost
+w Figmie: w `ButtonTiny` na kafelku slot `iconPlaceholder` trzyma ikonę **`ic_outline_plus`** 16×16
+w `content/onaccent`, a obok stoi tekst „Dodaj" (CellTest `1897:55043` w „Listing • Kategoria" `653:6660`).
+
+Prototyp odwzorowuje to 1:1: ikona `plus` doszła do zestawu (`ds/assets/ic_outline_plus.svg` → `ds/icons.js`,
+`fill` przepisany na `currentColor`), `DS.ProductCard` dostał parametr `ctaIcon`, domyślnie `plus`. Zmierzone:
+ikona 16×16, biała, odstęp 4px do etykiety — zgodnie z `gap-[4px]` i `size-[16px]` z Figmy.
+
+**Dlaczego to jest dobre rozwiązanie, a nie kompromis.** Znika jedyny realny zarzut wobec „+ Dodaj": plus
+przestał być znakiem w stringu. Nie trzeba go tłumaczyć, nie wchodzi do leksykonu, a **czytnik ekranu
+odczytuje samą etykietę „Dodaj"** — sprawdzone, `textContent` przycisku to dokładnie „Dodaj". Wcześniej
+odczytałby „plus Dodaj" jako treść. Wariant niedostępny („Zmień punkt") ikony nie ma, też sprawdzone.
 
 **Zostało otwarte:** karta produktu nadal mówi „Kup badanie" / „Kup pakiet" (kanon M3 3.2, „zostaje"), więc
-ta sama akcja ma w produkcie **dwa czasowniki** — „dodaj" na kafelku, „kup" na karcie. Do rozstrzygnięcia,
-czy karta też przechodzi na „Dodaj do koszyka", czy zostaje przy „Kup", bo tam przycisk jest głównym
-działaniem ekranu i ma inną wagę.
+ta sama akcja ma w produkcie **dwa czasowniki** — „dodaj" na kafelku, „kup" na karcie. To już nie kwestia
+plusa, tylko nazwy czynności; do rozstrzygnięcia, czy karta produktu też mówi „Dodaj", czy zostaje przy
+„Kup", bo tam przycisk jest głównym działaniem ekranu.
 
 Poprawione już przy tym przebiegu, bez czekania na decyzję, bo kanon jest jednoznaczny:
 

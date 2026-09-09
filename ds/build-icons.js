@@ -43,6 +43,7 @@ const ICONS = {
   'bubbles': 'ic_line_bubbles.svg',
   'heart-rate': 'ic_line_heart_rate.svg',
   'plus-square': 'ic_line_plus_sq_fr.svg',
+  'plus': 'ic_outline_plus.svg',            // CTA kafelka „+ Dodaj" (ButtonTiny, slot iconPlaceholder)
   'syringe': 'ic_line_syringe.svg',
   'heart': 'ic_line_heart.svg',
   'dna': 'ic_line_dna.svg',
