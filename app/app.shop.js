@@ -390,13 +390,26 @@
     if (!head || !scroll) return;
     // przyklejone CTA siedzi dokładnie na tab barze (jego wysokość zależy od safe-area telefonu)
     const placeCta = () => { if (cta && bar) cta.style.bottom = bar.offsetHeight + 'px'; };
-    placeCta(); window.addEventListener('resize', placeCta, { passive: true });
+    placeCta(); window.addEventListener('resize', () => { placeCta(); watchBuy(); }, { passive: true });
     // grafika hero jedzie w górę razem z treścią, ale przy ciągnięciu w dół (rubber band, scrollTop < 0) stoi w miejscu
     const onScroll = () => { const y = scroll.scrollTop, sc = y > 8; head.classList.toggle('is-scrolled', sc); APP.setThemeColor(sc ? '#ffffff' : '#04387c'); if (bg) bg.style.transform = `translateY(${-Math.max(0, Math.min(y, 468))}px)`; st().scroll[route] = y; };
     onScroll();
     scroll.addEventListener('scroll', onScroll, { passive: true });
     APP.hideOnScrollDown(scroll, cta);
-    if (cta && buy && 'IntersectionObserver' in window) { new IntersectionObserver(([e]) => cta.classList.toggle('is-visible', !e.isIntersecting && e.boundingClientRect.top < 0), { root: scroll, threshold: 0 }).observe(buy); }
+    // Przyklejone CTA ma wjechać dokładnie wtedy, gdy przycisk z treści zniknie POD BELKĄ, a nie gdy
+    // wyjedzie poza kontener przewijania. Kontener sięga pod belkę, więc bez `rootMargin` zostawało
+    // ~70 px przewijania bez żadnego CTA: przycisk już schowany za belką, a pasek jeszcze nie wjechał.
+    // Ujemny margines górny = wysokość belki, więc „nie widać" znaczy to samo dla obserwatora i dla oka.
+    let buyObs = null;
+    const watchBuy = () => {
+      if (!cta || !buy || !('IntersectionObserver' in window)) return;
+      if (buyObs) buyObs.disconnect();
+      const top = head.offsetHeight;
+      buyObs = new IntersectionObserver(([e]) => cta.classList.toggle('is-visible', !e.isIntersecting && e.boundingClientRect.bottom <= top),
+        { root: scroll, rootMargin: `-${top}px 0px 0px 0px`, threshold: 0 });
+      buyObs.observe(buy);
+    };
+    watchBuy();
     // karta produktu otwiera się zawsze od góry (jak nowy ekran w iOS) — pozycji nie przywracamy
   }
   APP.afterRender.push((route, root) => {

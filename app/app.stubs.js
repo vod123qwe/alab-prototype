@@ -75,13 +75,13 @@
   const TASKS = [
     ['1', 'Zadanie 1', 'Zamów badanie ogólne moczu',
       'Jesteś w Warszawie i chcesz zamówić badanie w aplikacji.',
-      ['Zamów badanie ogólne moczu', 'Zwróć uwagę na cenę'], 't-mocz'],
+      ['Zamów badanie ogólne moczu'], 't-mocz'],
     ['2', 'Zadanie 2', 'Zamów Pakiet tarczycowy',
       'Chcesz sprawdzić, jak pracuje Twoja tarczyca.',
       ['Zamów Pakiet tarczycowy', 'Zwróć uwagę na liczbę badań w pakiecie'], 'p-tarcz'],
-    ['3', 'Zadanie 3', 'Zamów morfologię krwi do domu',
+    ['3', 'Zadanie 3', 'Zamów morfologię krwi',
       'Chcesz zrobić badanie krwi u siebie w domu.',
-      ['Zamów morfologię krwi obwodowej', 'Wybierz pobranie w domu', 'Zwróć uwagę na cenę pobrania'], 't-morf'],
+      ['Zamów morfologię krwi', 'Wybierz pobranie w domu', 'Zwróć uwagę na cenę pobrania'], 't-morf'],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">

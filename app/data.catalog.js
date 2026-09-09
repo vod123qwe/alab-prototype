@@ -60,10 +60,10 @@
     // morfologia świadomie NIE na początku listy — zadaniem uczestnika jest ją znaleźć (plan badania, zadanie 3)
     // Treść z alab.pl/badanie/morfologia-krwi-c55 (odczyt 2026-09-09): nazwa, symbol, ICD, cena, czas
     // oczekiwania, opis i przygotowanie. Badanie jest celem zadania 3, więc karta musi wyglądać realnie.
-    t('t-morf', 'Morfologia krwi obwodowej', 'krazenie', 'Anemia / niedokrwistość', 31.00, { also: [['ogolne', 'Profilaktyka podstawowa']],
+    t('t-morf', 'Morfologia krwi', 'krazenie', 'Anemia / niedokrwistość', 31.00, { also: [['ogolne', 'Profilaktyka podstawowa']],
       symbol: 'MORF', icd: 'C55', lowest: 21.70, tat: '1 dzień roboczy', popularIn: ['dom'],
       keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
-      desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne, które dostarcza kompleksowej oceny jakościowej i ilościowej komórek krwi: krwinek czerwonych, białych i płytek krwi. Pozwala na wczesne wykrycie wielu schorzeń, monitorowanie stanu zdrowia oraz skuteczności leczenia.',
+      desc: 'Morfologia krwi to fundamentalne i najczęściej wykonywane badanie laboratoryjne, które dostarcza kompleksowej oceny jakościowej i ilościowej komórek krwi: krwinek czerwonych, białych i płytek krwi. Pozwala na wczesne wykrycie wielu schorzeń, monitorowanie stanu zdrowia oraz skuteczności leczenia.',
       prep: ['Na czczo, 8-12 godzin po ostatnim posiłku — pij tylko czystą, niegazowaną wodę',
              'Rano, najlepiej między 07:00 a 09:00, po całonocnym wypoczynku',
              'Odpocznij około 15 minut przed pobraniem',
@@ -86,7 +86,7 @@
     // Cel zadania 2 (zamiast Pakietu Sport). Treść z alab.pl/pakiet/pakiet-tarczycowy (odczyt 2026-09-09):
     // skład FT3 + FT4 + TSH, symbol PKTARPP, cena 153,00 zł, najniższa z 30 dni 107,10 zł, opis i przygotowanie.
     // BEZ `popular`: zadanie ma zmusić do przejścia przez kategorie albo wyszukiwarkę, więc pakiet nie może
-    // stać na ekranie głównym sklepu (ta sama zasada, która wcześniej trzymała poza nim Pakiet Sport).
+    // stać na ekranie głównym sklepu.
     p('p-tarcz', 'Pakiet tarczycowy', 'hormony', 'Tarczyca', 153.00, ['t-ft3', 't-ft4', 't-tsh'], { code: CODE, symbol: 'PKTARPP', lowest: 107.10, tat: '1 dzień roboczy',
       keywords: ['tarczyca', 'pakiet tarczycowy', 'tsh', 'ft3', 'ft4', 'hormony tarczycy'],
       desc: 'Tarczyca to niewielki gruczoł, który odgrywa kluczową rolę w regulacji procesów metabolicznych. Pakiet obejmujący badania TSH, FT3 i FT4 jest podstawowym narzędziem diagnostyki funkcji tarczycy. Pozwala na wczesne wykrycie zaburzeń pracy tego gruczołu i monitorowanie skuteczności terapii.',
@@ -98,9 +98,6 @@
     // BEZ morfologii (pakiet jest na ekranie głównym — patrz README „Pod badania z użytkownikami”); suma składowych 178,08 zł
     p('p-zdrowie', 'Pakiet Zdrowie podstawowy', 'ogolne', 'Profilaktyka podstawowa', 149.00, ['t-fe', 't-ob', 't-crp', 't-glu', 't-krea', 't-alt', 't-lip', 't-tsh'], { popular: true }),
     p('p-pods', 'Pakiet badań podstawowych', 'ogolne', 'Profilaktyka podstawowa', 129.00, ['t-morf', 't-ob', 't-crp', 't-glu', 't-lip', 't-krea', 't-alt', 't-tsh', 't-mocz'], { types: ['punkt'] }),
-    // Pakiet Sport: 6 składowych i BEZ morfologii — plan badania niemoderowanego (zadanie 2 pyta o liczbę badań,
-    // a morfologia w pakiecie dawałaby obejście zadania „znajdź morfologię”). Suma składowych 245,40 zł → pakiet 199,00 zł.
-    p('p-sport', 'Pakiet Sport', 'ogolne', 'Profilaktyka rozszerzona', 199.00, ['t-crp', 't-ferr', 't-fe', 't-witd', 't-b12', 't-krea']),
     p('p-kobiet', 'Pakiet dla kobiet', 'ogolne', 'Pakiety dla kobiet', 279.00, ['t-morf', 't-tsh', 't-ferr', 't-witd', 't-prl', 't-e2', 't-glu', 't-lip']),
 
     // ---- Hormony ----

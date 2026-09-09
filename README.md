@@ -132,6 +132,11 @@ oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi
 | 2 | **Pakiet tarczycowy** | `/pakiet/pakiet-tarczycowy` | symbol PKTARPP, skład FT3 + FT4 + TSH, 153,00 zł, 30 dni 107,10 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 | 3 | **Morfologia krwi obwodowej** | `/badanie/morfologia-krwi-c55` | symbol MORF, ICD C55, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 
+**Pakiet Sport wypadł z katalogu (2026-09-09).** Po przeniesieniu zadania 2 na Pakiet tarczycowy nie miał
+już żadnej roli, a jako siódmy pakiet profilaktyczny tylko wydłużał listing. **Morfologia nazywa się teraz
+„Morfologia krwi"** (wcześniej „Morfologia krwi obwodowej") — tą samą nazwą mówi zadanie 3 i karta produktu,
+żeby uczestnik nie szukał dwóch różnych rzeczy. W aplikacji jest dokładnie jedna morfologia.
+
 **Zadanie 2 to teraz Pakiet tarczycowy, nie Pakiet Sport** — realny produkt z oferty ALAB. Został **poza
 ekranem głównym** (bez `popular`), bo zadanie ma zmusić do przejścia przez kategorie albo wyszukiwarkę; ta
 sama zasada trzymała wcześniej poza nim Pakiet Sport. Skład zmienił się z czterech badań na trzy (wypadło
@@ -556,7 +561,7 @@ Infekcje, Lifestyle, Zdrowie psychiczne). Ten sam mechanizm działa na ekranie g
 
 Ścieżki badawcze sprawdzone po zmianie: morfologia nadal w „Badaniach ogólnych”, czwarta na liście, poza
 ekranem głównym, dostępna w Punkcie Pobrań i w domu; badanie moczu tylko w Punkcie Pobrań (i dodatkowo
-znajdowalne filtrem „Badania z moczu”); Pakiet Sport poza ekranem głównym.
+znajdowalne filtrem „Badania z moczu”); morfologia poza ekranem głównym Punktu Pobrań.
 
 ### Filtry pod ikoną, nie na ekranie (2026-09-09)
 
@@ -617,7 +622,7 @@ Po zmianie zestaw wysyłkowy ma **5 badań w 3 kategoriach** (Układ pokarmowy, 
 tak jak POC. Konsekwencja dla badania: w pozostałych 9 kategoriach uczestnik zobaczy stan pusty z wyjściem do
 Punktu Pobrań i ALAB w domu — to realne odwzorowanie oferty i akurat ten stan Maciek chce sprawdzić.
 Sprawdzone: ekran główny w trybie wysyłkowym pokazuje 3 kategorie, pusta kategoria daje oba wyjścia,
-a wszystkie trzy ścieżki zadań (mocz w Punkcie, Pakiet Sport, morfologia w domu) dochodzą do ekranu sukcesu.
+a wszystkie trzy ścieżki zadań (mocz w Punkcie, Pakiet tarczycowy, morfologia w domu) dochodzą do ekranu sukcesu.
 
 #### Tło hero na karcie produktu 1:1 z ProductBackground (2026-09-09)
 
@@ -749,7 +754,7 @@ Kod rabatowy zostaje w kodzie warunkowo, ale dziś żaden niedostępny produkt g
 
 ### Poprawki z planu badawczego (2026-09-08)
 
-- **Pakiet Sport ma 6 składowych i nie zawiera morfologii**: CRP, ferrytyna, żelazo w surowicy, witamina D,
+- ~~**Pakiet Sport ma 6 składowych i nie zawiera morfologii**: CRP, ferrytyna, żelazo w surowicy, witamina D,
   witamina B12, kreatynina. Wcześniej miał 4 składowe, w tym morfologię z rozmazem — a to dawało obejście
   zadania „znajdź morfologię” (Pacjent trafiałby na nią przez pakiet) i przeczyło liczbie badań z planu.
   Cena zmieniona z 280,50 zł na **199,00 zł**, bo suma składowych to 245,40 zł, a opis pakietu obiecuje,
@@ -769,7 +774,7 @@ Kod rabatowy zostaje w kodzie warunkowo, ale dziś żaden niedostępny produkt g
   181,50 zł przy sumie 185,08 zł, czyli oszczędność na papierze — teraz 159,00 zł regularnie i 127,20 zł z kodem.
   Sprawdzone skryptem: każdy pakiet ma cenę poniżej 95% sumy składowych.
 
-Dwa punkty z planu domknięte decyzją Jarka (2026-09-08): **Pakiet Sport** ma nie być widoczny na ekranie głównym
+Dwa punkty z planu domknięte decyzją Jarka (2026-09-08): **Pakiet Sport** miał nie być widoczny na ekranie głównym
 sklepu i tak jest — nie jest oznaczony jako popularny, więc dochodzi się do niego przez kategorię, filtry albo
 wyszukiwarkę. **Kwota opłaty za pobranie** zostaje w prototypie bez liczby (dopisek „+ opłata za pobranie”);
 pytanie 1.1 planu trzeba więc czytać jako cenę samego badania.
@@ -823,7 +828,7 @@ Scenariusze i wymagania są rozpisane z różowych naklejek „Treść” z tabl
 źródłem prawdy** — gdy Maciej je zmieni, aktualizujemy `TASKS` w `app/app.stubs.js`.
 
 Arkusz sukcesu pojawia się **tylko po dodaniu właściwego produktu** dla danego zadania (mocz → `t-mocz`,
-Pakiet Sport → `p-sport`, morfologia → `t-morf`; produkt jest ostatnim polem wpisu w `TASKS`). Inny produkt
+Pakiet tarczycowy → `p-tarcz`, morfologia → `t-morf`; produkt jest ostatnim polem wpisu w `TASKS`). Inny produkt
 normalnie wpada do koszyka — uczestnik może się pomylić i szukać dalej — ale sukcesu nie ogłaszamy i adres
 końca zadania się nie zmienia. Gdy uczestnik w ogóle nie trafi, zadanie kończy przyciskiem w zakładce Koszyk.
 
@@ -865,7 +870,7 @@ marginesy 44. Karty: w Figmie CellTestResult z wyłączonymi wierszami, w kodzie
 i chevronem 20, zgrupowane w jeden blok (zaokrąglone tylko skrajne narożniki 28, 1 px przerwy, wysokość 84).
 Bez dolnej nawigacji.
 
-Podtytuły kart nazywają produkty („Zamów badania moczu”, „Zamów Pakiet Sport”, „Zamów badanie krwi do domu”),
+Podtytuły kart nazywają produkty („Zamów badanie ogólne moczu”, „Zamów Pakiet tarczycowy”, „Zamów morfologię krwi”),
 zgodnie z makietą. Warto o tym pamiętać przy analizie: uczestnik czyta całą listę przy pierwszym wejściu, więc
 przed zadaniem 2 wie, że szuka Pakietu Sport, a przed zadaniem 3 — że istnieje dostawa do domu. Wariant z samymi
 numerami to jedna linijka w tablicy `TASKS`.
@@ -946,7 +951,7 @@ Adresy ekranów, które są w ścieżce badania (do wklejenia w konfigurację za
 | Listing „Badania” / „Pakiety badań” | `/app/lista/badania/punkt-pobran`, `/app/lista/pakiety/punkt-pobran` |
 | Karta produktu: morfologia z rozmazem | `/app/produkt/morfologia-krwi-obwodowej-z-rozmazem` |
 | Karta produktu: morfologia krwi | `/app/produkt/morfologia-krwi` |
-| Karta produktu: Pakiet Sport | `/app/produkt/pakiet-sport` |
+| Karta produktu: Pakiet tarczycowy | `/app/produkt/pakiet-tarczycowy` |
 | Punkt Pobrań (zaślepka) | `/app/punkt-pobran` |
 | Zakładki: Start / Wyniki / Koszyk | `/app/zakladka/start`, `/app/zakladka/wyniki`, `/app/zakladka/koszyk` |
 | ALAB club — zgody | `/app/alab-club` |
@@ -954,7 +959,7 @@ Adresy ekranów, które są w ścieżce badania (do wklejenia w konfigurację za
 | Logowanie, biometria, reset hasła | `/app/logowanie`, `/app/biometria`, `/app/reset-hasla` |
 | Wyniki poza badaniem (pełny moduł) | `/app/wyniki-pelne`, `/app/wynik/morfologia-krwi-obwodowej` |
 
-Adres każdego innego ekranu podejrzysz w konsoli: `APP.url('product/p-sport')`.
+Adres każdego innego ekranu podejrzysz w konsoli: `APP.url('product/p-tarcz')`.
 
 ### Tryb ALAB club w adresie
 
@@ -965,7 +970,7 @@ ekranach sklepu z cenami, na karcie produktu i w koszyku, czyli tam, gdzie końc
 | Ekran | Bez klubu | W klubie |
 | --- | --- | --- |
 | Sklep | `/app/sklep/punkt-pobran/bez-klubu` | `/app/sklep/punkt-pobran/w-klubie` |
-| Karta produktu | `/app/produkt/pakiet-sport/bez-klubu` | `/app/produkt/pakiet-sport/w-klubie` |
+| Karta produktu | `/app/produkt/pakiet-tarczycowy/bez-klubu` | `/app/produkt/pakiet-tarczycowy/w-klubie` |
 | **Koszyk (koniec zadania)** | `/app/zakladka/koszyk/bez-klubu` | `/app/zakladka/koszyk/w-klubie` |
 
 Ekran wyboru zadań, wejście w zadanie i ekran zgód zostają bez wariantu — tam tryb jeszcze nic nie zmienia.
