@@ -132,7 +132,7 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | --- | --- |
 | „X zł ekstra -5% w klubie" · „zniżka -40% w klubie" | „X zł 5% taniej w klubie" · „40% taniej w klubie" |
 | „Aktywna zniżka klubowa ekstra -5%" | „5% taniej, już naliczone" |
-| baner mały: „zyskaj dodatkowe zniżki" | „5% taniej + bon 20% po pierwszym badaniu" |
+| baner mały: „zyskaj dodatkowe zniżki" | „5% taniej + voucher 20% po pierwszym badaniu" |
 | baner duży i karuzela klubu: „5% dodatkowej zniżki", „Akcje profilaktyczne…" | trzy korzyści wg mapy M3, 3.4 |
 | sekcja PDP „Kupując w pakiecie, oszczędzasz" | „Pakiety z tym badaniem" |
 | webview klubu: „zasady ALAB club: zniżki, voucher…" | „… 5% taniej, voucher po pierwszym badaniu…" |
@@ -162,8 +162,14 @@ budowie arkusza filtrów i pillsów. Podmienione:
 
 Prototyp wykonuje mapy dosłownie, więc te rozjazdy w nim zostały. Do rozmowy z Kasprem:
 
-1. **„bon 20%" (M3 3.2) vs „Voucher 20%" (M3 3.4, M1 A14)** — dwa słowa na to samo w jednym module. U nas
-   mały baner mówi „bon", duży „Voucher", bo tak stoi w mapach.
+1. **„bon" vs „voucher" — ROZSTRZYGNIĘTE 2026-09-09: wszędzie „voucher".** Mapa M3 3.2 (mały baner pod ceną)
+   miała „bon 20%", a M3 3.4 i M1 A14 „Voucher 20%" — dwie nazwy jednego mechanizmu na jednej karcie produktu.
+   Kanon to „voucher": leksykon używa go w czterech wierszach (316 trzy korzyści, 331 aktywacja, 332 pusty stan
+   AC02, 333 baner na dashboardzie), a plik mapowania klienta pokazuje, że to **jego słowo** z webu („Voucher
+   ze zniżką 20% na kolejne zakupy") — leksykon 316 wprost zabrania ruszać treść tych korzyści. „bon" wszedł
+   raz, 1 września (leksykon 330, slajd intro), przy okazji zmiany o notacji „taniej", a w wierszu 333 stoi po
+   stronie odrzuconych („gamifikacja 3/5 / bon 50 zł (OUT)"). Do poprawy poza prototypem: leksykon 330,
+   mapa M1 wiersz 99, mapa M3 wiersz 84.
 2. **Kolejność korzyści klubu** — M1 A14: 5% → Oferta urodzinowa → Voucher; M3 3.4: 5% → Voucher → Oferta
    urodzinowa. Ekran klubu trzyma kolejność M1, baner na PDP kolejność M3.
 3. **Ta sama korzyść ma dwie akcje** — M1 A14 „zostaje do odpowiedzi ALAB (K6)", M3 3.4 „podmień wg K6".
