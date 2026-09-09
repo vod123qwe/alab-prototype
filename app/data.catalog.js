@@ -61,7 +61,7 @@
     // Treść z alab.pl/badanie/morfologia-krwi-c55 (odczyt 2026-09-09): nazwa, symbol, ICD, cena, czas
     // oczekiwania, opis i przygotowanie. Badanie jest celem zadania 3, więc karta musi wyglądać realnie.
     t('t-morf', 'Morfologia krwi obwodowej', 'krazenie', 'Anemia / niedokrwistość', 31.00, { also: [['ogolne', 'Profilaktyka podstawowa']],
-      symbol: 'MORF', icd: 'C55', lowest: 21.70, tat: '1 dzień roboczy',
+      symbol: 'MORF', icd: 'C55', lowest: 21.70, tat: '1 dzień roboczy', popularIn: ['dom'],
       keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
       desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne, które dostarcza kompleksowej oceny jakościowej i ilościowej komórek krwi: krwinek czerwonych, białych i płytek krwi. Pozwala na wczesne wykrycie wielu schorzeń, monitorowanie stanu zdrowia oraz skuteczności leczenia.',
       prep: ['Na czczo, 8-12 godzin po ostatnim posiłku — pij tylko czystą, niegazowaną wodę',

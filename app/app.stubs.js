@@ -68,16 +68,20 @@
   // Każde zadanie: nagłówek, krótki tytuł, scenariusz i wymagania jako punktowana lista. Punkty są znacznikami
   // (zielony tick), nie polami do zaznaczania — mają porządkować treść, a nie dawać uczestnikowi kolejnej rzeczy do klikania.
   // Ostatnie pole to produkt, którego dotyczy zadanie — arkusz sukcesu pokazuje się TYLKO po dodaniu jego.
+  // Treść celowo krótka i w prostym języku: jedno zdanie scenariusza, potem punkty w formie polecenia.
+  // Uczestnik czyta to na starcie w Useberry i musi z jednego spojrzenia wiedzieć, co ma zrobić i na co
+  // patrzeć. Bez pytań („sprawdź, po jakim czasie…”) — te zaburzały zadanie, bo uczestnik traktował je
+  // jak dodatkowy krok do odhaczenia zamiast po prostu zamówić.
   const TASKS = [
-    ['1', 'Zadanie 1', 'Zamów badania moczu',
-      'Mieszkasz w Warszawie i chcesz zamówić badanie w aplikacji sieci diagnostycznej.',
-      ['Zamów ogólne badanie moczu.'], 't-mocz'],
+    ['1', 'Zadanie 1', 'Zamów badanie ogólne moczu',
+      'Jesteś w Warszawie i chcesz zamówić badanie w aplikacji.',
+      ['Zamów badanie ogólne moczu', 'Zwróć uwagę na cenę'], 't-mocz'],
     ['2', 'Zadanie 2', 'Zamów Pakiet tarczycowy',
-      'Chcesz sprawdzić, jak pracuje Twoja tarczyca, i szukasz gotowego zestawu badań.',
-      ['Sprawdź, ile badań wchodzi w skład Pakietu tarczycowego.', 'Zamów ten pakiet.'], 'p-tarcz'],
-    ['3', 'Zadanie 3', 'Zamów badanie krwi do domu',
-      'Chcesz wykonać badanie morfologii krwi u siebie w domu — specjalista przyjedzie do Ciebie i je wykona.',
-      ['Sprawdź, po jakim czasie będzie dostępny wynik.', 'Zamów to badanie z pobraniem w domu.'], 't-morf'],
+      'Chcesz sprawdzić, jak pracuje Twoja tarczyca.',
+      ['Zamów Pakiet tarczycowy', 'Zwróć uwagę na liczbę badań w pakiecie'], 'p-tarcz'],
+    ['3', 'Zadanie 3', 'Zamów morfologię krwi do domu',
+      'Chcesz zrobić badanie krwi u siebie w domu.',
+      ['Zamów morfologię krwi obwodowej', 'Wybierz pobranie w domu', 'Zwróć uwagę na cenę pobrania'], 't-morf'],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
@@ -229,7 +233,7 @@
   const i = APP.ROUTES.findIndex(r => r[1] === 'tab/results');
   if (i >= 0) APP.ROUTES.splice(i + 1, 0, ['Wyniki · pełne (poza badaniem)', 'results-full'], ['Punkt Pobrań · zaślepka', 'punkt-pobran']);
   APP.ROUTES.push(['— Badanie'], ['Wybór zadań', 'zadania'],
-    ['Zadanie 1 · mocz', 'zadanie/1'], ['Zadanie 2 · Pakiet Sport', 'zadanie/2'], ['Zadanie 3 · morfologia w domu', 'zadanie/3']);
+    ['Zadanie 1 · mocz', 'zadanie/1'], ['Zadanie 2 · Pakiet tarczycowy', 'zadanie/2'], ['Zadanie 3 · morfologia w domu', 'zadanie/3']);
 
   // Prototyp badawczy zaczyna się od wyboru zadania. Rejestracja, logowanie i onboarding są POZA zakresem
   // tego testu, więc chowamy je z wejścia i z panelu — ekrany zostają w kodzie i wrócą, gdy będą potrzebne

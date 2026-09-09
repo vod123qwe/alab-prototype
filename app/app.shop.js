@@ -135,7 +135,11 @@
       </header>`;
 
   // ---------------- Sklep • Strona główna ----------------
-  const popular = (kind) => forType().filter(p => p.kind === kind && p.popular);
+  // `popular` pokazuje produkt na stronie głównej sklepu w każdym sposobie realizacji; `popularIn`
+  // zawęża to do wybranych. Morfologia ma `popularIn: ['dom']` — uwaga Macieja z tablicy: w „ALAB w domu"
+  // ma być widoczna, ale nie jako pierwsza pozycja. Kolejność bierze się z katalogu, więc wypada trzecia
+  // (CRP, Glukoza, Morfologia). W Punkcie Pobrań zostaje niewidoczna, bo zadanie 1 i 2 jej nie dotyczą.
+  const popular = (kind) => forType().filter(p => p.kind === kind && (p.popular || (p.popularIn || []).includes(type())));
   // przycisk pod sekcją nazywa liczbę tego, co uczestnik zobaczy po przejściu (mapa M3, P01)
   const popularSections = () => [['package', 'Popularne pakiety', 'packages', 'Pokaż wszystkie pakiety'], ['test', 'Popularne badania', 'tests', 'Pokaż wszystkie badania']].map(([kind, title, k, btn]) => { const items = popular(kind), all = forType().filter(x => x.kind === kind).length; return items.length ? `<section class="shop__section">
             ${DS.SectionHeader({ title, action: 'Pokaż wszystkie', actionAttrs: { 'data-action': 'show-all', 'data-kind': k } })}
