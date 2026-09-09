@@ -310,6 +310,36 @@ W katalogu jest **jedno** badanie morfologii — „Morfologia krwi” (21,70 z�
 bo dwie bardzo podobne pozycje rozmywały obraz w zadaniu 3. Morfologia leży **czwarta** na liście w podkategorii
 Krew (po OB, CRP i glukozie), więc nie wpada w oko od razu — uczestnik ma ją znaleźć, a nie zobaczyć na wierzchu.
 
+### Podkategorie z drzewka klienta (2026-09-09)
+
+Katalog dostał **12 kategorii i 62 podkategorie z drzewka klienta** („Nowe drzewko kategorii final 1.pdf”,
+2026-07-29), przepisane 1:1 z najnowszego POC (`js/data.js` → `CATEGORY_TREE` na insider-future-poc.netlify.app).
+Pełna lista podkategorii siedzi w polu `subs` przy każdej kategorii w `app/data.catalog.js`, a każdy produkt ma
+`sub` z tej listy — wcześniej podkategorie były naszym wymysłem („Krew”, „Pakiety”, „Uroda”).
+
+W filtrach pokazujemy podkategorie **w kolejności z drzewka** i tylko te, które mają produkty, więc uczestnik
+nie trafia na puste zaułki. Po zmianie każda z 12 kategorii ma co najmniej dwie podkategorie do zawężenia,
+a Hormony mają wszystkie cztery, dokładnie jak wariant filtrów 724:32918 w Figmie:
+
+| Kategoria | Podkategorie z produktami |
+| --- | --- |
+| Badania i pakiety ogólne | Profilaktyka podstawowa 7 · Profilaktyka rozszerzona 2 · Pakiety dla kobiet 1 · Badania z moczu 1 |
+| Hormony | Tarczyca 6 · Hormony kobiece 3 · Hormony męskie 1 · Diagnostyka płodności 1 |
+| Układ krążenia i Hematologia | Cholesterol i lipidy 2 · Ryzyko sercowo-naczyniowe 2 · Anemia / niedokrwistość 3 |
+| Lifestylowe i Uroda | Witaminy i minerały 2 · Skóra, włosy i paznokcie 2 · Długowieczność 2 |
+
+Żeby filtr miał sens w każdej kategorii, doszły trzy badania przykładowe: Testosteron całkowity (Hormony męskie),
+Leptyna (Otyłość i apetyt) i Wapń całkowity (Osteoporoza) — katalog ma teraz 70 pozycji.
+
+Dwie zmiany kategorii wobec naszego wcześniejszego katalogu, zgodne z POC: **Witamina D i Witamina B12** przeszły
+z „Badań ogólnych” do „Lifestylowe i Uroda / Witaminy i minerały”. Reszta produktów została w swoich kategoriach.
+Otwarte: w drzewku klienta HPV i choroby przenoszone drogą płciową należą do „Ciąża, Zdrowie intymne i Układ
+moczowy”, a u nas siedzą w „Infekcje i choroby zakaźne” — do przeniesienia, jeśli chcemy pełnej zgodności.
+
+Ścieżki badawcze sprawdzone po zmianie: morfologia nadal w „Badaniach ogólnych”, czwarta na liście, poza
+ekranem głównym, dostępna w Punkcie Pobrań i w domu; badanie moczu tylko w Punkcie Pobrań (i dodatkowo
+znajdowalne filtrem „Badania z moczu”); Pakiet Sport poza ekranem głównym.
+
 ### Filtry pod ikoną, nie na ekranie (2026-09-09)
 
 Z listingów zniknął rząd filtrów — chip „Badania i pakiety” i chipy podkategorii. Cały wybór siedzi teraz

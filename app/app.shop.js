@@ -32,7 +32,12 @@
   const forType = (t = type()) => PRODUCTS.filter(p => avail(p, t));
   const catsFor = (t = type()) => CATEGORIES.filter(c => forType(t).some(p => p.cat === c.id));
   const catCount = (c, t = type()) => forType(t).filter(p => p.cat === c.id).length;
-  const subsFor = (catId, t = type()) => { const m = new Map(); forType(t).filter(p => p.cat === catId && p.sub).forEach(p => m.set(p.sub, (m.get(p.sub) || 0) + 1)); return [...m]; };
+  // podkategorie w kolejności z drzewka klienta (CATEGORIES[].subs), tylko te, które mają produkty
+  const subsFor = (catId, t = type()) => {
+    const m = new Map(); forType(t).filter(p => p.cat === catId && p.sub).forEach(p => m.set(p.sub, (m.get(p.sub) || 0) + 1));
+    const order = (CATEGORIES.find(c => c.id === catId) || {}).subs || [];
+    return [...m].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+  };
   const plural = (n, one, few, many) => `${n} ${n === 1 ? one : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many)}`;
   const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
 
@@ -373,7 +378,7 @@
         <div class="filters__group"><p class="filters__label">Wybierz typ</p><div class="filters__chips">` +
       KINDS.map(([id, label]) => DS.FilterChip({ label, count: id === 'all' ? null : nKind(id, sub), selected: kind === id, attrs: { 'data-kind-pick': id } })).join('') +
       `</div></div>` +
-      (cat ? `<div class="filters__group"><p class="filters__label">Zawęź w kategorii: ${esc(cat.label)}</p><div class="filters__rows">` +
+      (cat && subsFor(cat.id).length > 1 ? `<div class="filters__group"><p class="filters__label">Zawęź w kategorii: ${esc(cat.label)}</p><div class="filters__rows">` +
         subsFor(cat.id).map(([name]) => `<button type="button" class="filters__row" data-sub-pick="${esc(name)}">${DS.Checkbox({ checked: sub === name })}<span>${esc(name)}<span class="filters__count"> • ${nSub(name)}</span></span></button>`).join('') +
         `</div></div>` : '') +
       `<div class="filters__actions">` +
