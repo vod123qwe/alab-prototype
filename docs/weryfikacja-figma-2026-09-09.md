@@ -396,3 +396,90 @@ Na masterach są obok siebie dwa różne modele liczenia:
 
 Master `PriceRow Code/Yes` idzie drugą drogą (952,00 = 1190 −20%). Trzeba wybrać jedną —
 inaczej „Aktywne ekstra -5% w klubie" mówi o rabacie, którego w liczbach nie ma.
+
+---
+
+## Runda 6: przebudowa 91 cellek + ikony zawsze w kolorze (2026-09-09)
+
+Po republishu biblioteki przebudowa poszła przez **wszystkie 91 cellek** na `├ Sklep` (`429:4`),
+sekcja po sekcji, w kolejności: **reset → wariant → wartości przez pola**. **Zero błędów.**
+
+| Sekcja | Cellki |
+| --- | --- |
+| `Sklep` | 14 |
+| `Listing` | 18 |
+| `Product page` | 16 |
+| `Wyszukiwarka · Wyniki wyszukiwania` | 16 |
+| `Typ usługi` | 11 |
+| `[Zachowanie] Scroll` | 14 |
+| `Podstrony` | 2 |
+
+> **Uwaga na przyszłość:** na stronie są **dwie sekcje o tej samej nazwie `[Zachowanie] Scroll`**
+> (`1690:76514` pusta i `1690:80318` z 14 cellkami). Skrypt szukający sekcji po nazwie trafia w pustą —
+> trzeba adresować po id.
+
+### Kontrola po przebudowie
+
+- **85 wierszy `PriceRow`**, warianty bez zmian: `Code/No` 28, `No code/No` 31, `Special/No` 13,
+  `No code/Yes` 5, `Code/Yes` 5, `Special/Yes` 3.
+- **`Club phrase` bez ani jednego override'u** — wszędzie dokładnie tekst wariantu. Czyli przełącznik
+  `ALAB club member` od teraz realnie przełącza copy.
+- **Każde pole `✏️ Price` zawiera kwotę**, nie zdanie.
+
+### Naprawione przy okazji
+
+| Ile | Co |
+| --- | --- |
+| 2 | zdanie klubowe siedziało **w polu ceny** → `199,00 zł`; przy okazji wrócił wariant `No code` |
+| 2 | `No code/Yes` z ceną demo `1369,00 zł` → `13,30 zł` / `14,00 zł` |
+| 1 | `Old price 120,00 zł` nie pasowało do ceny `35,24 zł` → `37,10 zł` |
+| 6 | karty poglądowe `Code/No` miały cenę główną **wyższą** od przekreślonej → kanon komponentu `952,00 / 1190,00 / 904,40` |
+
+Zostały **2 wiersze `Special/No`** z demo-ceną `1369,00 zł` i kwotą klubową `821,40 zł` — to dokładnie
+kanon komponentu i jest spójne, więc nie ruszam. Realną cenę wstawiamy, gdy będzie znana.
+
+---
+
+## Ikona zawsze w swoim kolorze — nazwy warstw w ikonach
+
+Jarek: „czasem jak publikuję zmianę to ten plus ma inny kolor niż domyślny".
+
+**Przyczyna, znowu nazwy warstw.** Biały plus na `ButtonTiny Primary` to override wiązany do zmiennej
+`Content/onAccent` — czyli **poprawnie**, tak samo jak etykieta. Ale slot ikony (`iconPlaceholder`)
+miał wektor nazwany **`Union`**, a prawdziwe ikony nazywały swój różnie: `Shape` (125), `Icon (Stroke)`
+(22), `Vector (Stroke)` (9), `pathNNNN`. Figma przy **podmianie instancji** mapuje override'y po nazwie —
+gdy nazwy się nie zgadzały, override koloru przepadał i ikona wracała do swojego własnego wiązania,
+czyli **ciemnego `Content/onSurface`**. Stąd „czasem czarny plus".
+
+### Zrobione
+
+Ujednolicone nazwy warstw w **958 komponentach ikon**: pierwszy wektor **zawsze `Icon (Stroke)`**,
+kolejne `Icon (Stroke) 2`, `3`, … Kontrola: **0 ikon bez warstwy `Icon (Stroke)`**. Tak samo nazwane
+oba placeholdery (`iconPlaceholder`, `ic_outline_placeholder`).
+
+### Test
+
+Na czystej instancji `ButtonTiny Primary` podmieniłem ikonę w slocie:
+
+| Krok | Wypełnienie |
+| --- | --- |
+| placeholder | `Icon (Stroke)` → 255,255,255, wiązane do zmiennej |
+| po podmianie na `ic_outline_plus` | **bez zmian** |
+| po podmianie na `ic_outline_chevron_right` | **bez zmian** |
+
+Na `├ Sklep` wszystkie **85 widocznych plusów** ma biały `Content/onAccent`.
+
+**Wymaga republishu**, żeby nowe nazwy warstw dotarły do pliku Design — ale nic się wizualnie
+nie zmieni, bo istniejące override'y trzymają się id węzłów. Republish jest potrzebny, żeby
+**przyszłe podmiany ikon** w pliku Design już nie gubiły koloru.
+
+### Nadal do rozstrzygnięcia
+
+1. **Dwie konwencje dla `Code + klubowicz`** — czy klubowe −5% jest wliczone w cenę główną
+   (`29,79 zł`), czy nie (`145,20 zł`). Master idzie drugą drogą.
+2. **Pola `✏️ Price` i `✏️ Old price` znaczą co innego w zależności od wariantu**: w `No`
+   `Price` to cena regularna, w `Yes` to cena klubowa, a `Old price` staje się ceną regularną.
+   Dlatego samo przełączenie `ALAB club member` **nigdy** nie da poprawnych liczb — zmienia copy,
+   ale kwoty trzeba przestawić ręcznie. Jeśli to ma działać jednym kliknięciem, potrzebne jest
+   trzecie pole „cena regularna" i stałe znaczenie każdego z nich.
+3. **Znak minus**: `-5%` z dywizem, `−40%` ze znakiem minus (leksykon 109 mówi: znak minus).
