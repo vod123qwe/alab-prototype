@@ -136,3 +136,47 @@ ale trzy dały realne znaleziska — w tym **dwa dowody na obronę wyjątku A2**
 
 **Dobra wiadomość:** wszystkie pozycje 🔴 i 🟠 są **już poprawione w prototypie**. Czyli prototyp jest dziś
 bliżej leksykonu niż design system, i to on może służyć jako referencja przy podmianie w DS.
+
+
+---
+
+## Przegląd pozostałych stron DS (2026-09-09, po publikacji biblioteki)
+
+Skan wszystkich stron komponentów regułami leksykonu: zakazane słowa, „ALAB Club" z wielkiej, kwoty bez
+groszy, trzy kropki, em dash, „pacjent"/„punkt pobrań" z małej, angielskie resztki, godzina jednocyfrowa.
+
+| Strona | Wynik | Poprawione |
+| --- | --- | --- |
+| `❖ Cells` | przejście z listą wyżej | 19 |
+| `❖ Cards` | 12 kwot bez groszy | **12** |
+| `❖ Pills` | 2 × zakazane „zniżka" | **2** |
+| `❖ Selectables` | angielskie resztki domyślne | **6** |
+| `❖ Text Fields` | wielokropek trzema kropkami | **1** |
+| `❖ Navigation` | „pacjenta" z małej | **1** |
+| `❖ Messages` | czysto | — |
+| `❖ Screen States` | czysto | — |
+| `❖ Buttons` | czysto | — |
+| `❖ Indicators` | czysto | — |
+| `❖ Controls` | czysto | — |
+| `❖ Containers` | czysto | — |
+| `❖ Other` | czysto | — |
+| `❖ Native UI Elements` | czysto | — |
+
+Szczegóły poprawek poza `❖ Cells`:
+
+- **`❖ Pills`** — dwa badge'e ze słowem zakazanym: „Naliczono 5% **zniżki**" → **„5% taniej, już naliczone"**
+  (kanon leksykonu 322) i „**Aktywna zniżka klubowa** ekstra -5%" → **„Aktywne ekstra -5% w klubie"**
+  (brzmienie, które Jarek ustawił w PriceRow).
+- **`❖ Selectables`** — angielskie resztki domyślne, wypisane wcześniej w mapie M1 (sekcja 4):
+  **„Read more" → „rozwiń"** i **„* Required" → „* Wymagane"**, sześć węzłów. Forma wymagalności
+  (gwiazdka czy zdanie przy przycisku) czeka na decyzję 5.10 — podmieniłem tylko język.
+- **`❖ Text Fields`** — **„Szukaj badania..." → „Szukaj badania…"**, wielokropek jednym znakiem.
+- **`❖ Navigation`** — **„Historia badań laboratoryjnych pacjenta" → „… Pacjenta"**.
+- **`❖ Cards`** — 12 kwot całkowitych dostało grosze, tą samą regułą co ekrany.
+
+### Nadal otwarte (nie ruszone)
+
+- **„+ 48" w `❖ Text Fields`** — prefiks telefoniczny ze spacją po plusie (znalezisko N1). Dotyczy też
+  prototypu, wszystkie 11 krajów. Czeka na decyzję.
+- **Dywiz w procentach** („-20%", „ekstra -5%") — **świadomie**, decyzja Jarka z przeglądu `❖ Cells`.
+- **Angielskie placeholdery slotów** („Title", „Subtitle", „Label") — to nazwy pól, nie treść.
