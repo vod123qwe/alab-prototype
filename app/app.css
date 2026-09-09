@@ -178,10 +178,17 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
   -webkit-mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - var(--corner)) no-repeat, radial-gradient(circle at 100% 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 0 100% / var(--corner) var(--corner) no-repeat, radial-gradient(circle at 0 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 100% 100% / var(--corner) var(--corner) no-repeat;
   mask: linear-gradient(#000, #000) 0 0 / 100% calc(100% - var(--corner)) no-repeat, radial-gradient(circle at 100% 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 0 100% / var(--corner) var(--corner) no-repeat, radial-gradient(circle at 0 100%, transparent calc(var(--corner) - 0.5px), #000 var(--corner)) 100% 100% / var(--corner) var(--corner) no-repeat; }
 .shop__head.is-scrolled .shop__fill { filter: drop-shadow(0 6px 14px rgba(4,56,124,.22)); }
-.shop__bg { position: absolute; left: 0; right: 0; top: 0; height: 468px; overflow: hidden; pointer-events: none; }
-/* ProductBackground z Figmy: kwadrat 840.74 obrócony o 75°, środek w (50% + 287.34px, 162.84px), rozmyty (Content Background = blur 50) */
-.shop__bg img { position: absolute; width: 840.74px; height: 840.74px; left: calc(50% + 287.34px); top: 162.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; filter: blur(50px); }
-.shop__bgOverlay { position: absolute; inset: 0; background: linear-gradient(181deg, rgba(4,56,125,0) 6%, #04387c 98%); }
+/* Tło nagłówka 1:1 z Top Nav 3185:44676. ProductBackground ma w projekcie stałe 375×468 i jest przyklejony do
+   prawej krawędzi — trzymamy to samo, bo środek zdjęcia liczy się od jego połowy (50% + 287.34px). Przy szerszym
+   telefonie z lewej zostaje sam --main-primary, dokładnie jak w projekcie. */
+.shop__bg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; pointer-events: none; }
+/* kwadrat 840.74 obrócony o 75°, środek w (50% + 287.34px, 162.84px) — BEZ własnego rozmycia */
+.shop__bg img { position: absolute; width: 840.738px; height: 840.738px; left: calc(50% + 287.34px); top: 162.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; }
+/* Content Background: rozmycie siedzi tutaj (backdrop-blur 46), nie na zdjęciu. Pas ma stałe 331px i liczy się od
+   dołu NAGŁÓWKA (w projekcie jest dzieckiem Top Nav, nie ProductBackground), więc leży w .shop__fill, nie w .shop__bg. */
+.shop__bgOverlay { position: absolute; left: 0; right: 0; bottom: 0; height: 331px;
+  -webkit-backdrop-filter: blur(46px); backdrop-filter: blur(46px);
+  background: linear-gradient(181.69deg, rgba(4,56,125,0) 6.09%, var(--background-surface-inverse) 98.39%); }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; margin: 0 -20px; }
@@ -471,7 +478,8 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .filters__rows { display: flex; flex-direction: column; }
 .filters__row { display: flex; align-items: center; gap: var(--space-2xl); width: 100%; padding: 12px 0; text-align: left; background: none; border: 0; }
 .filters__row > .ds-Checkbox { flex: 0 0 auto; }
-.filters__row > span { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
+/* tylko etykieta wiersza — reguła na „> span” przemalowywała też ptaszek w checkboxie na kolor treści */
+.filters__text { display: flex; gap: 6px; font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface); }
 .filters__count { color: var(--content-on-surface-tertiary); }
 .filters__actions { display: flex; gap: var(--space-md); }
 .filters__actions .ds-Button--secondary { flex: 0 0 auto; }

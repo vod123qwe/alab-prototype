@@ -52,15 +52,15 @@
   const PRODUCTS = [
     // ---- Badania i pakiety ogólne ----
     t('t-ob', 'Odczyn Biernackiego (OB)', 'ogolne', 'Profilaktyka podstawowa', 14.00, { icd: 'C59' }),
-    t('t-crp', 'CRP – białko C-reaktywne', 'ogolne', 'Profilaktyka podstawowa', 28.00, { popular: true, icd: 'I81', keywords: ['crp', 'stan zapalny', 'zapalenie', 'badanie krwi', 'krew'], desc: 'CRP to białko ostrej fazy, którego stężenie rośnie w stanach zapalnych i infekcjach. Badanie pomaga ocenić nasilenie zapalenia i skuteczność leczenia.' }),
-    t('t-glu', 'Glukoza na czczo w surowicy', 'ogolne', 'Profilaktyka podstawowa', 15.00, { popular: true, icd: 'L43', keywords: ['glukoza', 'cukier', 'cukrzyca', 'badanie krwi', 'krew'], desc: 'Podstawowe badanie w kierunku cukrzycy i zaburzeń gospodarki węglowodanowej. Wykonuj rano, na czczo, po 8-12 godzinach od ostatniego posiłku.' }),
+    t('t-crp', 'CRP – białko C-reaktywne', 'infekcje', 'Infekcje bakteryjne', 28.00, { also: [['ogolne', 'Profilaktyka podstawowa']], popular: true, icd: 'I81', keywords: ['crp', 'stan zapalny', 'zapalenie', 'badanie krwi', 'krew'], desc: 'CRP to białko ostrej fazy, którego stężenie rośnie w stanach zapalnych i infekcjach. Badanie pomaga ocenić nasilenie zapalenia i skuteczność leczenia.' }),
+    t('t-glu', 'Glukoza na czczo w surowicy', 'cukrzyca', 'Diagnostyka cukrzycy i insulinooporności', 15.00, { also: [['ogolne', 'Profilaktyka podstawowa']], popular: true, icd: 'L43', keywords: ['glukoza', 'cukier', 'cukrzyca', 'badanie krwi', 'krew'], desc: 'Podstawowe badanie w kierunku cukrzycy i zaburzeń gospodarki węglowodanowej. Wykonuj rano, na czczo, po 8-12 godzinach od ostatniego posiłku.' }),
     // morfologia świadomie NIE na początku listy — zadaniem uczestnika jest ją znaleźć (plan badania, zadanie 3)
-    t('t-morf', 'Morfologia krwi', 'ogolne', 'Profilaktyka podstawowa', 21.70, { symbol: 'MORF', icd: 'C55',
+    t('t-morf', 'Morfologia krwi', 'krazenie', 'Anemia / niedokrwistość', 21.70, { also: [['ogolne', 'Profilaktyka podstawowa']], symbol: 'MORF', icd: 'C55',
       keywords: ['morfologia', 'morfo', 'badanie krwi', 'krew', 'krwi', 'cbc', 'hematologia', 'mrf'],
       desc: 'Morfologia krwi obwodowej to fundamentalne i najczęściej wykonywane badanie laboratoryjne. Daje pełną ocenę krwinek czerwonych, białych i płytek krwi.' }),
-    t('t-krea', 'Kreatynina', 'ogolne', 'Profilaktyka podstawowa', 18.00, { icd: 'M37' }),
+    t('t-krea', 'Kreatynina', 'ciaza', 'Układ moczowy i nerki', 18.00, { icd: 'M37' }),
     t('t-alt', 'ALT – aminotransferaza alaninowa', 'ogolne', 'Profilaktyka rozszerzona', 16.00, { icd: 'I17' }),
-    t('t-mocz', 'Badanie ogólne moczu', 'ogolne', 'Badania z moczu', 15.00, { material: 'Mocz', types: ['punkt'], icd: 'A01' }),
+    t('t-mocz', 'Badanie ogólne moczu', 'ciaza', 'Układ moczowy i nerki', 15.00, { also: [['ogolne', 'Badania z moczu']], material: 'Mocz', types: ['punkt'], icd: 'A01' }),
     t('t-witd', 'Witamina D 25(OH) – metabolit', 'lifestyle', 'Witaminy i minerały', 89.00, { unavailableAt: 'punkt', popular: true, tat: '2 dni robocze', icd: 'O91',
       desc: 'Oznaczenie 25(OH)D pokazuje zaopatrzenie organizmu w witaminę D. Niedobór jest częsty w Polsce, zwłaszcza od października do kwietnia.' }),
     t('t-b12', 'Witamina B12', 'lifestyle', 'Witaminy i minerały', 39.00, { icd: 'O83' }),
@@ -104,7 +104,7 @@
     p('p-jelita', 'Pakiet zdrowe jelita', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 129.00, ['t-kalpro', 't-krewut', 't-hpyl'], { types: KIT, popular: true, prep: PREP.Kał }),
 
     // ---- Układ krążenia i Hematologia ----
-    t('t-lip', 'Lipidogram', 'krazenie', 'Cholesterol i lipidy', 35.00, { popular: false, icd: 'I99', desc: 'Lipidogram ocenia cholesterol całkowity, frakcje HDL i LDL oraz trójglicerydy. To podstawa oceny ryzyka chorób sercowo-naczyniowych.' }),
+    t('t-lip', 'Lipidogram', 'krazenie', 'Cholesterol i lipidy', 35.00, { also: [['ogolne', 'Profilaktyka podstawowa']], popular: false, icd: 'I99', desc: 'Lipidogram ocenia cholesterol całkowity, frakcje HDL i LDL oraz trójglicerydy. To podstawa oceny ryzyka chorób sercowo-naczyniowych.' }),
     t('t-chol', 'Cholesterol całkowity', 'krazenie', 'Cholesterol i lipidy', 21.60, { old: 27.00, code: CODE, icd: 'I99' }),
     t('t-hcy', 'Homocysteina', 'krazenie', 'Ryzyko sercowo-naczyniowe', 59.00, { icd: 'K99' }),
     t('t-ferr', 'Ferrytyna – ocena zapasów żelaza', 'krazenie', 'Anemia / niedokrwistość', 49.00, { premium: true, popular: true, symbol: 'FERR', icd: 'L05', keywords: ['ferrytyna', 'zelazo', 'anemia', 'niedokrwistosc', 'badanie krwi', 'krew'],
@@ -133,14 +133,14 @@
     t('t-ca125', 'CA 125', 'genetyka', 'Markery nowotworowe', 55.00, { icd: 'I45' }),
 
     // ---- Infekcje i choroby zakaźne ----
-    t('t-hiv', 'HIV Ag/Ab – test IV generacji', 'infekcje', 'Infekcje wirusowe', 45.00, { icd: 'F91' }),
+    t('t-hiv', 'HIV Ag/Ab – test IV generacji', 'infekcje', 'Infekcje wirusowe', 45.00, { also: [['ciaza', 'Choroby przenoszone drogą płciową']], icd: 'F91' }),
     t('t-bor', 'Borelioza IgM / IgG', 'infekcje', 'Borelioza', 79.00, { tat: '3 dni robocze', icd: 'S21' }),
-    t('t-hpv', 'HPV – genotypowanie 14 typów wysokiego ryzyka', 'infekcje', 'Infekcje wirusowe', 249.00, { material: 'Wymaz', types: KIT, popular: true, tat: '7 dni roboczych' }),
-    t('t-chl', 'Chlamydia trachomatis – PCR', 'infekcje', 'Infekcje bakteryjne', 129.00, { material: 'Wymaz', types: KIT, tat: '5 dni roboczych' }),
-    p('p-std', 'Pakiet chorób przenoszonych drogą płciową', 'infekcje', 'Infekcje wirusowe', 299.00, ['t-hiv', 't-chl', 't-hpv'], { types: ['punkt'], tat: '7 dni roboczych' }),
+    t('t-hpv', 'HPV – genotypowanie 14 typów wysokiego ryzyka', 'ciaza', 'Diagnostyka HPV', 249.00, { also: [['infekcje', 'Infekcje wirusowe']], material: 'Wymaz', types: KIT, popular: true, tat: '7 dni roboczych' }),
+    t('t-chl', 'Chlamydia trachomatis – PCR', 'infekcje', 'Infekcje bakteryjne', 129.00, { also: [['ciaza', 'Choroby przenoszone drogą płciową']], material: 'Wymaz', types: KIT, tat: '5 dni roboczych' }),
+    p('p-std', 'Pakiet chorób przenoszonych drogą płciową', 'ciaza', 'Choroby przenoszone drogą płciową', 299.00, ['t-hiv', 't-chl', 't-hpv'], { also: [['infekcje', 'Infekcje wirusowe']], types: ['punkt'], tat: '7 dni roboczych' }),
 
     // ---- Lifestylowe i Uroda ----
-    t('t-mikro', 'Mikrobiom jelitowy – analiza NGS', 'lifestyle', 'Długowieczność', 499.00, { material: 'Kał', types: KIT, popular: true, tat: '21 dni roboczych' }),
+    t('t-mikro', 'Mikrobiom jelitowy – analiza NGS', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 499.00, { material: 'Kał', types: KIT, popular: true, tat: '21 dni roboczych' }),
     t('t-kort-slina', 'Kortyzol – profil dzienny ze śliny', 'lifestyle', 'Długowieczność', 149.00, { material: 'Ślina', types: KIT, tat: '5 dni roboczych' }),
     t('t-biotyna', 'Biotyna (witamina B7)', 'lifestyle', 'Skóra, włosy i paznokcie', 119.00, { tat: '7 dni roboczych' }),
     p('p-uroda', 'Pakiet Uroda – skóra, włosy, paznokcie', 'lifestyle', 'Skóra, włosy i paznokcie', 189.00, ['t-ferr', 't-witd', 't-b12', 't-tsh', 't-biotyna']),

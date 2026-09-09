@@ -332,9 +332,31 @@ a Hormony mają wszystkie cztery, dokładnie jak wariant filtrów 724:32918 w Fi
 Leptyna (Otyłość i apetyt) i Wapń całkowity (Osteoporoza) — katalog ma teraz 70 pozycji.
 
 Dwie zmiany kategorii wobec naszego wcześniejszego katalogu, zgodne z POC: **Witamina D i Witamina B12** przeszły
-z „Badań ogólnych” do „Lifestylowe i Uroda / Witaminy i minerały”. Reszta produktów została w swoich kategoriach.
-Otwarte: w drzewku klienta HPV i choroby przenoszone drogą płciową należą do „Ciąża, Zdrowie intymne i Układ
-moczowy”, a u nas siedzą w „Infekcje i choroby zakaźne” — do przeniesienia, jeśli chcemy pełnej zgodności.
+z „Badań ogólnych” do „Lifestylowe i Uroda / Witaminy i minerały”.
+
+#### Drugie miejsce w drzewku (`also`) — przypisania jak w POC (2026-09-09)
+
+W POC część badań stoi w **dwóch** miejscach drzewka naraz: raz merytorycznie, raz w „Badaniach ogólnych”.
+Przenieśliśmy to 1:1 — produkt ma miejsce główne (`cat` + `sub`) i opcjonalne `also: [[kategoria, podkategoria]]`.
+Wszystkie listy, liczniki i filtry pytają o przynależność przez `inCat` / `subOf` (`app/app.shop.js`), więc drugie
+miejsce działa dokładnie tak jak główne — także w adresie (`pod-<slug>`).
+
+| Badanie | Miejsce główne | Drugie miejsce |
+| --- | --- | --- |
+| Morfologia krwi | Układ krążenia / Anemia | Badania ogólne / Profilaktyka podstawowa |
+| Panel lipidowy | Układ krążenia / Cholesterol i lipidy | Badania ogólne / Profilaktyka podstawowa |
+| CRP | Infekcje / Infekcje bakteryjne | Badania ogólne / Profilaktyka podstawowa |
+| Glukoza | Cukrzyca / Diagnostyka cukrzycy | Badania ogólne / Profilaktyka podstawowa |
+| Badanie ogólne moczu | Ciąża i Układ moczowy / Układ moczowy i nerki | Badania ogólne / Badania z moczu |
+| HIV, Chlamydia | Infekcje / wirusowe • bakteryjne | Ciąża / Choroby przenoszone drogą płciową |
+| HPV, Pakiet STD | Ciąża / Diagnostyka HPV • Choroby przenoszone drogą płciową | Infekcje / Infekcje wirusowe |
+
+Domknęło to otwarty punkt z poprzedniej wersji (HPV i STD należą w drzewku klienta do „Ciąża, Zdrowie intymne
+i Układ moczowy”). Mikrobiota jelitowa przeszła z „Lifestylowych” do „Układ pokarmowy / Jelita”.
+
+**Lista kategorii różni się per sposób realizacji** i wynika z danych, nie z osobnej konfiguracji: Punkt Pobrań
+i ALAB w domu mają wszystkie 12 kategorii, zestaw wysyłkowy — 7 (Alergie, Układ pokarmowy, Ciąża, Genetyka,
+Infekcje, Lifestyle, Zdrowie psychiczne). Ten sam mechanizm działa na ekranie głównym sklepu i na podstronach.
 
 Ścieżki badawcze sprawdzone po zmianie: morfologia nadal w „Badaniach ogólnych”, czwarta na liście, poza
 ekranem głównym, dostępna w Punkcie Pobrań i w domu; badanie moczu tylko w Punkcie Pobrań (i dodatkowo
@@ -354,8 +376,39 @@ Wybór w arkuszu jest brudnopisem: liczniki chipów i liczba na przycisku przeli
 listingu i adres zmieniają się dopiero po „Pokaż N wyników”. Na ekranach „Wszystkie badania” i „Wszystkie
 pakiety” ikony filtrów nie ma — tam rodzaj jest z definicji ustawiony, więc nie byłoby czego filtrować.
 
+#### Szybkie filtrowanie pillsami na PLP kategorii (2026-09-09)
+
+Na **listingu kategorii** wrócił rząd pillsów (724:77102): chip rozwijany z typem (otwiera arkusz „Filtry”),
+separator, a za nim pillsy podkategorii z licznikami. Tapnięcie pillsa działa **od razu** — bez arkusza — i od
+razu zmienia adres, więc szybkie zawężanie da się policzyć w nagraniu. Wyników wyszukiwania i ekranów
+„Wszystkie badania / pakiety” to nie dotyczy: tam cały wybór zostaje pod ikoną filtrów.
+
+**Zawężenie w kategorii jest wielokrotne** — i w pillsach, i w arkuszu (checkboxy, nie radio, jak w 724:32918).
+Stan trzymamy jako listę nazw, a w adresie ląduje po jednym segmencie `pod-<slug>` na każdą zaznaczoną
+podkategorię, w kolejności z drzewka — ten sam wybór zawsze daje ten sam adres, np.
+`/app/kategoria/alergie-i-nietolerancje-pokarmowe/pod-panele-alergiczne/pod-nietolerancje-pokarmowe/punkt-pobran/bez-klubu`.
+Licznik przy podkategorii pokazuje, ile jest w niej samej przy wybranym typie, żeby liczby nie skakały pod palcem
+przy dokładaniu kolejnych zaznaczeń; liczba na przycisku „Pokaż N wyników” liczy sumę wyboru.
+
 Wyniki wyszukiwania **zastępują ekran wyszukiwarki w historii**: cofnięcie z wyników wraca do kroku przed
 szukaniem (np. do listingu kategorii), a nie do pola wyszukiwania. Wyszukiwarka jest przystankiem, nie ekranem.
+
+#### Tło nagłówka sklepu 1:1 z Top Nav (2026-09-09)
+
+Nagłówek sklepu odtwarza **Top Nav 3185:44676** z pliku Design. Zdjęcie jest to samo, co mieliśmy
+(`ds/assets/img_shop_bg.png` — bajt w bajt to, co oddała Figma), rozjazd siedział w składaniu warstw:
+
+- **zdjęcie nie ma własnego rozmycia.** Mieliśmy na nim `filter: blur(50px)`, przez co cały bąbel był
+  jednolitą plamą. W projekcie rozmycie robi **Content Background** przez `backdrop-blur(46px)`,
+- **pas gradientu ma stałe 331px i liczy się od dołu nagłówka**, nie od dołu zdjęcia — w Figmie Content
+  Background jest dzieckiem Top Nav, więc u nas przeniósł się z `.shop__bg` do `.shop__fill`,
+- **ProductBackground ma stałe 375×468 i jest przyklejony do prawej krawędzi.** Mieliśmy go na pełną
+  szerokość, a środek zdjęcia liczy się od jego połowy (`50% + 287.34px`) — na szerszym telefonie bąbel
+  odjeżdżał w prawo. Teraz z lewej zostaje sam `--main-primary`, dokładnie jak w projekcie,
+- gradient dokładnie z Figmy: `181.69deg`, `rgba(4,56,125,0) 6.09%` → `--background-surface-inverse 98.39%`.
+
+Geometria zdjęcia bez zmian i zgodna z projektem: kwadrat 840.738px obrócony o 75°, środek w
+`(50% + 287.34px, 162.84px)`.
 
 ### Snackbar 1:1 z DS i „funkcja niedostępna” (2026-09-08)
 
