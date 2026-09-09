@@ -430,28 +430,28 @@ Karta produktu miała **spłaszczony eksport 375×468** (`img_product_bg.png`) r
 ani rozmycia z projektu. Teraz składamy je z tego samego zdjęcia źródłowego co nagłówek sklepu, wg
 **ProductBackground z 1183:19461** (`I1183:19461;574:1884`) — spłaszczony eksport usunięty z assetów.
 
-**Tła są WYPALONYMI grafikami z progresywnym rozmyciem** (`tools/bake-bg.py` → `ds/assets/img_shop_bg_blur.png`
-i `img_product_bg.png`, 3× = 1125×1404). W Figmie „background blur” jest wygaszany alfą warstwy Content
-Background, więc rozmycie **narasta razem z gradientem**: u góry zero, u dołu pełne. CSS tego nie zrobi —
-`backdrop-filter` rozmywa równo całą powierzchnię elementu (góra nagłówka robi się mazią), a wygaszanie maską
-alfy dawało osobne artefakty i na karcie produktu wywracało kompozycję w Chromium (nad tłem jadącym transformem
-przemalowywało białą kartę). Składamy więc raz, offline, i wrzucamy jako gotową grafikę — dokładnie tak, jak
-działał wcześniejszy eksport z Figmy na karcie produktu.
+**Tła bierzemy jako gotowe eksporty z Figmy** (od Jarka, @3x): `ds/assets/img_search_cover_bg@3x.png`
+(1125×1167 = 375×389, nagłówek sklepu) i `ds/assets/ProductBackground@3x.png` (1125×1404 = 375×468, karta
+produktu). Każdy plik ma w sobie zdjęcie, **progresywne rozmycie** i gradient.
 
-Skrypt bierze zdjęcie źródłowe `img_shop_bg.png` (to samo, które Figma oddaje dla obu ekranów), ustawia je
-w geometrii z projektu, mieszczy ostry i rozmyty wariant tą samą rampą, która nosi gradient, i dokłada gradient.
-Dwa gotchas z bake'u, oba dawały czarne tło: zdjęcie ma **kanał alfa** (`convert('RGB')` zamieniał przezroczystość
-w czerń) i `rotate(expand=True)` wypełnia narozniki czernią, więc obrót musi iść na RGBA i wklejenie przez maskę.
+**Why:** rozmycia z tych tła nie da się wiernie odtworzyć w CSS. W Figmie „background blur” jest wygaszany
+alfą warstwy Content Background, więc narasta razem z gradientem — u góry zero, u dołu pełne. `backdrop-filter`
+rozmywa równo całą powierzchnię elementu (góra nagłówka robi się bezkształtną mazią), wygaszanie maską alfy
+dawało własne artefakty, a na karcie produktu wywracało kompozycję w Chromium: nad tłem jadącym transformem
+przemalowywało białą kartę. Próba składania tła offline też poszła do kosza — eksport z Figmy jest prostszy
+i jednoznacznie zgodny z projektem.
 
-W nagłówku sklepu gradient też jest wypalony, mimo że w projekcie pas ma 331px liczone od dołu Top Nav: nasz
-nagłówek jest niższy (195-251 vs 266), więc pas liczony w CSS wjechał granatem na bąbel i gasił go u samej góry.
+**How to apply:** przy zmianie tła wyeksportuj z Figmy cały frame (ProductBackground / cover) w @3x i podmień
+plik — nie odtwarzaj geometrii, rozmycia ani gradientu w CSS. Blok ma stałe 375px szerokości przy prawej
+krawędzi (bo tak jest w projekcie); na szerszym telefonie lewą resztę dopełnia `--main-primary` w nagłówku
+sklepu i `.product__bgFill` (ten sam gradient na pełną szerokość) na karcie produktu — sprawdzone na 430px,
+szwu nie ma.
 
-Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):
+Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):
 
 | | Nagłówek sklepu (3185:44676) | Karta produktu (1183:19461) |
 | --- | --- | --- |
-| Środek zdjęcia | `50% + 287.34px`, `162.84px` | `50% + 251.34px`, `213.84px` |
-| Zasięg gradientu | 331px od dołu nagłówka | całe hero, `0 → 473px` |
+| Wysokość grafiki | 375×389 | 375×468 |
 | Gradient | `181.69deg`, przezroczysty → granat | `182.41deg`, granat 30% → `#f6f7f8` |
 
 Na karcie produktu gradient kończy się kolorem strony (`--background-surface-secondary`), dlatego hero płynnie

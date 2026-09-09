@@ -181,14 +181,11 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* Tło nagłówka 1:1 z Top Nav 3185:44676. ProductBackground ma w projekcie stałe 375×468 i jest przyklejony do
    prawej krawędzi — trzymamy to samo, bo środek zdjęcia liczy się od jego połowy (50% + 287.34px). Przy szerszym
    telefonie z lewej zostaje sam --main-primary, dokładnie jak w projekcie. */
-.shop__bg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; pointer-events: none; }
-/* Grafika jest WYPALONA (tools/bake-bg.py): zdjęcie w geometrii z Figmy (kwadrat 840.738 obrócony o 75°,
-   środek w 50% + 287.34px / 162.84px) plus PROGRESYWNE rozmycie narastające ku dołowi. Rozmycia nie da się
-   wiernie zrobić w CSS: Figma wygasza „background blur” alfą warstwy, a `backdrop-filter` rozmywa równo
-   całą powierzchnię. Plik ma 3× (1125×1404), źródło zostało w `img_shop_bg.png`.
-   Gradient też jest w grafice: nasz nagłówek jest niższy niż Top Nav w Figmie (195-251 vs 266), więc pas
-   liczony w CSS od jego dołu wjechał granatem na bąbel i gasił go u samej góry. */
-.shop__bg img { position: absolute; inset: 0; width: 375px; height: 468px; }
+.shop__bg { position: absolute; right: 0; top: 0; width: 375px; height: 389px; overflow: hidden; pointer-events: none; }
+/* Gotowy eksport z Figmy (@3x, 1125×1167 = 375×389): zdjęcie, PROGRESYWNE rozmycie i gradient w jednym
+   pliku. Rozmycia nie da się wiernie odtworzyć w CSS — Figma wygasza „background blur” alfą warstwy Content
+   Background, więc narasta ono razem z gradientem, a `backdrop-filter` rozmywa równo całą powierzchnię. */
+.shop__bg img { position: absolute; inset: 0; width: 375px; height: 389px; }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; margin: 0 -20px; }
@@ -267,9 +264,8 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .product__head.is-scrolled .ds-StatusBar--light { color: var(--content-on-surface); }
 /* Tło hero leży POD przewijaną treścią jako osobna warstwa: przy scrollu w górę JS przesuwa je razem z treścią,
    przy ciągnięciu w dół (rubber band) zostaje na miejscu.
-   Grafika WYPALONA (tools/bake-bg.py) wg ProductBackground z karty produktu (I1183:19461;574:1884): zdjęcie
-   środkiem w 50% + 251.34px / 213.84px, progresywne rozmycie 50 i gradient 182.41° z granatu 30% do koloru
-   strony na 82.43%. Ma stałe 375×468 przy prawej krawędzi, bo środek zdjęcia liczy się od połowy tego bloku;
+   Gotowy eksport z Figmy (ProductBackground @3x, 1125×1404 = 375×468): zdjęcie, progresywne rozmycie
+   i gradient 182.41° z granatu do koloru strony w jednym pliku. Ma stałe 375×468 przy prawej krawędzi;
    `.product__bgFill` dokłada ten sam gradient na pełną szerokość, żeby na szerszym telefonie nie było szwu. */
 .screen.product { background: var(--background-surface-secondary); }
 .product__scroll { background: transparent; position: relative; z-index: 1; }
