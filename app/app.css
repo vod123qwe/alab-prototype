@@ -184,10 +184,10 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .shop__bg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; pointer-events: none; }
 /* kwadrat 840.74 obrócony o 75°, środek w (50% + 287.34px, 162.84px) — BEZ własnego rozmycia */
 .shop__bg img { position: absolute; width: 840.738px; height: 840.738px; left: calc(50% + 287.34px); top: 162.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; }
-/* Content Background: rozmycie siedzi tutaj (backdrop-blur 46), nie na zdjęciu. Pas ma stałe 331px i liczy się od
-   dołu NAGŁÓWKA (w projekcie jest dzieckiem Top Nav, nie ProductBackground), więc leży w .shop__fill, nie w .shop__bg. */
+/* Content Background: sama warstwa gradientu, BEZ rozmycia — zdjęcie w tle zostaje ostre. Pas ma stałe 331px
+   i liczy się od dołu NAGŁÓWKA (w projekcie jest dzieckiem Top Nav, nie ProductBackground), więc leży
+   w .shop__fill, nie w .shop__bg. Gradient wprost z Figmy. */
 .shop__bgOverlay { position: absolute; left: 0; right: 0; bottom: 0; height: 331px;
-  -webkit-backdrop-filter: blur(46px); backdrop-filter: blur(46px);
   background: linear-gradient(181.69deg, rgba(4,56,125,0) 6.09%, var(--background-surface-inverse) 98.39%); }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
@@ -254,7 +254,8 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* ------------------------------------------------------------
    Karta produktu — ProductBackground 1:1 z Figmy (583:22109): 468 px granatu, blob 840.74 px obrócony 75°,
    „Content Background” = gradient 182.4° od rgba(4,56,125,.3) do Background/surfaceSecondary (#f6f7f8) na 82%.
-   Blur 50 z Figmy nakładamy na sam obraz (zamiast backdrop-filter — lżej dla telefonu, ten sam efekt).
+   Zdjęcie zostaje OSTRE — nie odtwarzamy „background blur” z Figmy ani na obrazie, ani przez backdrop-filter;
+   przejście do tła robi sam gradient.
    TopBar: na górze „Transparent - light” (biały tekst, brak tła); po scrollu wariant „On scroll” z dokumentacji DS:
    Background/surface 82% + background blur 32 + cień 0 0 12 rgba(0,0,0,.04); tekst i ikony Content/onSurface. Nic się nie przesuwa.
    ------------------------------------------------------------ */
@@ -276,9 +277,11 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* ProductBackground: stałe 375×468 przy prawej krawędzi (środek zdjęcia liczy się od jego połowy) */
 .product__bgImg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; background: var(--main-primary); }
 .product__bgImg img { position: absolute; width: 840.738px; height: 840.738px; left: calc(50% + 251.34px); top: 213.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; }
-/* Content Background: rozmycie i gradient na całej wysokości hero (0 → 473px), pełna szerokość ekranu */
+/* Content Background: gradient na całej wysokości hero (0 → 473px), pełna szerokość ekranu, z rampą alfy
+   wprost z Figmy (granat 30% → kolor strony). Tu świadomie BEZ `backdrop-filter`: nad przewijanym tłem, które
+   jedzie transformem, Chromium gubi kompozycję warstwy z rozmyciem i przemalowuje kartę. Nic na tym nie tracimy —
+   w projekcie rozmycie na karcie produktu działa tam, gdzie gradient jest już prawie kryjący, więc i tak go nie widać. */
 .product__bgOverlay { position: absolute; left: 0; right: 0; top: 0; height: 473px;
-  -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px);
   background: linear-gradient(182.41deg, rgba(4,56,125,.3) 1.62%, var(--background-surface-secondary) 82.43%); }
 .product__heroSpacer { flex: 0 0 468px; height: 468px; }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */

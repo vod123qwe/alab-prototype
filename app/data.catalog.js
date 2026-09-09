@@ -33,7 +33,10 @@
   };
   const CODE = { discount: '-20%', code: 'JESIEN20' };
   const BLOOD = ['punkt', 'dom'];
-  const KIT = ['punkt', 'wysylka'];
+  // Zestaw wysyłkowy jest w POC OSOBNYM produktem, dlatego badanie wysyłkowe nie ma ani `punkt`, ani `dom`
+  // (js/data.js: „badania wysyłkowe nie mają 'punkt' ani 'dom', poza HPV, które ALAB przełącza w koszyku”).
+  const MAIL = ['wysylka'];
+  const KIT = ['punkt', 'wysylka'];   // tylko HPV: to samo badanie w Punkcie Pobrań i w zestawie
 
   // t(id, title, cat, sub, price, opcje) — badanie; opcje: old, code, premium, unavailableAt, material, types, tat, symbol, icd, desc, prep, popular, keywords
   // keywords = dodatkowe frazy, po których badanie ma się znaleźć w wyszukiwarce (potoczne nazwy, skróty, materiał)
@@ -92,16 +95,16 @@
     t('t-ige', 'IgE całkowite', 'alergie', 'Panele alergiczne', 35.00, { icd: 'L89' }),
     t('t-alex', 'Panel alergiczny ALEX2 – 295 alergenów', 'alergie', 'Panele alergiczne', 899.00, { tat: '7 dni roboczych', icd: 'L91',
       desc: 'Molekularny panel alergologiczny oceniający uczulenie na niemal 300 alergenów wziewnych, pokarmowych i kontaktowych w jednym pobraniu krwi.' }),
-    t('t-igg', 'Panel nietolerancji pokarmowych IgG – 44 składniki', 'alergie', 'Nietolerancje pokarmowe', 349.00, { types: ['punkt', 'dom', 'wysylka'], popular: true, tat: '10 dni roboczych',
+    t('t-igg', 'Panel nietolerancji pokarmowych IgG – 44 składniki', 'alergie', 'Nietolerancje pokarmowe', 349.00, { types: BLOOD, popular: true, tat: '10 dni roboczych',
       desc: 'Ocena swoistych przeciwciał IgG wobec 44 produktów spożywczych. W zestawie wysyłkowym próbkę suchej kropli krwi pobierasz samodzielnie.' }),
     p('p-alergia', 'Pakiet alergiczny wziewny', 'alergie', 'Alergie wziewne', 72.00, ['t-ige', 't-morf', 't-crp']),
 
     // ---- Układ pokarmowy ----
-    t('t-kalpro', 'Kalprotektyna w kale', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 89.00, { material: 'Kał', types: KIT, popular: true, tat: '3 dni robocze', icd: 'I55' }),
-    t('t-krewut', 'Krew utajona w kale', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 25.00, { material: 'Kał', types: KIT, icd: 'A17' }),
-    t('t-hpyl', 'Helicobacter pylori – antygen w kale', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 45.00, { material: 'Kał', types: KIT, icd: 'U15' }),
+    t('t-kalpro', 'Kalprotektyna w kale', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 89.00, { material: 'Kał', types: ['punkt'], popular: true, tat: '3 dni robocze', icd: 'I55' }),
+    t('t-krewut', 'Krew utajona w kale', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 25.00, { material: 'Kał', types: ['punkt'], icd: 'A17' }),
+    t('t-hpyl', 'Helicobacter pylori – antygen w kale', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 45.00, { material: 'Kał', types: ['punkt'], icd: 'U15' }),
     t('t-celiakia', 'Celiakia – przeciwciała anty-tTG IgA', 'pokarmowy', 'Celiakia i gluten', 69.00, { tat: '3 dni robocze', icd: 'N87' }),
-    p('p-jelita', 'Pakiet zdrowe jelita', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 129.00, ['t-kalpro', 't-krewut', 't-hpyl'], { types: KIT, popular: true, prep: PREP.Kał }),
+    p('p-jelita', 'Pakiet zdrowe jelita', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 129.00, ['t-kalpro', 't-krewut', 't-hpyl'], { types: ['punkt'], popular: true, prep: PREP.Kał }),
 
     // ---- Układ krążenia i Hematologia ----
     t('t-lip', 'Lipidogram', 'krazenie', 'Cholesterol i lipidy', 35.00, { also: [['ogolne', 'Profilaktyka podstawowa']], popular: false, icd: 'I99', desc: 'Lipidogram ocenia cholesterol całkowity, frakcje HDL i LDL oraz trójglicerydy. To podstawa oceny ryzyka chorób sercowo-naczyniowych.' }),
@@ -126,28 +129,47 @@
     p('p-ciaza', 'Pakiet dla kobiet w ciąży', 'ciaza', 'Ciąża i planowanie ciąży', 159.00, ['t-morf', 't-glu', 't-tsh', 't-toxo', 't-mocz', 't-ferr'], { types: ['punkt'] }),
 
     // ---- Genetyka i Nowotwory ----
-    t('t-brca', 'Badanie genetyczne BRCA1 / BRCA2', 'genetyka', 'Ryzyko zachorowania na nowotwór', 599.00, { material: 'Wymaz', types: KIT, tat: '14 dni roboczych',
+    t('t-brca', 'Badanie genetyczne BRCA1 / BRCA2', 'genetyka', 'Ryzyko zachorowania na nowotwór', 599.00, { material: 'Wymaz', types: ['punkt'], tat: '14 dni roboczych',
       desc: 'Analiza najczęstszych mutacji w genach BRCA1 i BRCA2 związanych z dziedzicznym ryzykiem raka piersi i jajnika. Materiał: wymaz z policzka.' }),
-    t('t-mthfr', 'MTHFR – mutacje C677T i A1298C', 'genetyka', 'Predyspozycje genetyczne', 199.00, { material: 'Wymaz', types: KIT, tat: '10 dni roboczych' }),
+    t('t-mthfr', 'MTHFR – mutacje C677T i A1298C', 'genetyka', 'Predyspozycje genetyczne', 199.00, { material: 'Wymaz', types: ['punkt'], tat: '10 dni roboczych' }),
     t('t-psa', 'PSA całkowity', 'genetyka', 'Markery nowotworowe', 39.00, { icd: 'I61' }),
     t('t-ca125', 'CA 125', 'genetyka', 'Markery nowotworowe', 55.00, { icd: 'I45' }),
 
     // ---- Infekcje i choroby zakaźne ----
     t('t-hiv', 'HIV Ag/Ab – test IV generacji', 'infekcje', 'Infekcje wirusowe', 45.00, { also: [['ciaza', 'Choroby przenoszone drogą płciową']], icd: 'F91' }),
     t('t-bor', 'Borelioza IgM / IgG', 'infekcje', 'Borelioza', 79.00, { tat: '3 dni robocze', icd: 'S21' }),
+    // W POC to pakiet dwóch oznaczeń (Borrelia IgM + IgG); u nas Borelioza IgM / IgG jest jednym badaniem,
+    // więc wersja wysyłkowa też jest badaniem — pakiet z jedną pozycją pokazywałby „Liczba badań: 1”.
+    t('t-bor-kit', 'Borelioza IgM / IgG – zestaw wysyłkowy', 'infekcje', 'Borelioza', 159.00, {
+      types: MAIL, tat: 'do 13 dni roboczych', symbol: 'BORKIT',
+      desc: 'Przeciwciała przeciw Borrelia w klasach IgM i IgG — diagnostyka boreliozy z próbki pobranej w domu.',
+      prep: ['Zestaw do samodzielnego pobrania krwi włośniczkowej otrzymasz kurierem', 'Pobranie zgodnie z instrukcją w zestawie'],
+      keywords: ['borelioza', 'kleszcz', 'borrelia', 'zestaw', 'wysyłkowy'] }),
     t('t-hpv', 'HPV – genotypowanie 14 typów wysokiego ryzyka', 'ciaza', 'Diagnostyka HPV', 249.00, { also: [['infekcje', 'Infekcje wirusowe']], material: 'Wymaz', types: KIT, popular: true, tat: '7 dni roboczych' }),
-    t('t-chl', 'Chlamydia trachomatis – PCR', 'infekcje', 'Infekcje bakteryjne', 129.00, { also: [['ciaza', 'Choroby przenoszone drogą płciową']], material: 'Wymaz', types: KIT, tat: '5 dni roboczych' }),
+    t('t-chl', 'Chlamydia trachomatis – PCR', 'infekcje', 'Infekcje bakteryjne', 129.00, { also: [['ciaza', 'Choroby przenoszone drogą płciową']], material: 'Wymaz', types: ['punkt'], tat: '5 dni roboczych' }),
     p('p-std', 'Pakiet chorób przenoszonych drogą płciową', 'ciaza', 'Choroby przenoszone drogą płciową', 299.00, ['t-hiv', 't-chl', 't-hpv'], { also: [['infekcje', 'Infekcje wirusowe']], types: ['punkt'], tat: '7 dni roboczych' }),
 
     // ---- Lifestylowe i Uroda ----
-    t('t-mikro', 'Mikrobiom jelitowy – analiza NGS', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 499.00, { material: 'Kał', types: KIT, popular: true, tat: '21 dni roboczych' }),
-    t('t-kort-slina', 'Kortyzol – profil dzienny ze śliny', 'lifestyle', 'Długowieczność', 149.00, { material: 'Ślina', types: KIT, tat: '5 dni roboczych' }),
+    // Trzy badania wysyłkowe dopisane wprost z POC — bez nich kanał wysyłkowy nie miał czym wypełnić
+    // „Układu pokarmowego” i „Infekcji”, a to jedyne dwie kategorie (obok HPV), które POC tam pokazuje.
+    t('t-sibo', 'SIBO – test wodorowo-metanowy', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 489.00, {
+      material: 'Powietrze wydychane', types: MAIL, tat: '12 dni roboczych', symbol: 'SIBO', icd: 'K63',
+      desc: 'Test oddechowy w kierunku przerostu bakteryjnego jelita cienkiego, z próbek powietrza pobranych w domu.',
+      prep: ['Dzień wcześniej dieta bez węglowodanów złożonych, potem 12 h na czczo', 'Nie pal i nie żuj gumy w dniu badania'],
+      keywords: ['sibo', 'jelita', 'wzdęcia', 'test oddechowy', 'wodorowo-metanowy'] }),
+    t('t-organix', 'ORGANIX GASTRO – pośredni test dysbiozy', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 498.00, {
+      material: 'Mocz', types: MAIL, tat: '13 dni roboczych', symbol: 'ORGX', icd: 'K59',
+      desc: 'Ocena metabolitów bakteryjnych i grzybiczych w moczu, pośrednia diagnostyka dysbiozy jelitowej.',
+      prep: ['Pierwszy poranny mocz', 'Na dobę przed pobraniem odstaw suplementy i owoce jagodowe'],
+      keywords: ['organix', 'dysbioza', 'jelita', 'grzybica', 'metabolity'] }),
+    t('t-mikro', 'Mikrobiom jelitowy – analiza NGS', 'pokarmowy', 'Jelita (m.in. mikrobiota, stany zapalne)', 499.00, { material: 'Kał', types: MAIL, popular: true, tat: '21 dni roboczych' }),
+    t('t-kort-slina', 'Kortyzol – profil dzienny ze śliny', 'lifestyle', 'Długowieczność', 149.00, { material: 'Ślina', types: ['punkt'], tat: '5 dni roboczych' }),
     t('t-biotyna', 'Biotyna (witamina B7)', 'lifestyle', 'Skóra, włosy i paznokcie', 119.00, { tat: '7 dni roboczych' }),
     p('p-uroda', 'Pakiet Uroda – skóra, włosy, paznokcie', 'lifestyle', 'Skóra, włosy i paznokcie', 189.00, ['t-ferr', 't-witd', 't-b12', 't-tsh', 't-biotyna']),
 
     // ---- Zdrowie psychiczne ----
     t('t-kort', 'Kortyzol', 'psychika', 'Stres i zaburzenia psychiczne', 35.00, { icd: 'M31', prep: ['Rano, między 7:00 a 9:00', 'Unikaj wysiłku i stresu przed pobraniem'] }),
-    t('t-neuro', 'Profil neuroprzekaźników w moczu', 'psychika', 'Stres i zaburzenia psychiczne', 349.00, { material: 'Mocz', types: KIT, tat: '14 dni roboczych' }),
+    t('t-neuro', 'Profil neuroprzekaźników w moczu', 'psychika', 'Stres i zaburzenia psychiczne', 349.00, { material: 'Mocz', types: ['punkt'], tat: '14 dni roboczych' }),
     p('p-stres', 'Pakiet Stres i zmęczenie', 'psychika', 'Przewlekłe zmęczenie', 149.00, ['t-kort', 't-tsh', 't-morf', 't-ferr', 't-b12']),
 
     // ---- Reumatologia i Dermatologia ----

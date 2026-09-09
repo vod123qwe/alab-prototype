@@ -393,6 +393,36 @@ przy dokładaniu kolejnych zaznaczeń; liczba na przycisku „Pokaż N wyników�
 Wyniki wyszukiwania **zastępują ekran wyszukiwarki w historii**: cofnięcie z wyników wraca do kroku przed
 szukaniem (np. do listingu kategorii), a nie do pola wyszukiwania. Wyszukiwarka jest przystankiem, nie ekranem.
 
+#### Zestaw wysyłkowy wg zasady POC (2026-09-09)
+
+Porównanie kategorii per sposób realizacji z POC pokazało, że Punkt Pobrań i ALAB w domu są u nas świadomym
+nadzbiorem (POC nie ma produktów w Genetyce, Zdrowiu psychicznym i Reumatologii, my dorobiliśmy je, żeby każda
+z 12 kategorii miała treść), ale **zestaw wysyłkowy rozjeżdzał się zasadą**: miał 12 badań w 7 kategoriach,
+POC — 5 w 3. Przyjęliśmy regułę POC (`js/data.js`: *„badania wysyłkowe nie mają 'punkt' ani 'dom', poza HPV,
+które ALAB przełącza w koszyku”*) — zestaw wysyłkowy jest osobnym produktem, nie drugim kanałem dla badania
+z Punktu Pobrań.
+
+Co się zmieniło w `app/data.catalog.js`:
+
+- **`MAIL = ['wysylka']`** — nowa stała kanału. `KIT = ['punkt', 'wysylka']` zostało wyłącznie dla HPV.
+- **wypadły z wysyłki:** panel IgG (materiał krew), genetyka (BRCA, MTHFR), kortyzol ze śliny,
+  neuroprzekaźniki w moczu, Chlamydia PCR — zostały w Punkcie Pobrań (IgG też w domu),
+- **kał do laboratorium wraca do samego Punktu:** kalprotektyna, krew utajona, H. pylori i Pakiet zdrowe jelita
+  — dokładnie jak w POC, gdzie te badania są `punkt`, a nie `mail`,
+- **mikrobiom jelitowy jest teraz wyłącznie wysyłkowy** (w POC `mail`),
+- **doszły trzy badania wysyłkowe z POC:** SIBO (test oddechowy, 489,00 zł), ORGANIX GASTRO (mocz, 498,00 zł)
+  i Borelioza IgM / IgG — zestaw wysyłkowy (159,00 zł). Katalog ma teraz 73 pozycje.
+
+Borelioza wysyłkowa jest u nas **badaniem, nie pakietem** — w POC to pakiet dwóch oznaczeń (Borrelia IgM + IgG),
+a u nas Borelioza IgM / IgG od początku jest jednym badaniem, więc pakiet z jedną pozycją pokazywałby
+„Liczba badań: 1”.
+
+Po zmianie zestaw wysyłkowy ma **5 badań w 3 kategoriach** (Układ pokarmowy, Ciąża i Układ moczowy, Infekcje),
+tak jak POC. Konsekwencja dla badania: w pozostałych 9 kategoriach uczestnik zobaczy stan pusty z wyjściem do
+Punktu Pobrań i ALAB w domu — to realne odwzorowanie oferty i akurat ten stan Maciek chce sprawdzić.
+Sprawdzone: ekran główny w trybie wysyłkowym pokazuje 3 kategorie, pusta kategoria daje oba wyjścia,
+a wszystkie trzy ścieżki zadań (mocz w Punkcie, Pakiet Sport, morfologia w domu) dochodzą do ekranu sukcesu.
+
 #### Tło hero na karcie produktu 1:1 z ProductBackground (2026-09-09)
 
 Karta produktu miała **spłaszczony eksport 375×468** (`img_product_bg.png`) rozciągany na szerokość ekranu
@@ -400,12 +430,19 @@ Karta produktu miała **spłaszczony eksport 375×468** (`img_product_bg.png`) r
 ani rozmycia z projektu. Teraz składamy je z tego samego zdjęcia źródłowego co nagłówek sklepu, wg
 **ProductBackground z 1183:19461** (`I1183:19461;574:1884`) — spłaszczony eksport usunięty z assetów.
 
+**Zdjęcie w tle zostaje ostre — nie odtwarzamy „background blur” (2026-09-09).** W Figmie rozmycie tła jest
+wygaszane alfą warstwy Content Background, więc u góry, gdzie gradient jest przezroczysty, zdjęcie zostaje ostre.
+CSS `backdrop-filter` rozmywa równo całą powierzchnię elementu — stąd bezkształtna mazia u góry nagłówka.
+Odtworzenie tego maską alfy (rozmycie narastające ku dołowi) też poszło do kosza — **decyzja Jarka: na zdjęciach
+w tle nie ma progresywnego rozmycia**. Zostało samo zdjęcie i gradient z Figmy, w obu miejscach. Na karcie produktu
+doszedł do tego drugi powód: nad tłem, które jedzie transformem przy przewijaniu, Chromium gubi kompozycję warstwy
+z `backdrop-filter` i przemalowuje białą kartę.
+
 Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):
 
 | | Nagłówek sklepu (3185:44676) | Karta produktu (1183:19461) |
 | --- | --- | --- |
 | Środek zdjęcia | `50% + 287.34px`, `162.84px` | `50% + 251.34px`, `213.84px` |
-| Rozmycie | `backdrop-blur(46px)` | `backdrop-blur(50px)` |
 | Zasięg gradientu | 331px od dołu nagłówka | całe hero, `0 → 473px` |
 | Gradient | `181.69deg`, przezroczysty → granat | `182.41deg`, granat 30% → `#f6f7f8` |
 
