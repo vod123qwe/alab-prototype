@@ -265,11 +265,21 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .product__head.is-scrolled .ds-IconButton--onscrim { background: transparent; border-color: transparent; color: var(--content-on-surface); }
 .product__head.is-scrolled .ds-StatusBar--light { color: var(--content-on-surface); }
 /* Tło hero leży POD przewijaną treścią jako osobna warstwa: przy scrollu w górę JS przesuwa je razem z treścią,
-   przy ciągnięciu w dół (rubber band) zostaje na miejscu. Obraz = eksport frame'u ProductBackground z Figmy (375×468). */
+   przy ciągnięciu w dół (rubber band) zostaje na miejscu.
+   Składamy je 1:1 z ProductBackground z karty produktu (I1183:19461;574:1884), z tego samego zdjęcia źródłowego
+   co nagłówek sklepu — wcześniej był tu spłaszczony eksport 375×468 rozciągany na szerokość ekranu.
+   Różnice wobec nagłówka sklepu: środek zdjęcia wyżej i bardziej w prawo, rozmycie 50 (nie 46) i gradient, który
+   kończy się kolorem strony (#f6f7f8), a nie granatem — dlatego hero płynnie wchodzi w tło pod białą kartą. */
 .screen.product { background: var(--background-surface-secondary); }
 .product__scroll { background: transparent; position: relative; z-index: 1; }
 .product__bg { position: absolute; inset: 0; z-index: 0; background: var(--background-surface-secondary); will-change: transform; }
-.product__bg img { display: block; width: 100%; height: 468px; object-fit: cover; object-position: center top; }
+/* ProductBackground: stałe 375×468 przy prawej krawędzi (środek zdjęcia liczy się od jego połowy) */
+.product__bgImg { position: absolute; right: 0; top: 0; width: 375px; height: 468px; overflow: hidden; background: var(--main-primary); }
+.product__bgImg img { position: absolute; width: 840.738px; height: 840.738px; left: calc(50% + 251.34px); top: 213.84px; transform: translate(-50%, -50%) rotate(75deg); object-fit: cover; }
+/* Content Background: rozmycie i gradient na całej wysokości hero (0 → 473px), pełna szerokość ekranu */
+.product__bgOverlay { position: absolute; left: 0; right: 0; top: 0; height: 473px;
+  -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px);
+  background: linear-gradient(182.41deg, rgba(4,56,125,.3) 1.62%, var(--background-surface-secondary) 82.43%); }
 .product__heroSpacer { flex: 0 0 468px; height: 468px; }
 .product__content { position: relative; flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; padding: 0 20px 150px; margin-top: calc(142px - 468px); } /* karta zaczyna się 142 px od góry jak w Figmie */
 .product__main { gap: 24px; padding: 36px 24px 36px; /* +12 dp góra/dół vs pozostałe karty */ border: 0; box-shadow: 0 8px 24px rgba(4,56,124,.08); }

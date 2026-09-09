@@ -273,7 +273,7 @@
     const buyAttrs = un ? { 'data-action': 'change-point' } : { 'data-action': 'add-to-cart', 'data-product': p.id, 'data-title': p.title };
     return `<div class="screen shop product" data-tab="shop">
       <header class="product__head" id="prod-head">${DS.TopBar({ transparent: true, light: true, title: isPkg ? 'Szczegóły pakietu' : 'Szczegóły badania' })}</header>
-      <div class="product__bg" id="prod-bg"><img src="${A}img_product_bg.png" alt=""></div>
+      <div class="product__bg" id="prod-bg"><div class="product__bgImg"><img src="${A}img_shop_bg.png" alt=""></div><div class="product__bgOverlay"></div></div>
       <div class="screen__body shop__scroll product__scroll" id="prod-scroll">
         <div class="product__heroSpacer"></div>
         <div class="product__content">

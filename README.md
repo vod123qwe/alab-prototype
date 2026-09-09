@@ -393,6 +393,26 @@ przy dokładaniu kolejnych zaznaczeń; liczba na przycisku „Pokaż N wyników�
 Wyniki wyszukiwania **zastępują ekran wyszukiwarki w historii**: cofnięcie z wyników wraca do kroku przed
 szukaniem (np. do listingu kategorii), a nie do pola wyszukiwania. Wyszukiwarka jest przystankiem, nie ekranem.
 
+#### Tło hero na karcie produktu 1:1 z ProductBackground (2026-09-09)
+
+Karta produktu miała **spłaszczony eksport 375×468** (`img_product_bg.png`) rozciągany na szerokość ekranu
+(`width: 100%`, `object-fit: cover`), więc na szerszym telefonie zdjęcie się skalowało i nie miało ani gradientu,
+ani rozmycia z projektu. Teraz składamy je z tego samego zdjęcia źródłowego co nagłówek sklepu, wg
+**ProductBackground z 1183:19461** (`I1183:19461;574:1884`) — spłaszczony eksport usunięty z assetów.
+
+Różnice wobec nagłówka sklepu (dwa różne warianty tego samego tła, nie pomyłka):
+
+| | Nagłówek sklepu (3185:44676) | Karta produktu (1183:19461) |
+| --- | --- | --- |
+| Środek zdjęcia | `50% + 287.34px`, `162.84px` | `50% + 251.34px`, `213.84px` |
+| Rozmycie | `backdrop-blur(46px)` | `backdrop-blur(50px)` |
+| Zasięg gradientu | 331px od dołu nagłówka | całe hero, `0 → 473px` |
+| Gradient | `181.69deg`, przezroczysty → granat | `182.41deg`, granat 30% → `#f6f7f8` |
+
+Na karcie produktu gradient kończy się kolorem strony (`--background-surface-secondary`), dlatego hero płynnie
+wchodzi w tło pod białą kartą — w sklepie kończy się granatem, bo pod nagłówkiem zaczyna się biała treść.
+Zdjęcie (840.738px, obrót 75°) i parallaks przy przewijaniu bez zmian.
+
 #### Tło nagłówka sklepu 1:1 z Top Nav (2026-09-09)
 
 Nagłówek sklepu odtwarza **Top Nav 3185:44676** z pliku Design. Zdjęcie jest to samo, co mieliśmy
