@@ -1,6 +1,6 @@
 # Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
 
-Stan na 2026-09-09, wersja prototypu **2026.09.09-106**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+Stan na 2026-09-09, wersja prototypu **2026.09.09-107**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
 (mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
 Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
 
@@ -181,7 +181,7 @@ To nasze propozycje, nie kanon. Zgłaszam je, zamiast dopisywać do leksykonu je
 | D5 | Nazwy alergenów w wyniku | „Trawy — mieszanka (gx)", „Kot — nabłonek (e1)" | Dane przykładowe z em dashem. Realne nazwy ALAB używają dywizu; do wyrównania, gdy przyjdą z API |
 | D6 | Wyjście do logowania na intro i hubie | **przycisk** „Masz już konto? Zaloguj się" | Kanon M1 (K3) mówi „tekst z linkiem, jak stopka logowania". Podmieniłem same słowa; zamiana przycisku na link zmienia hierarchię ekranu, zwłaszcza na hubie, gdzie to przycisk `oncolor`. **Decyzja Jarka.** Skill zgłasza dodatkowo, że pytanie w etykiecie przycisku to słaby wzorzec CTA |
 
-### D7 · Plus tylko na jednym z dwóch przycisków tej samej akcji · **PYTANIE OTWARTE**
+### D7 · Plus przy „Dodaj" · **ROZSTRZYGNIĘTE 2026-09-09: „Dodaj do koszyka", bez plusa**
 
 Zauważone przez Jarka 2026-09-09. Ta sama akcja — dodanie produktu do koszyka, w kodzie jedno
 `data-action="add-to-cart"` — ma w kanonie **dwie różne etykiety, i plus tylko w jednej**:
@@ -212,7 +212,17 @@ z webu klienta (więc zgodna z hierarchią źródeł) i spełnia wzorzec CTA „
 „+ Dodaj" nie spełnia. Karta produktu zostaje przy „Kup badanie", bo tam przycisk jest głównym działaniem
 ekranu i ma inną wagę — ale wtedy warto to rozstrzygnąć wprost, a nie zostawiać jako przypadek.
 
-**Status:** w prototypie został kanon F2 („+ Dodaj"), bo to świeżo rozstrzygnięty wiersz. Czeka na decyzję.
+**Decyzja Jarka 2026-09-09: droga 1 — kafelek mówi „Dodaj do koszyka", bez plusa.** Etykieta mieści się
+z zapasem (121 z 285 px, jedna linia w każdym stanie karty). To **odstępstwo od decyzji F2** („+ Dodaj"),
+ale zgodne z hierarchią źródeł: „Dodaj do koszyka" to brzmienie z webu klienta, które F2 odrzuciło na rzecz
+formy z POC. Koszt jest żaden — żadna reguła leksykonu nie zostaje złamana, więc to **nie jest wyjątek
+z sekcji A**, tylko powrót do kandydata, który lepiej spełnia własne reguły leksykonu (etykieta CTA jako
+czasownik z dopełnieniem).
+
+**Zostało otwarte:** karta produktu nadal mówi „Kup badanie" / „Kup pakiet" (kanon M3 3.2, „zostaje"), więc
+ta sama akcja ma w produkcie **dwa czasowniki** — „dodaj" na kafelku, „kup" na karcie. Do rozstrzygnięcia,
+czy karta też przechodzi na „Dodaj do koszyka", czy zostaje przy „Kup", bo tam przycisk jest głównym
+działaniem ekranu i ma inną wagę.
 
 Poprawione już przy tym przebiegu, bez czekania na decyzję, bo kanon jest jednoznaczny:
 

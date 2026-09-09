@@ -59,7 +59,7 @@
 
   // ---------- ProductCard (CellPackage / CellTest) ----------
   // badge: {code:{discount,text}} | {premium:text} | {basic:text}; price: {current, old, club, lowest, note}
-  DS.ProductCard = ({ id, kind = 'test', meta = '', title = '', badge, price, cta = '+ Dodaj', ctaVariant = 'primary', footer, attrs: a } = {}) => {
+  DS.ProductCard = ({ id, kind = 'test', meta = '', title = '', badge, price, cta = 'Dodaj do koszyka', ctaVariant = 'primary', footer, attrs: a } = {}) => {
     const badgeHtml = !badge ? '' : badge.code ? DS.BadgeCode(badge.code) : badge.premium ? DS.BadgePremium({ text: badge.premium }) : DS.BadgeBasic({ text: badge.basic });
     const priceHtml = !price ? '' : `<div class="ds-ProductCard__price">` +
       `<div class="ds-ProductCard__priceMain"><div class="ds-ProductCard__priceRow"><span class="ds-ProductCard__current">${esc(price.current)}</span>${price.old ? `<s class="ds-ProductCard__old">${esc(price.old)}</s>` : ''}</div>` +

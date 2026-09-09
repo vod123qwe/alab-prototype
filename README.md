@@ -142,7 +142,7 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | Było | Jest | Źródło |
 | --- | --- | --- |
 | „Liczba badań: 4" · „Materiał: Krew" | „Pakiet · 4 badania" · „Badanie · krew" | leksykon 136 |
-| CTA karty „Do koszyka" | „+ Dodaj" | decyzja F2 |
+| CTA karty „Do koszyka" | ~~„+ Dodaj"~~ → **„Dodaj do koszyka"** (decyzja Jarka 2026-09-09, D7 w rejestrze) | decyzja F2, potem korekta |
 | „Zobacz składowe pakietu • 4" | „Składowe pakietu (4)" | leksykon 234 |
 | belka „Wyniki wyszukiwania" | „Znalezione badania i pakiety" | leksykon 238 |
 | „Pokaż 5 wyników" | „Pokaż 3 pakiety i 8 badań" | mapa M3, P02 |
