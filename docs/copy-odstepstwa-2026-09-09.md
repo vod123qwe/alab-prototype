@@ -1,6 +1,6 @@
 # Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
 
-Stan na 2026-09-09, wersja prototypu **2026.09.09-108**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+Stan na 2026-09-09, wersja prototypu **2026.09.09-110**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
 (mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
 Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
 
@@ -37,8 +37,8 @@ Jak czytać sekcje:
 | --- | --- |
 | Poza klubem | „64,60 zł **ekstra -5%** w klubie" |
 | Poza klubem, promocja klubowa | „66,78 zł **zniżka -40%** w klubie" |
-| Klubowicz | „**Aktywna zniżka klubowa** ekstra -5%" |
-| Klubowicz, promocja klubowa | „**Aktywna zniżka klubowa** -40%" |
+| Klubowicz | „Aktywne −5% w klubie" — **poza wyjątkiem, zgodne z leksykonem** |
+| Klubowicz, niższa cena klubowa | „Aktywne −40% w klubie" — **poza wyjątkiem, zgodne z leksykonem** |
 
 **Powód.** Kanon F1 stawia procent bezpośrednio za kwotą, bez żadnego słowa między liczbami. „64,60 zł 5%
 taniej w klubie" czyta się wtedy jak wyrażenie matematyczne — kwota i procent zlewają się w jedno. Klient
@@ -50,9 +50,19 @@ słownego łamią regułę „jeden przekaz na raz".
 **Koszt wyjątku.** Wraca słowo „zniżka", którego leksykon 321 zakazuje w interfejsie, bo prawnicy klienta
 odradzają „rabat" i „zniżkę". To jest cała cena tej decyzji i trzeba ją wprost przyjąć albo odrzucić.
 
-**Zakres.** Wyłącznie wiersz ceny na kartach produktowych i w hero na karcie badania (u klubowicza także
-odznaka nad tytułem). **Reszta produktu mówi „taniej"** i została nietknięta: mały baner pod ceną, duży baner
-klubu, karuzela na ekranie zgód klubu, webview, rozwinięcia zgód, toast po dołączeniu. Sprawdzone po zmianie.
+**Zakres zwężony 2026-09-09: tylko linijka Z KWOTĄ, dla Pacjenta poza klubem.** Stan klubowicza wyszedł
+z wyjątku: brzmi **„Aktywne −5% w klubie"** / **„Aktywne −40% w klubie"** i żadnej reguły nie łamie —
+„zniżka" i „ekstra" wypadły, a „w klubie" to krótka forma, którą leksykon 109 wprost zaleca przy cenie.
+Problem „równania" tam nie występuje, bo **ten string nie ma kwoty** — dwie liczby nie stoją obok siebie.
+
+Dlaczego nie kanoniczne „5% taniej, już naliczone": w tym slocie cena główna JEST już ceną klubową,
+a regularna stoi przekreślona obok. Comparativus „taniej" nie ma wtedy punktu odniesienia — tańsze niż co,
+jeśli niższa cena jest już na ekranie (uwaga Jarka). Słowo „Aktywne" niesie to, czego nie niesie sama cena:
+że Pacjent **już to ma**, a nie że może mieć — i tylko ta forma odróżnia stan klubowicza od zachęty.
+
+**Reszta produktu mówi „taniej"** i została nietknięta: mały baner pod ceną, duży baner klubu, karuzela na
+ekranie zgód klubu, webview, rozwinięcia zgód, toast po dołączeniu. Sprawdzone po zmianie: na ekranie
+klubowicza nie ma żadnego z zakazanych słów.
 
 **Alternatywa bez zakazanego słowa.** Przestawienie kolejności daje ten sam efekt i nie wychodzi poza słownik
 zatwierdzony w F1:
