@@ -11,15 +11,15 @@ te trzeba rozstrzygnąć, bo dziś nie da się być zgodnym z jednym i drugim.
 **Kanon dziś** (sek. 3a, `decisions-log` CXXIV.L, decyzja F1): przy cenie fioletowy dopisek
 **„5% taniej w klubie"** poza klubem i **„5% taniej, już naliczone"** dla klubowicza; przy ofercie
 specjalnej **„40% taniej w klubie"** i **„40% taniej, już naliczone"**. Na liście **NIE** stoi wprost
-**„ekstra -5% w klubie"** i **„zniżka -40% w klubie"**.
+**„ekstra −5% w klubie"** i **„zniżka -40% w klubie"**.
 
 **Co stoi w produkcie** (komponent `PriceRow`, DS klienta `777:6266`, 85 wierszy na ekranach sklepu
 oraz cały prototyp):
 
 | Stan | Oferta specjalna (−40%) | Klub standardowy (−5%) |
 | --- | --- | --- |
-| Pacjent poza klubem | „66,78 zł taniej -40% w klubie" | „189,05 zł ekstra -5% w klubie" |
-| Pacjent w klubie | „Aktywne −40% w klubie" | „Aktywne ekstra -5% w klubie" |
+| Pacjent poza klubem | „66,78 zł taniej −40% w klubie" | „189,05 zł ekstra −5% w klubie" |
+| Pacjent w klubie | „Aktywne −40% w klubie" | „Aktywne ekstra −5% w klubie" |
 
 **Powód.** Kanoniczna forma bez kwoty stoi w karcie obok dwóch liczb (cena główna i przekreślona)
 i czyta się jak trzeci element równania: „199,00 zł · 248,75 zł · 5% taniej w klubie". Pacjent nie
@@ -30,7 +30,7 @@ mechanikę naliczania, „Aktywne" opisuje stan korzyści.
 **O co prosimy.** Rozstrzygnięcie w jedną stronę:
 
 - **(A, rekomendacja)** kanon przyjmuje formę z kwotą i słowo „Aktywne" dla klubowicza. Wtedy z listy
-  NIE wypada „ekstra -5% w klubie", a wchodzi reguła doboru słowa z **L2**.
+  NIE wypada „ekstra −5% w klubie", a wchodzi reguła doboru słowa z **L2**.
 - **(B)** wracamy do kanonu bez kwoty. Wtedy potrzebujemy **innego miejsca na cenę klubową** na
   karcie, bo dziś nie ma gdzie jej pokazać, a jest to najmocniejszy argument klubu.
 
@@ -56,7 +56,7 @@ dokładkę; „taniej" nazwałoby ją tym samym słowem co obniżkę bazową i z
 
 ---
 
-## L3 · KONFLIKT · Znak minus: kanon jest, egzekucji nie ma
+## L3 · ROZSTRZYGNIĘTE · Znak minus w każdej wartości procentowej
 
 **Kanon dziś.** Badge kodu to **„−20% z kodem b26cz"** - wprost „znak minus, bez dwukropka",
 a na liście NIE stoi „-20% rabat" z dywizem.
@@ -73,10 +73,13 @@ a na liście NIE stoi „-20% rabat" z dywizem.
 z dywizem, a my wyrównaliśmy plik Design **do DS**, żeby komponent i ekrany mówiły to samo. Efekt:
 ta sama wielkość ma dwa znaki zależnie od procentu.
 
-**O co prosimy.** Potwierdzenie, że **U+2212 obowiązuje w każdej wartości procentowej**, nie tylko
-w badge'u kodu. Wtedy poprawiamy DS jednym przebiegiem, a plik Design za nim.
+**Decyzja Jarka 2026-09-09: znak minus wszędzie.** Wdrożone tego samego dnia - DS (16 węzłów na
+`❖ Cells`, `❖ Pills`, `❖ Cards`), plik Design (**590 węzłów** na `🟢 Sklep`, masterach, `Design
+explorations` i `Roboczy`) oraz prototyp (`CodeBox` i storybook). Autentykacja nie miała żadnej
+wartości procentowej.
 
-**Koszt.** Dwa stringi w DS, jeden skrypt po pliku Design. Prototyp jest już zgodny.
+**O co prosimy.** Rozszerzenie zapisu w leksykonie: kanon mówi „znak minus" przy badge'u kodu,
+a reguła dotyczy **każdej** wartości procentowej.
 
 ---
 
@@ -84,7 +87,7 @@ w badge'u kodu. Wtedy poprawiamy DS jednym przebiegiem, a plik Design za nim.
 
 **Kanon dziś.** „już naliczone".
 
-**Co stoi w produkcie.** „Aktywne ekstra -5% w klubie", „Aktywne −40% w klubie". Wcześniej w DS stały
+**Co stoi w produkcie.** „Aktywne ekstra −5% w klubie", „Aktywne −40% w klubie". Wcześniej w DS stały
 **dwa różne brzmienia dla tego samego stanu** („Naliczono 5% zniżki" i „Aktywna zniżka klubowa ekstra
 -5%") - oba ze słowem zakazanym. Ujednoliciliśmy je na jedno.
 

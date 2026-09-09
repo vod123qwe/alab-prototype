@@ -9,8 +9,9 @@ Każde pytanie ma adresata i rekomendację. Numeracja: **K** do Kaspra, **A** do
 **K1. Linijka ceny klubowej.** Punkt L1 - konflikt z kanonem, najważniejsza rzecz w tej paczce.
 Rekomendacja: przyjąć formę z kwotą i „Aktywne" dla klubowicza.
 
-**K2. Znak minus w każdej wartości procentowej.** Punkt L3. Rekomendacja: U+2212 wszędzie, zgodnie
-z zapisem o badge'u kodu.
+**K2. Znak minus - ROZSTRZYGNIĘTE.** Jarek zdecydował 2026-09-09: U+2212 w każdej wartości
+procentowej. Wdrożone w DS, pliku Design i prototypie. Zostaje tylko rozszerzenie zapisu
+w leksykonie.
 
 **K3. Licznik łączny w filtrach.** Punkt L5. Rekomendacja: zapisać wyjątek dla „wyniki" w kontekście
 filtrów albo dać kanon na „Pokaż 11 pozycji".

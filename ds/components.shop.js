@@ -85,7 +85,7 @@
     (club ? `<p class="ds-PriceBlock__club">${esc(club)}</p>` : '') +
     ((lowest || note) ? `<div class="ds-PriceBlock__notes">${lowest ? `<p>${esc(lowest)}</p>` : ''}${note ? `<p class="ds-PriceBlock__note">${esc(note)}${DS.icon('info-circle', 16)}</p>` : ''}</div>` : '') + `</div>`;
   // CodeBox: kod rabatowy z przyciskiem kopiowania
-  DS.CodeBox = ({ discount = '-20%', code = 'B26SIER' } = {}) =>
+  DS.CodeBox = ({ discount = '−20%', code = 'B26SIER' } = {}) =>
     `<div class="ds ds-CodeBox">${DS.BadgePrice({ label: discount })}<span class="ds-CodeBox__text">z kodem <b>${esc(code)}</b></span>` +
     `<button type="button" class="ds-CodeBox__copy" aria-label="Kopiuj kod ${esc(code)}" data-action="copy-code" data-code="${esc(code)}">${DS.icon('copy', 24)}</button></div>`;
   // ClubPromo: fioletowa zachęta „Dołącz do ALAB club / 5% taniej + voucher 20% po pierwszym badaniu”
