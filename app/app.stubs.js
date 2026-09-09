@@ -81,7 +81,7 @@
       ['Zamów Pakiet tarczycowy', 'Zwróć uwagę na liczbę badań w pakiecie'], 'p-tarcz'],
     ['3', 'Zadanie 3', 'Zamów morfologię krwi',
       'Chcesz zrobić badanie krwi u siebie w domu.',
-      ['Zamów morfologię krwi', 'Wybierz pobranie w domu', 'Zwróć uwagę na cenę pobrania'], 't-morf'],
+      ['Zamów morfologię krwi', 'Wybierz pobranie w domu'], 't-morf'],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
