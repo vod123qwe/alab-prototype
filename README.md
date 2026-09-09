@@ -158,6 +158,10 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | ekran klubu: „Trzy korzyści, jedna decyzja." · sheet kategorii z podtytułem | zdjęte | M1 A14, decyzja F3 |
 | „1 podpowiedzi" · etykieta pola „Wpisz kraj..." | odmiana po liczbie · „Kraj" | polszczyzna, reguła 3a |
 
+> **Rejestr odstępstw copy:** [`docs/copy-odstepstwa-2026-09-09.md`](docs/copy-odstepstwa-2026-09-09.md) —
+> wyjątki sugerowane, rozjazdy w mapach, teksty poza kanonem i pełna lista podmian z 9 września.
+> Czytaj to przed kolejną rundą z map, żeby nie cofnąć świadomej decyzji.
+
 ### Wiersz ceny klubowej: cofnięta decyzja F1 (2026-09-09)
 
 **Decyzja Jarka po komentarzu klienta: na kartach i w hero PDP wracają poprzednie formy.**

@@ -335,7 +335,7 @@
   SCREENS.dashboard = () => `<div class="screen dash"><iframe src="${file('../index.html')}" title="Sklep • Strona główna"></iframe></div>`; // nadpisywane w app.shop.js
   // powitanie po rejestracji/logowaniu (raz)
   const onRoute = (fn) => { window.addEventListener('popstate', fn); window.addEventListener('hashchange', fn); };
-  onRoute(() => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe. Witaj w ALAB club!' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
+  onRoute(() => { if (current() === 'dashboard' && S.loggedIn && !S.welcomed) { S.welcomed = true; setTimeout(() => snack(S.clubJoined ? 'Konto gotowe · witaj w ALAB club' : 'Konto gotowe. Możesz kupować badania i odbierać wyniki.', 'success', 110), 500); } });
 
   // Kolor tła dokumentu i theme-color = kolor dolnej krawędzi ekranu (pas poza oknem PWA na iOS maluje html)
   // Dwa niezależne kolory: tło dokumentu (iOS maluje nim pas pod oknem PWA na dole) i theme-color (od niego zależy kolor
@@ -550,7 +550,7 @@
       const back1 = S.clubFrom; delete S.clubFrom;
       go(back1 || 'dashboard');
       // wejście z karty produktu: potwierdzamy zmianę trybu, bo ceny na ekranie zmieniają się „same"
-      if (back1) setTimeout(() => snack('Witaj w ALAB club. Ceny klubowe są już aktywne.', 'success', 110), 420);
+      if (back1) setTimeout(() => snack('Witaj w ALAB club · od teraz 5% taniej', 'success', 110), 420);
     },
     'club-skip': () => { S.clubJoined = false; S.loggedIn = true; rememberClub(false); const b = S.clubFrom; delete S.clubFrom; go(b || 'dashboard'); },
     'faceid-on': () => faceIdOverlay(() => { S.faceId = true; go('dashboard'); }),
@@ -563,7 +563,7 @@
       if (!ok) return;
       const btn = $('#login-btn'); btn.outerHTML = DS.Button({ label: 'Zaloguj się', state: 'loading', block: true, attrs: { id: 'login-btn' } });
       setTimeout(() => {
-        if (S.loginPassword === 'blokada') { render_(); snack('Konto zostało zablokowane. Skontaktuj się z infolinią ALAB.', 'error', 120); return; }
+        if (S.loginPassword === 'blokada') { render_(); snack('Konto zostało zablokowane. Skontaktuj się z infolinią ALAB laboratoria.', 'error', 120); return; }
         if (S.loginPassword === 'zle12345') { render_(); fieldError($('#l-password'), 'Dane uwierzytelniające są nieprawidłowe'); return; }
         S.loggedIn = true; go(S.faceId == null ? 'faceid' : 'dashboard');
       }, 900);

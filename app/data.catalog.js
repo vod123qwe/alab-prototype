@@ -142,7 +142,7 @@
     // więc wersja wysyłkowa też jest badaniem — pakiet z jedną pozycją pokazywałby „Liczba badań: 1”.
     t('t-bor-kit', 'Borelioza IgM / IgG – zestaw wysyłkowy', 'infekcje', 'Borelioza', 159.00, {
       types: MAIL, tat: 'do 13 dni roboczych', symbol: 'BORKIT',
-      desc: 'Przeciwciała przeciw Borrelia w klasach IgM i IgG — diagnostyka boreliozy z próbki pobranej w domu.',
+      desc: 'Przeciwciała przeciw Borrelia w klasach IgM i IgG, diagnostyka boreliozy z próbki pobranej w domu.',
       prep: ['Zestaw do samodzielnego pobrania krwi włośniczkowej otrzymasz kurierem', 'Pobranie zgodnie z instrukcją w zestawie'],
       keywords: ['borelioza', 'kleszcz', 'borrelia', 'zestaw', 'wysyłkowy'] }),
     t('t-hpv', 'HPV – genotypowanie 14 typów wysokiego ryzyka', 'ciaza', 'Diagnostyka HPV', 249.00, { also: [['infekcje', 'Infekcje wirusowe']], material: 'Wymaz', types: KIT, popular: true, tat: '7 dni roboczych' }),

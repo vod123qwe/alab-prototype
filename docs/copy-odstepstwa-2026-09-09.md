@@ -1,0 +1,154 @@
+# Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
+
+Stan na 2026-09-09, wersja prototypu **2026.09.09-103**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+(mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
+Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
+
+Plik istnieje po to, żeby przy kolejnym generowaniu map nikt nie „poprawił" świadomej decyzji z powrotem,
+i żeby Kasper widział w jednym miejscu, co u nas nie zgadza się z kanonem i dlaczego.
+
+Jak czytać sekcje:
+
+- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra.
+- **B. Odstępstwa z natury prototypu** — nie są tematem do zatwierdzania, ale trzeba o nich wiedzieć, żeby nie mylić ich z błędem.
+- **C. Rozjazdy w samych mapach** — odwzorowane dosłownie, bo prototyp wykonuje mapy; decyzja po stronie autora map.
+- **D. Poza kanonem** — teksty, których mapy nie obejmują. Nasze propozycje, nie kanon.
+- **E. Co zostało zmienione** — pełna lista podmian z 9 września.
+- **F. Nietknięte „do decyzji"** — wiersze map, których świadomie nie ruszaliśmy.
+
+---
+
+## A. Wyjątki sugerowane (wymagają zgody)
+
+### A1 · Wiersz ceny klubowej na kartach i w hero PDP · **SUGEROWANY WYJĄTEK**
+
+**Kanon (leksykon 109, decyzja F1 z 2026-09-09):**
+
+| Stan | Kanon |
+| --- | --- |
+| Poza klubem | „64,60 zł 5% taniej w klubie" |
+| Poza klubem, promocja klubowa | „66,78 zł 40% taniej w klubie" |
+| Klubowicz | „5% taniej, już naliczone" |
+| Klubowicz, promocja klubowa | „40% taniej, już naliczone" |
+
+**Co jest w prototypie:**
+
+| Stan | Prototyp |
+| --- | --- |
+| Poza klubem | „64,60 zł **ekstra -5%** w klubie" |
+| Poza klubem, promocja klubowa | „66,78 zł **zniżka -40%** w klubie" |
+| Klubowicz | „**Aktywna zniżka klubowa** ekstra -5%" |
+| Klubowicz, promocja klubowa | „**Aktywna zniżka klubowa** -40%" |
+
+**Powód.** Kanon F1 stawia procent bezpośrednio za kwotą, bez żadnego słowa między liczbami. „64,60 zł 5%
+taniej w klubie" czyta się wtedy jak wyrażenie matematyczne — kwota i procent zlewają się w jedno. Klient
+zgłaszał to już wcześniej i właśnie dlatego poprzednie formy miały przerywnik słowny („ekstra", „zniżka").
+To był ukryty cel tych słów, o którym leksykon nie wspomina: **F1 rozstrzygało słownictwo, nie typografię
+wiersza**, więc luki nie zamknęło. Skill `ux-writer` potwierdza czytanie klienta — dwie liczby bez separatora
+słownego łamią regułę „jeden przekaz na raz".
+
+**Koszt wyjątku.** Wraca słowo „zniżka", którego leksykon 321 zakazuje w interfejsie, bo prawnicy klienta
+odradzają „rabat" i „zniżkę". To jest cała cena tej decyzji i trzeba ją wprost przyjąć albo odrzucić.
+
+**Zakres.** Wyłącznie wiersz ceny na kartach produktowych i w hero na karcie badania (u klubowicza także
+odznaka nad tytułem). **Reszta produktu mówi „taniej"** i została nietknięta: mały baner pod ceną, duży baner
+klubu, karuzela na ekranie zgód klubu, webview, rozwinięcia zgód, toast po dołączeniu. Sprawdzone po zmianie.
+
+**Alternatywa bez zakazanego słowa.** Przestawienie kolejności daje ten sam efekt i nie wychodzi poza słownik
+zatwierdzony w F1:
+
+> „64,60 zł **w klubie, 5% taniej**" · „66,78 zł **w klubie, 40% taniej**"
+
+Kwota nadal prowadzi, między liczbami stoi słowo, żadne nowe wyrazy nie wchodzą. Wariant klubowicza
+(„5% taniej, już naliczone") nie ma kwoty, więc problemu w nim nie ma i może zostać w brzmieniu F1.
+Kropka środkowa problemu **nie** rozwiązuje: „·" to znak mnożenia, więc zrobiłaby z wiersza dosłowne równanie.
+Półpauza też nie, bo czyta się jako minus.
+
+**Status:** wprowadzone w prototypie decyzją Jarka 2026-09-09, do rozstrzygnięcia z Kasprem i klientem.
+Zmiana to jedna linia (`app/app.shop.js`, `clubOffer` i `clubActive`).
+
+---
+
+## B. Odstępstwa z natury prototypu (do wiedzy, nie do zatwierdzania)
+
+| # | Rzecz | Kanon | U nas | Dlaczego |
+| --- | --- | --- | --- | --- |
+| B1 | Odliczanie ponownego wysłania kodu | 0:59 | **0:29** | API blokuje wysłanie na minutę, ale w prototypie uczestnik nie ma po co czekać minuty na ekranie, którego i tak nie testujemy |
+| B2 | Komunikaty o samym prototypie | leksykon zakazuje em dasha | „Pełny opis **—** treść z API w kolejnym etapie", „FAQ badania — w kolejnym etapie", „Pobieranie PDF — poza prototypem", „Udostępnianie wyniku — systemowy arkusz, poza prototypem" | To nie jest copy produktu, tylko informacja, że dalej nic nie ma. Do decyzji, czy leksykon obejmuje tę warstwę; jeśli tak, zamieniamy pauzy na dwukropek |
+| B3 | Liczniki w tekstach | mapy podają przykłady z POC („Pokaż wszystkie pakiety (6)") | „(16)", „(53)" | Nasz katalog ma 73 pozycje, POC 25 — liczby w copy są wyliczane, nie wpisane |
+| B4 | Ekrany autentykacji | trzynaście ekranów M1 | ukryte w badaniu | Badanie zaczyna się od hubu zadań; copy M1 doprowadziliśmy do kanonu, ale uczestnik go nie zobaczy |
+| B5 | Zestaw wysyłkowy | POC ma 5 badań w 3 kategoriach | to samo, ale nasze nazwy | Przypisania kanałów wyrównane do zasady POC 2026-09-09; nazwy produktów są nasze, bo katalog jest większy |
+
+---
+
+## C. Rozjazdy w samych mapach, odwzorowane dosłownie
+
+Prototyp wykonuje mapy wiersz po wierszu, więc jeśli dwie mapy mówią co innego, w prototypie widać oba.
+Decyzja należy do autora map.
+
+| # | Rozjazd | Skutek w prototypie | Status |
+| --- | --- | --- | --- |
+| C1 | „bon 20%" (M3 3.2) vs „Voucher 20%" (M3 3.4, M1 A14) | — | **ROZSTRZYGNIĘTE 2026-09-09: wszędzie „voucher".** Do poprawy w leksykonie 330, mapie M1 wiersz 99 i M3 wiersz 84 |
+| C2 | Kolejność korzyści klubu: M1 A14 daje 5% → urodziny → voucher, M3 3.4 daje 5% → voucher → urodziny | ekran klubu ma kolejność M1, baner na karcie produktu kolejność M3 | otwarte |
+| C3 | „Niedostępne w wybranym punkcie" (M3 3.1) przeczy regule z sekcji 1 tej samej mapy: „Punkt Pobrań dwiema wielkimi literami we wszystkich formach" | prototyp trzyma regułę: „Niedostępne w wybranym **Punkcie Pobrań**" | otwarte |
+| C4 | Słowo „wyniki": w belce P05 wychodzi, w pustym stanie wyszukiwarki zostaje jako świadomy dług (LXXVI) | belka „Znalezione badania i pakiety", ale pusty stan „Brak wyników dla „xyz"" | otwarte |
+| C5 | Kropka na końcu tytułu „Brak badań dla tych filtrów." | pozostałe tytuły pustych stanów u nas kropki nie mają | otwarte |
+| C6 | Zakres godzin z dywizem („07:00 - 11:00"), gdy ta sama sekcja zakazuje em dasha i narzuca kropkę środkową jako separator w linii | zakres z dywizem, jak w mapie | otwarte, zakres to typowo półpauza |
+| C7 | Ta sama korzyść klubu ma dwie akcje: M1 A14 „zostaje do odpowiedzi ALAB (K6)", M3 3.4 „podmień wg K6" | podmienione (wersja M3) | otwarte |
+
+---
+
+## D. Poza kanonem: teksty, których mapy nie obejmują
+
+To nasze propozycje, nie kanon. Zgłaszam je, zamiast dopisywać do leksykonu jednostronnie.
+
+| # | Gdzie | Nasz tekst | Uwaga |
+| --- | --- | --- | --- |
+| D1 | Pusty stan sheeta wyboru kraju | „Brak wyników" + „Spróbuj wpisać nazwę kraju inaczej." | **Trzecia** wersja tego zdania obok hi-fi („Sprawdź pisownię lub wyczyść wyszukiwanie…") i wyszukiwarki sklepu („Sprawdź pisownię lub wyszukaj inną frazę"). Mapa M1 mówi „zostaje", ale ujednolicenie warto zaplanować razem z długiem na słowie „wyniki" (C4) |
+| D2 | Brak wymaganej zgody, krok 1 | „Brak zgody wymaganej" | Kanon M1: „Bez zgody na Regulamin i Politykę prywatności nie założymy konta". Nasz tekst nazywa stan, a nie mówi, co zrobić — do podmiany, gdy domkniemy formę (decyzja 5.10: zdanie przy przycisku czy snackbar) |
+| D3 | Brak zgód klubowych | „Zaznacz wymagane zgody, żeby dołączyć do ALAB club" | Kanon M1 A14: „Bez obu zgód nie dołączymy Cię do klubu" |
+| D4 | Błędny kod SMS | „Kod nieprawidłowy. Sprawdź SMS i spróbuj ponownie." | Leksykon 5b nie ma jeszcze tej treści (mapa M1 to zauważa). Nasza propozycja do dopisania albo podmiany |
+| D5 | Nazwy alergenów w wyniku | „Trawy — mieszanka (gx)", „Kot — nabłonek (e1)" | Dane przykładowe z em dashem. Realne nazwy ALAB używają dywizu; do wyrównania, gdy przyjdą z API |
+| D6 | Wyjście do logowania na intro i hubie | **przycisk** „Masz już konto? Zaloguj się" | Kanon M1 (K3) mówi „tekst z linkiem, jak stopka logowania". Podmieniłem same słowa; zamiana przycisku na link zmienia hierarchię ekranu, zwłaszcza na hubie, gdzie to przycisk `oncolor`. **Decyzja Jarka.** Skill zgłasza dodatkowo, że pytanie w etykiecie przycisku to słaby wzorzec CTA |
+
+Poprawione już przy tym przebiegu, bez czekania na decyzję, bo kanon jest jednoznaczny:
+
+- toast po dołączeniu do klubu: „Witaj w ALAB club. Ceny klubowe są już aktywne." → **„Witaj w ALAB club · od teraz 5% taniej"** (leksykon 330)
+- powitanie po rejestracji: „Konto gotowe. Witaj w ALAB club!" → **„Konto gotowe · witaj w ALAB club"** (bez wykrzyknika, kropka środkowa jak w 330)
+- blokada konta: „…infolinią ALAB." → **„…infolinią ALAB laboratoria."** (gołe „ALAB" nie jest nazwą firmy, CXV.B)
+- opis Borelioza wysyłkowa: em dash → przecinek (leksykon 3)
+
+---
+
+## E. Co zostało zmienione 9 września
+
+Pełne tabele podmian są w `README.md`. W skrócie:
+
+| Obszar | Podmian | Najważniejsze |
+| --- | --- | --- |
+| M3, zakazane słowa | 7 | ceny klubowe, banery klubu, „Kupując w pakiecie, oszczędzasz" → „Pakiety z tym badaniem", webview |
+| M3, kanon leksykonu | 20 | meta karty „Pakiet · 4 badania", CTA „+ Dodaj", belka „Znalezione badania i pakiety", etykiety filtrów rzeczownikiem, „Sposób realizacji", godziny dwucyfrowe, wielokropek, znak minus, liczniki w nawiasach |
+| Przebieg `/ux-writer` | 3 | „Zobacz składowe pakietu (4)" (mój błąd: wziąłem kanon nagłówka sekcji i przyłożyłem do przycisku), stany puste rozróżniają przyczynę, przycisk „Wyczyść filtry" |
+| M1, autentykacja | 19 | „Masz już konto? Zaloguj się", „E-mail", „Brak numeru PESEL", data DD.MM.RRRR z automatycznym separatorem, „Płeć", CTA „Zarejestruj się", „rozwiń/zwiń", `aria-label` na sześciu polach kodu SMS, „akceptuję", „Sp. z o.o." |
+| M1, ósme „zniżki" | 1 | rozwinięcie zgody klubowej: „naliczania **zniżek**" → „naliczania korzyści i komunikacji o nich" — przeoczone przy M3, bo nie dotyczy cen |
+| Cofnięcie F1 | 1 | wiersz ceny klubowej, patrz sekcja A1 |
+| Ten przebieg | 4 | toast klubu, powitanie, infolinia, em dash w opisie produktu |
+
+---
+
+## F. Nietknięte „do decyzji"
+
+Wiersze, których świadomie nie ruszaliśmy, bo mapy oznaczają je jako otwarte.
+
+**Mapa M1, sekcja 5:** treść trzech slajdów intro i tagline splasha (5.4, decyzja ALAB), ekran biometrii A15
+(5.5), przycisk „Zaloguj się z Face ID" (5.6), reguły hasła (5.8), gwiazdka „* Wymagane" i forma komunikatu
+o brakującej zgodzie (5.10), stopka huba (5.11), „Zmień numer" i „Potwierdź" na ekranie kodu SMS (5.12).
+
+**Mapa M3, sekcja 6:** etykiety „Wybierz kategorię" nad siatką kafli i „Przeglądaj tylko" nad chipami
+(punkt 5) — **decyzja Jarka**, w prototypie ich nie ma.
+
+**Do ALAB:** brzmienie zgody na kroku 1, model klubu w rejestracji, trzecia korzyść klubu (K6), FAQ w formach
+neutralnych, pełna klauzula zgody na przetwarzanie danych w klubie (w prototypie mamy skrót, nie wymyślamy
+treści prawnej).
+
+**Do devów:** czy API sprawdza trzy reguły hasła z webu klienta (5.8).

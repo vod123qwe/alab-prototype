@@ -85,7 +85,7 @@
   DS.CodeBox = ({ discount = '-20%', code = 'B26SIER' } = {}) =>
     `<div class="ds ds-CodeBox">${DS.BadgePrice({ label: discount })}<span class="ds-CodeBox__text">z kodem <b>${esc(code)}</b></span>` +
     `<button type="button" class="ds-CodeBox__copy" aria-label="Kopiuj kod ${esc(code)}" data-action="copy-code" data-code="${esc(code)}">${DS.icon('copy', 24)}</button></div>`;
-  // ClubPromo: fioletowa zachęta „Dołącz do ALAB club / zyskaj dodatkowe zniżki”
+  // ClubPromo: fioletowa zachęta „Dołącz do ALAB club / 5% taniej + voucher 20% po pierwszym badaniu”
   // „voucher", nie „bon" (decyzja 2026-09-09): to słowo klienta z jego webu, leksykon używa go w czterech
   // miejscach i zabrania ruszać treści korzyści klubu. „bon" wszedł raz, 1 września, przy okazji innej zmiany.
   DS.ClubPromo = ({ title = 'Dołącz do ALAB club', subtitle = '5% taniej + voucher 20% po pierwszym badaniu', attrs: a } = {}) =>
