@@ -1,6 +1,6 @@
 # Copy w prototypie: odstępstwa, wyjątki i rzeczy do wyjaśnienia
 
-Stan na 2026-09-09, wersja prototypu **2026.09.09-110**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
+Stan na 2026-09-09, wersja prototypu **2026.09.09-111**. Kanon: paczka `ALAB-copy-dla-Jarka-2026-09-09`
 (mapy `copy-hifi-mapa-M1-autentykacja`, `copy-hifi-mapa-M3-sklep`, `ux-writing-lexicon`) oraz źródła klienta.
 Hierarchia źródeł przy konflikcie jest ta z README paczki: **ustalenia klienta → nasz leksykon → web klienta → hi-fi**.
 
@@ -9,7 +9,7 @@ i żeby Kasper widział w jednym miejscu, co u nas nie zgadza się z kanonem i d
 
 Jak czytać sekcje:
 
-- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra. Dziś trzy: wiersz ceny klubowej (A1), notacja liczników (A2) i przycisk arkusza filtrów (A3).
+- **A. Wyjątki sugerowane** — świadomie łamiemy kanon, potrzebna zgoda. To jedyna sekcja, która wymaga decyzji ALAB albo Kaspra. Dziś dwa: notacja liczników (A2) i przycisk arkusza filtrów (A3). A1 (wiersz ceny) przestał być wyjątkiem — copy przyszło z komponentu DS.
 - **B. Odstępstwa z natury prototypu** — nie są tematem do zatwierdzania, ale trzeba o nich wiedzieć, żeby nie mylić ich z błędem.
 - **C. Rozjazdy w samych mapach** — odwzorowane dosłownie, bo prototyp wykonuje mapy; decyzja po stronie autora map.
 - **D. Poza kanonem** — teksty, których mapy nie obejmują. Nasze propozycje, nie kanon.
@@ -20,62 +20,33 @@ Jak czytać sekcje:
 
 ## A. Wyjątki sugerowane (wymagają zgody)
 
-### A1 · Wiersz ceny klubowej na kartach i w hero PDP · **SUGEROWANY WYJĄTEK**
+### A1 · Wiersz ceny klubowej · **ROZSTRZYGNIĘTE 2026-09-09: copy z komponentu DS**
 
-**Kanon (leksykon 109, decyzja F1 z 2026-09-09):**
+Jarek dopisał własne copy w **PriceRow w design systemie** (`xnsgOdaVVKCkzjyStSOdVv`, node `777:6266`,
+sześć wariantów `discount` × `alabClubMember`). Prototyp odwzorowuje je 1:1, więc to **nie jest nasz wyjątek,
+tylko copy z komponentu** — a komponent DS jest u nas źródłem prawdy dla komponentów.
 
-| Stan | Kanon |
-| --- | --- |
-| Poza klubem | „64,60 zł 5% taniej w klubie" |
-| Poza klubem, promocja klubowa | „66,78 zł 40% taniej w klubie" |
-| Klubowicz | „5% taniej, już naliczone" |
-| Klubowicz, promocja klubowa | „40% taniej, już naliczone" |
+| Stan | Kanon leksykonu 109 (F1) | DS PriceRow → prototyp |
+| --- | --- | --- |
+| Poza klubem, niższa cena klubowa | „821,40 zł 40% taniej w klubie" | **„821,40 zł taniej −40% w klubie"** |
+| Poza klubem, zwykłe 5% | „904,40 zł 5% taniej w klubie" | **„904,40 zł ekstra −5% w klubie"** |
+| Klubowicz, niższa cena klubowa | „40% taniej, już naliczone" | **„Aktywne −40% w klubie"** |
+| Klubowicz, zwykłe 5% | „5% taniej, już naliczone" | **„Aktywne ekstra −5% w klubie"** |
 
-**Co jest w prototypie:**
+**Co się zmieniło wobec stanu przed 9 września.** Słowo **„zniżka" wypadło wszędzie** (zakaz klienta,
+leksykon 321) — wcześniej stało w „zniżka −40% w klubie" i „Aktywna zniżka klubowa". Zostało **„ekstra"**,
+ale tylko przy 5%, i to jest sensowne rozróżnienie: te 5% **dokłada się** do kodu i do ceny bazowej, a 40%
+**zastępuje** cenę regularną — stąd przy 40% „taniej", a przy 5% „ekstra".
 
-| Stan | Prototyp |
-| --- | --- |
-| Poza klubem | „64,60 zł **ekstra -5%** w klubie" |
-| Poza klubem, promocja klubowa | „66,78 zł **zniżka -40%** w klubie" |
-| Klubowicz | „Aktywne −5% w klubie" — **poza wyjątkiem, zgodne z leksykonem** |
-| Klubowicz, niższa cena klubowa | „Aktywne −40% w klubie" — **poza wyjątkiem, zgodne z leksykonem** |
+**Co zostało odstępstwem.** Sam szyk: leksykon 109 chce „5% taniej w klubie" i „5% taniej, już naliczone",
+DS mówi „ekstra −5% w klubie" i „Aktywne ekstra −5% w klubie". Powód jest ten, który F1 przeoczyło:
+kanon stawia procent bezpośrednio za kwotą, bez słowa między liczbami, więc „64,60 zł 5% taniej" czyta się
+jak wyrażenie matematyczne. **Żadne zakazane słowo nie wchodzi**, więc koszt jest już tylko taki, że leksykon
+109 trzeba dopisać do DS, a nie odwrotnie.
 
-**Powód.** Kanon F1 stawia procent bezpośrednio za kwotą, bez żadnego słowa między liczbami. „64,60 zł 5%
-taniej w klubie" czyta się wtedy jak wyrażenie matematyczne — kwota i procent zlewają się w jedno. Klient
-zgłaszał to już wcześniej i właśnie dlatego poprzednie formy miały przerywnik słowny („ekstra", „zniżka").
-To był ukryty cel tych słów, o którym leksykon nie wspomina: **F1 rozstrzygało słownictwo, nie typografię
-wiersza**, więc luki nie zamknęło. Skill `ux-writer` potwierdza czytanie klienta — dwie liczby bez separatora
-słownego łamią regułę „jeden przekaz na raz".
-
-**Koszt wyjątku.** Wraca słowo „zniżka", którego leksykon 321 zakazuje w interfejsie, bo prawnicy klienta
-odradzają „rabat" i „zniżkę". To jest cała cena tej decyzji i trzeba ją wprost przyjąć albo odrzucić.
-
-**Zakres zwężony 2026-09-09: tylko linijka Z KWOTĄ, dla Pacjenta poza klubem.** Stan klubowicza wyszedł
-z wyjątku: brzmi **„Aktywne −5% w klubie"** / **„Aktywne −40% w klubie"** i żadnej reguły nie łamie —
-„zniżka" i „ekstra" wypadły, a „w klubie" to krótka forma, którą leksykon 109 wprost zaleca przy cenie.
-Problem „równania" tam nie występuje, bo **ten string nie ma kwoty** — dwie liczby nie stoją obok siebie.
-
-Dlaczego nie kanoniczne „5% taniej, już naliczone": w tym slocie cena główna JEST już ceną klubową,
-a regularna stoi przekreślona obok. Comparativus „taniej" nie ma wtedy punktu odniesienia — tańsze niż co,
-jeśli niższa cena jest już na ekranie (uwaga Jarka). Słowo „Aktywne" niesie to, czego nie niesie sama cena:
-że Pacjent **już to ma**, a nie że może mieć — i tylko ta forma odróżnia stan klubowicza od zachęty.
-
-**Reszta produktu mówi „taniej"** i została nietknięta: mały baner pod ceną, duży baner klubu, karuzela na
-ekranie zgód klubu, webview, rozwinięcia zgód, toast po dołączeniu. Sprawdzone po zmianie: na ekranie
-klubowicza nie ma żadnego z zakazanych słów.
-
-**Alternatywa bez zakazanego słowa.** Przestawienie kolejności daje ten sam efekt i nie wychodzi poza słownik
-zatwierdzony w F1:
-
-> „64,60 zł **w klubie, 5% taniej**" · „66,78 zł **w klubie, 40% taniej**"
-
-Kwota nadal prowadzi, między liczbami stoi słowo, żadne nowe wyrazy nie wchodzą. Wariant klubowicza
-(„5% taniej, już naliczone") nie ma kwoty, więc problemu w nim nie ma i może zostać w brzmieniu F1.
-Kropka środkowa problemu **nie** rozwiązuje: „·" to znak mnożenia, więc zrobiłaby z wiersza dosłowne równanie.
-Półpauza też nie, bo czyta się jako minus.
-
-**Status:** wprowadzone w prototypie decyzją Jarka 2026-09-09, do rozstrzygnięcia z Kasprem i klientem.
-Zmiana to jedna linia (`app/app.shop.js`, `clubOffer` i `clubActive`).
+**Do wyrównania u źródła:** w DS trzy z czterech stringów mają jeszcze **dywiz** („-40%", „-5%"), a tylko
+„Aktywne −40% w klubie" ma prawdziwy znak minus. Leksykon 109 wymaga znaku minus (U+2212). W prototypie
+używamy go konsekwentnie w całej czwórce.
 
 ### A2 · Liczniki przy etykietach: duża kropka, nie nawias · **SUGEROWANY WYJĄTEK**
 

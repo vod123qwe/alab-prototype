@@ -48,29 +48,26 @@
 
   // ---------------- ceny: użytkownik podstawowy vs członek ALAB club ----------------
   // Warianty 1:1 z „Warianty • Banner PDP hero" 2726:16353 oraz kart badania 2726:16368 i pakietu 2726:16383:
-  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA „X zł ekstra -5% w klubie",
+  //  • bez klubu — cena podstawowa jako główna, a pod nią fioletowa ZACHĘTA z kwotą klubową,
   //  • w klubie — cena klubowa staje się główną, podstawowa idzie w przekreślenie, a fioletowa linijka
-  //    zmienia się w POTWIERDZENIE „Aktywne −5% w klubie" (na karcie produktu dodatkowo odznaka).
+  //    zmienia się w POTWIERDZENIE „Aktywne…" (na karcie produktu dodatkowo odznaka).
   //
-  // COFNIĘTA DECYZJA F1 — decyzja Jarka 2026-09-09, po komentarzu klienta. Kanon leksykonu 109 („5% taniej
-  // w klubie", „5% taniej, już naliczone") stawia procent bezpośrednio za kwotą, bez żadnego słowa między
-  // liczbami — „64,60 zł 5% taniej w klubie" czyta się wtedy jak wyrażenie matematyczne. Wcześniejsze formy
-  // miały przerywnik słowny („ekstra", „zniżka") i to był jego ukryty cel, o którym leksykon nie wspomina.
-  // Świadomy koszt: wraca słowo „zniżka", którego leksykon 321 zakazuje w interfejsie (prawnicy klienta).
-  // Dotyczy WYŁĄCZNIE wiersza ceny na kartach i w hero PDP; reszta produktu mówi „taniej" (banery, karuzela
-  // klubu, webview). Do rozstrzygnięcia z Kasprem — patrz README, sekcja o cenach klubowych.
-  // Kod rabatowy ŁĄCZY się ze zniżką klubową −5% (cena z kodem × 0,95), ale NIE z klubową ceną −40%
+  // Copy 1:1 z PriceRow w DS (xnsgOdaVVKCkzjyStSOdVv, 777:6266, sześć wariantów `discount` × `alabClubMember`):
+  //   poza klubem, niższa cena klubowa   → „821,40 zł taniej −40% w klubie"
+  //   poza klubem, zwykłe 5%             → „904,40 zł ekstra −5% w klubie"
+  //   klubowicz, niższa cena klubowa     → „Aktywne −40% w klubie"
+  //   klubowicz, zwykłe 5%               → „Aktywne ekstra −5% w klubie"
+  // „Zniżka" wypadła wszędzie (zakaz klienta). „Ekstra" zostało tylko przy 5%, bo te 5% DOKŁADA się do kodu
+  // i do ceny bazowej, a 40% zastępuje cenę regularną — stąd przy 40% „taniej", a przy 5% „ekstra".
+  // Znak minus (U+2212), nie dywiz — w DS trzy z czterech stringów mają jeszcze dywiz, do wyrównania u źródła.
+  // Kod rabatowy ŁĄCZY się z klubowymi 5% (cena z kodem × 0,95), ale NIE z klubową ceną −40%
   // (ustalenie Jarka 2026-09-08). Przy produkcie premium w klubie liczy się tylko −40% od ceny regularnej
   // i nie pokazujemy kodu, żeby nie sugerować kumulacji. Dziś żaden produkt nie ma obu naraz — to zabezpieczenie.
   const inClub = () => !!S().clubJoined;
   const codeApplies = (p) => !!p.code && !(inClub() && p.premium);
   const clubPrice = (p) => p.premium ? (p.old || p.price) * 0.6 : p.price * 0.95;
-  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} zniżka -40% w klubie` : `${zl(clubPrice(p))} ekstra -5% w klubie`;
-  // Stan klubowicza: „Aktywne −40% w klubie". Nie ma tu kwoty, więc problem „równania" z wyjątku A1 nie
-  // występuje, a żadne zakazane słowo nie wchodzi: „zniżka" i „ekstra" wypadają, a „w klubie" to krótka forma,
-  // którą leksykon 109 wprost zaleca przy cenie. „Aktywne" niesie to, czego nie niesie sama cena klubowa:
-  // że Pacjent JUŻ to ma, a nie że może mieć (decyzja Jarka 2026-09-09).
-  const clubActive = (p) => p.premium ? 'Aktywne −40% w klubie' : 'Aktywne −5% w klubie';
+  const clubOffer = (p) => p.premium ? `${zl(clubPrice(p))} taniej −40% w klubie` : `${zl(clubPrice(p))} ekstra −5% w klubie`;
+  const clubActive = (p) => p.premium ? 'Aktywne −40% w klubie' : 'Aktywne ekstra −5% w klubie';
   // hero = karta produktu na PDP: tam komunikat o zniżce klubowej niesie ODZNAKA nad tytułem, więc fioletowa
   // linijka pod ceną znika (2726:16358); na kartach listingu odznaki nie ma, więc linijka zostaje (2726:16368).
   const priceVM = (p, t = type(), hero = false) => {
