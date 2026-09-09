@@ -164,9 +164,11 @@ groszy, trzy kropki, em dash, „pacjent"/„punkt pobrań" z małej, angielskie
 
 Szczegóły poprawek poza `❖ Cells`:
 
-- **`❖ Pills`** — dwa badge'e ze słowem zakazanym: „Naliczono 5% **zniżki**" → **„5% taniej, już naliczone"**
-  (kanon leksykonu 322) i „**Aktywna zniżka klubowa** ekstra -5%" → **„Aktywne ekstra -5% w klubie"**
-  (brzmienie, które Jarek ustawił w PriceRow).
+- **`❖ Pills`** — dwa badge'e ze słowem zakazanym, **oba na jedno brzmienie** (decyzja Jarka 2026-09-09):
+  „Naliczono 5% **zniżki**" i „**Aktywna zniżka klubowa** ekstra -5%" → **„Aktywne ekstra -5% w klubie"**.
+  Pierwszy poprawiłem najpierw na „5% taniej, już naliczone" (kanon leksykonu 322), ale Jarek słusznie
+  zauważył, że **oba badge'e opisują ten sam stan**, więc muszą mówić jednym głosem. Po ujednoliceniu
+  w całym DS jest jeden string dla stanu klubowicza z 5% i jeden dla 40%.
 - **`❖ Selectables`** — angielskie resztki domyślne, wypisane wcześniej w mapie M1 (sekcja 4):
   **„Read more" → „rozwiń"** i **„* Required" → „* Wymagane"**, sześć węzłów. Forma wymagalności
   (gwiazdka czy zdanie przy przycisku) czeka na decyzję 5.10 — podmieniłem tylko język.
@@ -180,3 +182,22 @@ Szczegóły poprawek poza `❖ Cells`:
   prototypu, wszystkie 11 krajów. Czeka na decyzję.
 - **Dywiz w procentach** („-20%", „ekstra -5%") — **świadomie**, decyzja Jarka z przeglądu `❖ Cells`.
 - **Angielskie placeholdery slotów** („Title", „Subtitle", „Label") — to nazwy pól, nie treść.
+
+---
+
+## Otwarte: znak minus vs dywiz w badge'ach klubowych
+
+Po ujednoliceniu brzmienia został rozjazd **typograficzny**, który warto domknąć jedną decyzją:
+
+| Miejsce | 5% | 40% |
+| --- | --- | --- |
+| DS (`PriceRow`, `❖ Pills`) | „Aktywne ekstra **-**5% w klubie" (dywiz) | „Aktywne **−**40% w klubie" (znak minus) |
+| Plik Design, po ujednoliceniu | dywiz | znak minus |
+| Prototyp | znak minus | znak minus |
+
+Czyli **ta sama wielkość ma dwa różne znaki w zależności od procentu**, a prototyp trzyma trzecią wersję.
+Plik Design wyrównałem **do DS**, żeby komponent i ekrany mówiły to samo — ale to nie zamyka sprawy.
+
+**Rekomendacja: znak minus (U+2212) wszędzie**, jak w leksykonie 109 i jak w badge'u kodu „−20%". Koszt:
+dwa stringi w DS i jeden przebieg po pliku Design. Alternatywa — dywiz wszędzie — wymaga zmiany w prototypie
+i łamie regułę 109, więc bym jej nie brał.
