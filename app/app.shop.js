@@ -89,7 +89,9 @@
     return DS.ProductCard({ id: p.id, kind: p.kind, title: p.title,
       meta: p.kind === 'package' ? `Pakiet · ${plural(p.components.length, 'badanie', 'badania', 'badań')}` : `Badanie · ${(p.material || 'krew').toLowerCase()}`,
       badge: badgeVM(p), price: priceVM(p), cta: un ? 'Zmień punkt' : '+ Dodaj', ctaVariant: un ? 'secondary' : 'primary',
-      footer: p.kind === 'package' ? { label: 'Składowe pakietu', count: p.components.length } : null,
+      // „Zobacz" zostaje: to przycisk, nie nagłówek sekcji — mapa M3 3.1 zmienia tu tylko separator na nawias
+      // (leksykon 234 mówi o nagłówku składu pakietu na PDP, a nie o tym wierszu na karcie)
+      footer: p.kind === 'package' ? { label: 'Zobacz składowe pakietu', count: p.components.length } : null,
       attrs: { 'data-open': p.id } });
   };
 
@@ -219,6 +221,8 @@
     return items.length ? `Bez filtrów zobaczysz tu ${plural(items.length, 'badanie', 'badania', 'badań')}`
       : 'Zmień sposób realizacji albo kategorię';
   };
+  // czy pusty stan wynika z filtrów, a nie z samej kategorii — tylko wtedy „Wyczyść filtry" ma sens
+  const filtersOn = (ctx) => (st().kind && st().kind !== 'all') || !!(ctx.cat && subsSel(ctx.cat.id).length);
   const emptyWithAlts = (title, hint, alts) => `<div class="shop__emptyAlts">` + DS.SearchEmpty({ icon: 'file-note-search', title, hint }) + altRows(alts) + `</div>`;
   function listingBody(ctx) {
     const items = listingItems(ctx), kind = kindOf(ctx);
@@ -231,8 +235,13 @@
     const alts = altList(t => { const items = listingItems(ctx, t), k = kindOf(ctx);
       return { pk: k !== 'tests' ? items.filter(p => p.kind === 'package').length : 0, ts: k !== 'packages' ? items.filter(p => p.kind === 'test').length : 0 }; });
     const what = ctx.query ? `Brak wyników dla „${ctx.query}”` : ctx.fixedKind === 'packages' ? 'Brak pakietów' : 'Brak badań w tej kategorii';
-    return alts.length ? emptyWithAlts(`${what} ${DELIVERY[type()].loc}`, 'Zmień sposób realizacji, żeby je zobaczyć.', alts)
-      : DS.SearchEmpty({ icon: 'file-note-search', title: 'Brak badań dla tych filtrów.', hint: filtersHint(ctx) });
+    if (alts.length) return emptyWithAlts(`${what} ${DELIVERY[type()].loc}`, 'Zmień sposób realizacji, żeby je zobaczyć.', alts);
+    // Gdy nie ma gdzie odesłać, stan pusty musi nazwać PRZYCZYNĘ: fraza bez trafień prowadzi do pisowni,
+    // zawężenie filtrami do zdjęcia filtrów. Wcześniej oba kończyły się komunikatem o filtrach, więc przy
+    // pustym wyszukiwaniu gubiliśmy frazę i dawaliśmy radę nie na temat.
+    if (ctx.query) return DS.SearchEmpty({ icon: 'file-note-search', title: `${what} ${DELIVERY[type()].loc}`, hint: 'Sprawdź pisownię lub wyszukaj inną frazę' });
+    return `<div class="shop__emptyAlts">` + DS.SearchEmpty({ icon: 'file-note-search', title: 'Brak badań dla tych filtrów.', hint: filtersHint(ctx) }) +
+      (filtersOn(ctx) ? `<div class="shop__emptyAction">${DS.Button({ label: 'Wyczyść filtry', type: 'secondary', attrs: { 'data-action': 'filters-clear' } })}</div>` : '') + `</div>`;
   }
   // Szybkie filtrowanie na PLP kategorii (724:77102): chip rozwijany z typem otwiera arkusz „Filtry", a za
   // separatorem stoją pillsy podkategorii — tapnięcie działa od razu i można zaznaczyć kilka. Wyników
@@ -501,6 +510,7 @@
     'show-all': (el) => go('list/' + el.dataset.kind),
     'package-details': (el) => { const id = el.closest('.ds-ProductCard')?.dataset.product; if (id) openProduct(id); },
     'filters': () => filtersSheet(),
+    'filters-clear': () => { const ctx = listingCtx(current()); st().kind = 'all'; if (ctx && ctx.cat) st().sub[ctx.cat.id] = []; APP.syncUrl({ push: true }); refreshListing(); },
     'full-desc': () => info('Pełny opis — treść z API w kolejnym etapie'),
     'faq': () => info('FAQ badania — w kolejnym etapie'),
     'copy-code': (el) => { const code = el.dataset.code; (navigator.clipboard?.writeText(code) || Promise.resolve()).then(() => snack(`Skopiowano kod ${code}`, 'success', 110), () => info(`Kod: ${code}`)); },

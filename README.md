@@ -158,6 +158,36 @@ budowie arkusza filtrów i pillsów. Podmienione:
 | ekran klubu: „Trzy korzyści, jedna decyzja." · sheet kategorii z podtytułem | zdjęte | M1 A14, decyzja F3 |
 | „1 podpowiedzi" · etykieta pola „Wpisz kraj..." | odmiana po liczbie · „Kraj" | polszczyzna, reguła 3a |
 
+### Przebieg skillem `/ux-writer` (2026-09-09, po wdrożeniu)
+
+Paczka mówi „pracujesz z Claude i skillem UX writer"; pierwsze wdrożenie poszło bez niego, więc copy
+przepuściliśmy przez skill drugim przebiegiem. Znalazł trzy rzeczy:
+
+1. **Błąd w podmianie: zniknęło „Zobacz" z wiersza składowych.** Wziąłem kanon z leksykonu 234
+   („Składowe pakietu (N)"), a ten wiersz dotyczy **nagłówka sekcji na karcie produktu**, nie przycisku
+   na kafelku. Mapa M3 3.1 zmienia tam tylko separator. Wróciło „Zobacz składowe pakietu (4)".
+2. **Stan pusty nie nazywał przyczyny.** Fraza bez trafień w żadnym sposobie realizacji kończyła się
+   komunikatem o filtrach — uczestnik tracił swoją frazę i dostawał radę nie na temat. Teraz szukanie bez
+   trafień daje „Brak wyników dla „x” w Punkcie Pobrań" + „Sprawdź pisownię…", a zawężenie filtrami
+   „Brak badań dla tych filtrów." + „Bez filtrów zobaczysz tu N badań".
+3. **Stan pusty po filtrach był ślepym zaułkiem** — sam komunikat, bez wyjścia. Doszedł przycisk
+   **„Wyczyść filtry"** (kanon z mapy M3, P02 „Brak wyników po filtrach"), który zdejmuje typ i podkategorie
+   i czyści adres. Pokazuje się tylko wtedy, gdy filtry faktycznie są włączone.
+
+Napięcia między skillem a leksykonem, w których **wygrywa leksykon** (hierarchia źródeł z README paczki):
+
+- **„+ Dodaj"** — skill chce „czasownik + obiekt", to jest goły czasownik. Decyzja F2 wprost to rozstrzyga
+  („plus mówi, co się stanie"), więc zostaje.
+- **„Wyczyść"** w arkuszu filtrów bez dopełnienia — kontekst niesie tytuł arkusza „Filtry"; mapa M3 P02
+  zostawia tę formę w arkuszu, a „Wyczyść filtry" na ekranie pustego stanu. Trzymamy oba, tak jak mapa.
+- **Kropka na końcu „Brak badań dla tych filtrów."** — pozostałe tytuły pustych stanów u nas kropki nie mają.
+  Kanon mapy ma ją dosłownie, więc zostaje; do wyrównania w leksykonie przy następnej rundzie.
+- **„Brak wyników dla „x”"** używa słowa „wyniki" w znaczeniu trafień — mapa przyjmuje to świadomie
+  jako dług (LXXVI).
+
+Skill potwierdził też czytanie Jarka, że „64,60 zł 5% taniej w klubie" czyta się jak równanie (dwie liczby
+bez słowa między nimi łamią regułę „jeden przekaz na raz"). Czeka na decyzję Kaspra.
+
 ### Sprzeczności w mapach — zgłoszone, nierozstrzygnięte
 
 Prototyp wykonuje mapy dosłownie, więc te rozjazdy w nim zostały. Do rozmowy z Kasprem:

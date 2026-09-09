@@ -494,3 +494,7 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .filters__count { color: var(--content-on-surface-tertiary); }
 .filters__actions { display: flex; gap: var(--space-md); }
 .filters__actions .ds-Button--secondary { flex: 0 0 auto; }
+
+/* Wyjście z pustego stanu po filtrach: wzorzec pustych stanów chce akcji, a nie samego komunikatu
+   (mapa M3, P02 „Brak wyników po filtrach" ma przycisk „Wyczyść filtry"). */
+.shop__emptyAction { display: flex; justify-content: center; padding-top: var(--space-xl); }
