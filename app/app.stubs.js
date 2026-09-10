@@ -12,11 +12,11 @@
   const sk = (w, h) => `<span class="stub__skel" style="width:${w};height:${h}px"></span>`;
   const row = (content, gap = 12) => `<div class="stub__row" style="gap:${gap}px">${content}</div>`;
 
-  const notice = (title, second = 'Przejdź do innej zakładki.', action = '', { pill = 'Niedostępne w badaniu', first = 'Ta część aplikacji jest w przygotowaniu.' } = {}) => `<div class="stub__notice"><div class="stub__card">` +
+  const notice = (title, second = 'Przejdź do innej zakładki.', action = '', { pill = 'Niedostępne w badaniu', first = 'Ta część aplikacji jest w przygotowaniu.', extra } = {}) => `<div class="stub__notice"><div class="stub__card">` +
     `<div class="stub__group">` +
     DS.ButtonTiny({ label: pill, variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
     `<div class="stub__text"><p class="stub__title">${esc(title)}</p>` +
-    `<p class="stub__desc"><span>${esc(first)}</span>${second ? `<span class="stub__descStrong">${esc(second)}</span>` : ''}</p>` +
+    `<p class="stub__desc"><span>${esc(first)}</span>${extra ? `<span>${esc(extra)}</span>` : ''}${second ? `<span class="stub__descStrong">${esc(second)}</span>` : ''}</p>` +
     `</div></div>` + (action ? `<div class="stub__action">${action}</div>` : '') + `</div></div>`;
 
   const stub = (tab, title, skeleton, second, action, opts) => `<div class="screen shop stub" data-tab="${tab}">
@@ -60,7 +60,7 @@
   // Poza zadaniem (podgląd z panelu) ekran zostaje zwykłą zaślepką.
   SCREENS['tab/start'] = () => {
     const t = taskOf(APP.S.task);
-    if (t) return stub('start', t[2], startSkeleton, '', '', { pill: t[1], first: t[3] });
+    if (t) return stub('start', t[2], startSkeleton, '', '', { pill: t[1], first: t[3], extra: t[7] });
     return stub('start', 'Ekran startowy', startSkeleton);
   };
   SCREENS['tab/results'] = () => stub('results', 'Wyniki badań', resultsSkeleton);
@@ -89,9 +89,12 @@
       ['Zamów Pakiet tarczycowy', 'Zwróć uwagę na liczbę badań w pakiecie'], 'p-tarcz'],
     // Siódme pole = wymagany sposób realizacji. Zadanie 3 jest o pobraniu w domu, więc dodanie tej samej
     // morfologii w Punkcie Pobrań NIE jest wykonaniem zadania — badge sukcesu się nie pojawia.
+    // Ósme pole = dopisek na ekranie Start, wyciszoną barwą pod scenariuszem. W zadaniu 3 mówi, co
+    // pobranie w domu właściwie znaczy — bez tego „u siebie w domu" część osób czytała jako zestaw wysyłkowy.
     ['3', 'Zadanie 3', 'Zamów morfologię krwi',
       'Chcesz zrobić badanie krwi u siebie w domu.',
-      ['Zamów morfologię krwi', 'Wybierz pobranie w domu'], 't-morf', 'dom'],
+      ['Zamów morfologię krwi', 'Wybierz pobranie w domu'], 't-morf', 'dom',
+      '(specjalista przyjedzie do Ciebie i je wykona)'],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
