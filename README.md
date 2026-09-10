@@ -132,6 +132,17 @@ oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi
 | 2 | **Pakiet tarczycowy** | `/pakiet/pakiet-tarczycowy` | symbol PKTARPP, skład FT3 + FT4 + TSH, 153,00 zł, 30 dni 107,10 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 | 3 | **Morfologia krwi obwodowej** | `/badanie/morfologia-krwi-c55` | symbol MORF, ICD C55, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 
+**Arkusz składowych pakietu (2026-09-10, `3309:33789`).** Stopka karty pakietu („Zobacz składowe
+pakietu • N") otwiera arkusz z nazwą pakietu, podtytułem „Składowe pakietu • N" i listą badań. Każdy
+wiersz prowadzi do karty tego badania; to samo działa teraz w sekcji „Składowe pakietu" na PDP, gdzie
+wiersze miały `data-open`, ale nie miały akcji. Pod listą stoi **przyklejony `BottomActionsBar`**
+z przyciskiem „Szczegóły pakietu" — lista przewija się **pod** paskiem i wygasza w jego gradiencie
+(ten sam komponent DS co na innych ekranach: `linear-gradient(to top, #fff 34.9%, transparent)`
+plus `backdrop-filter: blur(22px)`). Pasek jest pozycjonowany absolutnie, a jego `bottom` ustawia JS
+zmierzoną wysokością wskaźnika ekranu głównego: **w arkuszu ma on 16 px, nie 34 px** jak samodzielny,
+więc zaszyta stała zostawiała 18 px dziury. Arkusz hugguje treść (3 składowe = 433 px), a przy
+największym pakiecie (9 składowych) zatrzymuje się na `max-height: 92%` i lista dostaje własny scroll.
+
 **Pakiet Sport wypadł z katalogu (2026-09-09).** Po przeniesieniu zadania 2 na Pakiet tarczycowy nie miał
 już żadnej roli, a jako siódmy pakiet profilaktyczny tylko wydłużał listing. **Morfologia nazywa się teraz
 „Morfologia krwi"** (wcześniej „Morfologia krwi obwodowej") — tą samą nazwą mówi zadanie 3 i karta produktu,

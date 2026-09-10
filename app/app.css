@@ -464,6 +464,13 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .pkg__list .ds-Cell { border-radius: 0; padding: 4px 0; box-shadow: inset 0 -1px 0 var(--outline-border); }
 .pkg__list .ds-Cell:last-child { box-shadow: none; }
 .pkg__list .ds-Cell__title { white-space: normal; overflow: visible; }
+/* Pasek akcji arkusza 1:1 z 3309:33789 (instancja BottomActionsBar): stoi nad listą, więc treść przewija
+   się pod nim i wygasza się w gradiencie komponentu. `bottom: 34px` to dokładnie górna krawędź
+   HomeIndicatora arkusza, żeby pasek nie nachodził na wskaźnik. Slot arkusza ma `overflow: hidden`,
+   ale pasek mieści się w jego pudełku, więc nie jest obcinany. Wartość `bottom` nadpisuje JS zmierzoną
+   wysokością wskaźnika — w arkuszu ma on 16 px, nie 34 px jak samodzielny. */
+.sheet--pkg .pkg__list { padding-bottom: 84px; }
+.sheet--pkg .pkg__bar { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 2; }
 .product .ds-Cell__trailing { color: var(--content-on-surface-tertiary); }
 
 /* Odznaka nad tytułem na karcie produktu (warianty 2726:16353): wyrównana do lewej, nie rozciąga się na kartę */

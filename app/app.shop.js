@@ -434,10 +434,19 @@
     const p = CATALOG.byId(id);
     if (!p || !(p.components || []).length) return;
     const items = p.components.map(c => CATALOG.byId(c)).filter(Boolean);
+    // Pasek akcji jest przyklejony do dołu arkusza, a lista przewija się POD nim — dlatego pasek stoi
+    // absolutnie nad listą, a lista dostaje dolny padding równy jego wysokości. Gradient w `BottomActionsBar`
+    // (ten sam komponent DS co na innych ekranach) wygasza treść wjeżdżającą pod pasek.
     const sheet = DS.presentSheet({ title: p.title, subtitle: `Składowe pakietu • ${items.length}`, className: 'sheet--pkg',
-      content: `<div class="ds-BottomSheet__scroll pkg__list">${items.map(t => DS.Cell({ icon: null, title: t.title, attrs: { 'data-action': 'open-component', 'data-open': t.id } })).join('')}</div>` });
+      content: `<div class="ds-BottomSheet__scroll pkg__list">${items.map(t => DS.Cell({ icon: null, title: t.title, attrs: { 'data-action': 'open-component', 'data-open': t.id } })).join('')}</div>`
+        + `<div class="pkg__bar">${DS.BottomActionsBar({ homeIndicator: false, buttons: [DS.Button({ label: 'Szczegóły pakietu', type: 'secondary', block: true, attrs: { 'data-action': 'open-package', 'data-open': p.id } })] })}</div>` });
+    // Pasek siada dokładnie na wskaźniku ekranu głównego. Wysokość wskaźnika w arkuszu (16 px) różni się
+    // od samodzielnego (34 px), więc mierzymy ją, zamiast zaszywać stałą, która rozjedzie się przy zmianie DS.
+    const hi = sheet.wrap.querySelector('.ds-BottomSheet > .ds-HomeIndicator');
+    const bar = sheet.wrap.querySelector('.pkg__bar');
+    if (hi && bar) bar.style.bottom = hi.offsetHeight + 'px';
     sheet.wrap.addEventListener('click', (e) => {
-      const el = e.target.closest('[data-action="open-component"]');
+      const el = e.target.closest('[data-action="open-component"], [data-action="open-package"]');
       if (el) { sheet.close(false); openProduct(el.dataset.open); }
     });
   }
