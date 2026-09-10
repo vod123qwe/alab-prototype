@@ -125,7 +125,7 @@
   };
   // granatowy nagłówek z hero, polem szukania i chipami (wspólny dla strony głównej i listingów)
   const shopHead = ({ title, bar = false, query, filters = false } = {}) => `<header class="shop__head" id="shop-head">
-        <div class="shop__fill"><div class="shop__bg"><img src="${A}img_search_cover_bg@3x.png" alt=""></div></div>
+        <div class="shop__fill"><div class="shop__bg"><img src="${A}img_search_cover_bg@3x.png" alt=""><img class="shop__bgBlur" src="${A}img_search_cover_bg@3x.png" alt="" aria-hidden="true"></div></div>
         <div class="${bar ? 'shop__nav shop__nav--bar' : 'shop__nav'}">${bar ? DS.TopBar({ transparent: true, light: true, title }) : DS.StatusBar({ light: true })}</div>
         <div class="shop__searchWrap">
           <div class="shop__searchRow">${DS.SearchField({ style: 'oncolor', placeholder: query || 'Szukaj badania…', attrs: { 'data-action': 'open-search', 'aria-label': 'Szukaj badania', class: query ? 'has-query' : '' } })}${filters ? DS.IconButton({ icon: 'settings', variant: 'onscrim', size: 'medium', label: 'Filtry', attrs: { 'data-action': 'filters' } }) : ''}</div>

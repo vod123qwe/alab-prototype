@@ -188,7 +188,18 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 /* Gotowy eksport z Figmy (@3x, 1125×1167 = 375×389): zdjęcie, PROGRESYWNE rozmycie i gradient w jednym
    pliku. Rozmycia nie da się wiernie odtworzyć w CSS — Figma wygasza „background blur” alfą warstwy Content
    Background, więc narasta ono razem z gradientem, a `backdrop-filter` rozmywa równo całą powierzchnię. */
-.shop__bg img { display: block; width: 100%; height: auto; }
+.shop__bg > img { display: block; width: 100%; height: auto; }
+/* Druga kopia tej samej grafiki, rozmyta i wygaszona maską od góry: dokłada rozmycie TAM, gdzie w eksporcie
+   już narasta, więc charakter progresywny zostaje, a dół (pole szukania i chipy) robi się mocniej rozmyty.
+   Uniform `filter: blur()` na jednej warstwie rozmyłby też ostrą górę zdjęcia. `scale` chowa miękkie
+   krawędzie, które rozmycie wciąga z przezroczystości poza obrazem. Siłę reguluje jedna zmienna.
+   Stopy maski są w PIKSELACH, nie w procentach: nagłówek ma stałe ~195 px, a obraz skaluje się z szerokością
+   ekranu (389 px przy 375). Przy procentach ramp schodził pod nagłówek — pełną siłę osiągał na 319 px, czyli
+   tam, gdzie tło jest już zasłonięte białą treścią, i rozmycia praktycznie nie było widać. */
+.shop__bg { --bg-blur: 14px; }
+.shop__bgBlur { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: blur(var(--bg-blur)); transform: scale(1.1); transform-origin: center;
+  -webkit-mask: linear-gradient(180deg, transparent 0, #000 180px); mask: linear-gradient(180deg, transparent 0, #000 180px); }
 .shop__nav { position: relative; }
 .shop__searchWrap { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 24px; will-change: padding; }
 .shop__chipsWrap { overflow: hidden; will-change: height, opacity, transform; margin: 0 -20px; }
