@@ -132,6 +132,20 @@ oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi
 | 2 | **Pakiet tarczycowy** | `/pakiet/pakiet-tarczycowy` | symbol PKTARPP, skład FT3 + FT4 + TSH, 153,00 zł, 30 dni 107,10 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 | 3 | **Morfologia krwi obwodowej** | `/badanie/morfologia-krwi-c55` | symbol MORF, ICD C55, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 
+## Wyjście z katalogu DS (2026-09-10)
+
+Do storybooka wchodzi się z ukrytego menu prototypu („Storybook — design system"), a stamtąd nie było
+drogi powrotnej ani resetu — trzeba było ręcznie poprawiać adres. Storybook ma teraz **przyklejony pasek
+u góry z przyciskiem menu**, który otwiera ten sam arkusz co prototyp: „Wróć do prototypu" i
+„Resetuj prototyp".
+
+Reset z tej strony czyści `alab:club` w `sessionStorage` (jedyny trwały stan aplikacji — reszta żyje
+w pamięci i ginie przy przejściu) i wraca na `../app/`, czyli na ekran wyboru zadania.
+
+**DS nie ma ikony burgera**, więc pasek używa `view-list` z zestawu — tej samej, którą menu prototypu
+opisuje wejście do katalogu. Dorysowanie własnej ikony łamałoby regułę „ikony bierzemy z zatwierdzonej
+biblioteki", więc zostawiam to do decyzji: albo `view-list` zostaje, albo dochodzi burger do DS.
+
 ## Linki startowe do badania (2026-09-10)
 
 Pięć adresów do rozesłania uczestnikom. **Tylko Netlify** — GitHub Pages nie obsługuje głębokich
