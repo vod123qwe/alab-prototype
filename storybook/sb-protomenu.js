@@ -9,8 +9,15 @@
   const bar = document.getElementById('sb-topbar');
   if (!bar || !window.DS) return;
 
-  bar.innerHTML = DS.IconButton({ icon: 'view-list', size: 'medium', variant: 'transparent', label: 'Menu prototypu', attrs: { id: 'sb-burger' } }) +
-    `<span class="sb-topbar__title">ALAB • Design system</span>`;
+  // Pasek to `DS.TopBar` z biblioteki, nie własna konstrukcja: przycisk po lewej, tytuł wyśrodkowany.
+  // `statusBar: false`, bo makietowy status bar iOS nie ma sensu na stronie katalogu otwieranej na desktopie.
+  bar.innerHTML = DS.TopBar({ statusBar: false, leading: 'view-list', title: 'ALAB • Design system',
+    leadingAttrs: { id: 'sb-burger' } });
+  // `DS.TopBar` wpisuje leadingowi `aria-label="Wstecz"` na sztywno, a przy dwóch takich samych atrybutach
+  // HTML bierze PIERWSZY — czytnik ogłaszałby „Wstecz" dla przycisku menu. Nadpisujemy po renderze,
+  // zamiast ruszać komponent w DS.
+  const burger = document.getElementById('sb-burger');
+  burger.setAttribute('aria-label', 'Menu prototypu');
 
   // Reset prototypu z tej strony: jedyny trwały stan aplikacji to `alab:club` w sessionStorage
   // (reszta żyje w pamięci i ginie przy przejściu). Czyścimy go i wracamy na start prototypu.
@@ -20,7 +27,7 @@
   };
 
   let open = false;
-  document.getElementById('sb-burger').addEventListener('click', () => {
+  burger.addEventListener('click', () => {
     if (open) return; open = true;
     const sheet = DS.presentSheet({ title: 'Prototyp ALAB', className: 'devmenu', closeAttrs: { 'data-sb': 'close' },
       onClose: () => { open = false; }, content:
