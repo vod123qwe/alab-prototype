@@ -132,6 +132,24 @@ oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi
 | 2 | **Pakiet tarczycowy** | `/pakiet/pakiet-tarczycowy` | symbol PKTARPP, skład FT3 + FT4 + TSH, 153,00 zł, 30 dni 107,10 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 | 3 | **Morfologia krwi obwodowej** | `/badanie/morfologia-krwi-c55` | symbol MORF, ICD C55, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 
+**Runda uwag zespołu (2026-09-10).** Cztery zmiany w scenariuszu badania:
+
+- **Koniec zadania to wyśrodkowany komunikat, nie arkusz.** Marginesy 32 px, zielony tick 64 px,
+  wyśrodkowany tekst, **zero akcji**: bez dwóch przycisków i bez „x" w narożniku. Tapnięcie
+  w dowolnym miejscu wraca na listę zadań. Poprzedni arkusz dawał wyjście „Przeglądaj dalej", więc
+  część osób nagrywała ścieżkę już poza zadaniem i mieszała wynik. Adres nadal zmienia się na
+  `/app/koniec/<produkt>`, żeby w Useberry dało się rozdzielić zakup z ALAB club i bez.
+- **Zadanie 3 zalicza się tylko w „ALAB w domu".** Wpis zadania ma teraz siódme pole z wymaganym
+  sposobem realizacji. Ta sama morfologia dodana w Punkcie Pobrań nie kończy zadania, bo w realnym
+  produkcie pobranie w domu jest inną usługą.
+- **Wyszukiwarka nie oddaje celu zadania za pierwszym trafieniem.** Produkt z `demoteUnless` zjeżdża
+  na trzecią pozycję, dopóki zapytanie nie trafia w jego wyróżnik: „pakiet" pokazuje Pakiet tarczycowy
+  jako trzeci, „tarczycowy" znów jako pierwszy.
+- **Wejście w zadanie zależy od zadania.** Zadanie 1 ma cel na Starcie, więc po splashu zostaje na tym
+  ekranie, a Start mówi wtedy „Zamów badanie ogólne moczu · Zacznij w zakładce Sklep" zamiast zaślepki
+  „w przygotowaniu". Zadania 2 i 3 są w całości w Sklepie, więc splash prowadzi prosto do zakładki
+  Sklep; Start odwiedzony z ciekawości pokazuje zwykłą zaślepkę.
+
 **Arkusz składowych pakietu (2026-09-10, `3309:33789`).** Stopka karty pakietu („Zobacz składowe
 pakietu • N") otwiera arkusz z nazwą pakietu, podtytułem „Składowe pakietu • N" i listą badań. Każdy
 wiersz prowadzi do karty tego badania; to samo działa teraz w sekcji „Składowe pakietu" na PDP, gdzie

@@ -87,7 +87,7 @@
     // skład FT3 + FT4 + TSH, symbol PKTARPP, cena 153,00 zł, najniższa z 30 dni 107,10 zł, opis i przygotowanie.
     // BEZ `popular`: zadanie ma zmusić do przejścia przez kategorie albo wyszukiwarkę, więc pakiet nie może
     // stać na ekranie głównym sklepu.
-    p('p-tarcz', 'Pakiet tarczycowy', 'hormony', 'Tarczyca', 153.00, ['t-ft3', 't-ft4', 't-tsh'], { code: CODE, symbol: 'PKTARPP', lowest: 107.10, tat: '1 dzień roboczy',
+    p('p-tarcz', 'Pakiet tarczycowy', 'hormony', 'Tarczyca', 153.00, ['t-ft3', 't-ft4', 't-tsh'], { code: CODE, symbol: 'PKTARPP', lowest: 107.10, tat: '1 dzień roboczy', demoteUnless: 'tarczyc',
       keywords: ['tarczyca', 'pakiet tarczycowy', 'tsh', 'ft3', 'ft4', 'hormony tarczycy'],
       desc: 'Tarczyca to niewielki gruczoł, który odgrywa kluczową rolę w regulacji procesów metabolicznych. Pakiet obejmujący badania TSH, FT3 i FT4 jest podstawowym narzędziem diagnostyki funkcji tarczycy. Pozwala na wczesne wykrycie zaburzeń pracy tego gruczołu i monitorowanie skuteczności terapii.',
       prep: ['Na czczo, 8-12 godzin po ostatnim posiłku — pij tylko czystą, niegazowaną wodę',

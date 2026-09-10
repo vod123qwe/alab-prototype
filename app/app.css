@@ -513,6 +513,20 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .doneSheet__mark { display: flex; }
 .doneSheet__icon { width: 48px; height: 48px; }
 
+/* Komunikat końca zadania: wyśrodkowany, bez akcji. Marginesy 32 px z obu stron, tekst wyśrodkowany,
+   zielony tick na środku. Cała warstwa jest klikalna — tapnięcie gdziekolwiek wraca na listę zadań,
+   dlatego karta nie ma własnych zdarzeń ani przycisku zamykania. */
+.doneDialog { inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 0 32px; cursor: pointer; }
+.doneDialog__scrim { position: absolute; inset: 0; background: rgba(4, 24, 48, .48); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); animation: ds-fade .24s ease both; }
+.doneDialog__card { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 20px; padding: 40px 28px 36px; border-radius: 32px; background: var(--background-surface);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .18); animation: doneDialog-in .34s cubic-bezier(.32,.72,0,1) both; }
+.doneDialog__icon { width: 64px; height: 64px; color: var(--functional-success); }
+.doneDialog__title { font: 700 var(--display-medium-font-size)/var(--display-medium-line-height) var(--font-family-primary); letter-spacing: -0.02em; color: var(--content-on-surface); }
+.doneDialog__desc { font: 600 var(--body-medium-font-size)/var(--body-medium-line-height) var(--font-family-primary); color: var(--content-on-surface-secondary); }
+.doneDialog__hint { margin-top: 8px; font: 600 var(--body-xsmall-font-size)/var(--body-xsmall-line-height) var(--font-family-primary); color: var(--content-on-surface-tertiary); }
+@keyframes doneDialog-in { from { opacity: 0; transform: scale(.94) translateY(8px); } to { opacity: 1; transform: none; } }
+
 /* Wymagania zadania jako punktowana lista: znacznikiem jest zielony tick, więc od razu widać, że to lista
    rzeczy do zrobienia, a nie pola do klikania. Ten sam blok wraca na arkuszu końca zadania. */
 .taskSheet__list { display: flex; flex-direction: column; }

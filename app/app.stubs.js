@@ -12,17 +12,17 @@
   const sk = (w, h) => `<span class="stub__skel" style="width:${w};height:${h}px"></span>`;
   const row = (content, gap = 12) => `<div class="stub__row" style="gap:${gap}px">${content}</div>`;
 
-  const notice = (title, second = 'Przejdź do innej zakładki.', action = '') => `<div class="stub__notice"><div class="stub__card">` +
+  const notice = (title, second = 'Przejdź do innej zakładki.', action = '', { pill = 'Niedostępne w badaniu', first = 'Ta część aplikacji jest w przygotowaniu.' } = {}) => `<div class="stub__notice"><div class="stub__card">` +
     `<div class="stub__group">` +
-    DS.ButtonTiny({ label: 'Niedostępne w badaniu', variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
+    DS.ButtonTiny({ label: pill, variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
     `<div class="stub__text"><p class="stub__title">${esc(title)}</p>` +
-    `<p class="stub__desc"><span>Ta część aplikacji jest w przygotowaniu.</span><span class="stub__descStrong">${esc(second)}</span></p>` +
+    `<p class="stub__desc"><span>${esc(first)}</span><span class="stub__descStrong">${esc(second)}</span></p>` +
     `</div></div>` + (action ? `<div class="stub__action">${action}</div>` : '') + `</div></div>`;
 
-  const stub = (tab, title, skeleton, second, action) => `<div class="screen shop stub" data-tab="${tab}">
+  const stub = (tab, title, skeleton, second, action, opts) => `<div class="screen shop stub" data-tab="${tab}">
       <div class="screen__top">${DS.StatusBar()}</div>
-      <div class="screen__body stub__body">${skeleton}</div>
-      ${notice(title, second, action)}
+      <div class="screen__body stub__body">${skeleton || startSkeleton}</div>
+      ${notice(title, second, action, opts)}
     </div>`;
 
   // Start — szkielet 1:1 z wzoru: awatar + dwie linijki, dwa kafle, niżej sekcja z blokiem
@@ -54,7 +54,15 @@
 
   APP.resultsStub = true;   // zakładka Wyniki jest zaślepką → bez licznika nowych wyników w dolnej nawigacji
 
-  SCREENS['tab/start'] = () => stub('start', 'Ekran startowy', startSkeleton);
+  // Zadanie 1 zaczyna się NA Starcie, więc ten ekran nie może mówić „ta część aplikacji jest
+  // w przygotowaniu" — uczestnik dostaje tu swoje zadanie. W zadaniach 2 i 3 wchodzi od razu do Sklepu,
+  // a Start odwiedza tylko z ciekawości, więc widzi zwykłą zaślepkę.
+  SCREENS['tab/start'] = () => {
+    const t = taskOf(APP.S.task);
+    if (t && t[0] === '1') return stub('start', t[2], startSkeleton, 'Zacznij w zakładce Sklep.', '',
+      { pill: t[1], first: 'To Twoje zadanie w tym prototypie.' });
+    return stub('start', 'Ekran startowy', startSkeleton);
+  };
   SCREENS['tab/results'] = () => stub('results', 'Wyniki badań', resultsSkeleton);
   SCREENS['tab/cart'] = () => stub('cart', 'Koszyk', cartSkeleton, 'Jeśli zadanie jest skończone, kliknij poniżej.',
     DS.Button({ label: 'Zakończ zadanie', type: 'secondary', block: true, attrs: { 'data-action': 'end-task' } }));
@@ -79,9 +87,11 @@
     ['2', 'Zadanie 2', 'Zamów Pakiet tarczycowy',
       'Chcesz sprawdzić, jak pracuje Twoja tarczyca.',
       ['Zamów Pakiet tarczycowy', 'Zwróć uwagę na liczbę badań w pakiecie'], 'p-tarcz'],
+    // Siódme pole = wymagany sposób realizacji. Zadanie 3 jest o pobraniu w domu, więc dodanie tej samej
+    // morfologii w Punkcie Pobrań NIE jest wykonaniem zadania — badge sukcesu się nie pojawia.
     ['3', 'Zadanie 3', 'Zamów morfologię krwi',
       'Chcesz zrobić badanie krwi u siebie w domu.',
-      ['Zamów morfologię krwi', 'Wybierz pobranie w domu'], 't-morf'],
+      ['Zamów morfologię krwi', 'Wybierz pobranie w domu'], 't-morf', 'dom'],
   ];
   const taskOf = (n) => TASKS.find(t => t[0] === String(n));
   SCREENS['zadania'] = () => `<div class="screen tasks">
@@ -150,7 +160,14 @@
       if (matchMedia('(max-width: 900px)').matches) document.documentElement.style.backgroundColor = '#04387c';
     });
     const id = booting;
-    setTimeout(() => { if (booting === id && APP.current() === 'zadanie/' + id) APP.rerender('fade'); }, BOOT_MS);
+    // Zadanie 1 ma cel na Starcie, więc po splashu zostajemy na tym ekranie. Zadania 2 i 3 są w całości
+    // w Sklepie — wrzucanie uczestnika najpierw na zaślepkę Startu kazałoby mu szukać zakładki, zanim
+    // w ogóle zobaczy zadanie. Dlatego splash prowadzi tam prosto.
+    setTimeout(() => {
+      if (booting !== id || APP.current() !== 'zadanie/' + id) return;
+      if (id === '1') { APP.rerender('fade'); return; }
+      booting = null; APP.hideTabBar = false; APP.go('dashboard');
+    }, BOOT_MS);
   });
 
   // Kliknięcie karty zadania otwiera arkusz z treścią: nagłówek „Zadanie 1", tytuł, opis i dwie akcje.
@@ -170,26 +187,34 @@
     sheet.wrap.addEventListener('click', (e) => { if (!e.target.closest('[data-task-start]')) return; sheet.close(false); APP.go('zadanie/' + n); });
   };
 
-  // Koniec zadania: arkusz sukcesu jest CELOWO prosty — tick, co wylądowało w koszyku i dwie drogi dalej.
-  // Bez powtarzania wymagań zadania: uczestnik ma je już za sobą, a nie kolejną listę do czytania.
-  // Adres zmienia się na `/app/koniec/<produkt>/<tryb klubu>`,
-  // żeby w Useberry dało się rozdzielić zakup z ALAB club i bez (uwaga Maćka z tablicy). Arkusz nie zamyka
-  // eksploracji: uczestnik może zostać w aplikacji i wrócić tu zakładką Koszyk albo iść do kolejnego zadania.
-  const doneSheet = (p) => {
-    const s = APP.S, t = taskOf(s.task);
-    const back = () => { try { history.replaceState(null, '', APP.url('product/' + p.id)); } catch (e) { /* file:// */ } };
-    const sheet = DS.presentSheet({ title: t ? t[1] + ' wykonane' : 'Zadanie wykonane', onClose: back, content:
-      `<div class="taskSheet">
-        <div class="doneSheet__mark">${DS.icon('check-circle-fill', null, 'doneSheet__icon')}</div>
-        <div class="taskSheet__text"><p class="taskSheet__title">${esc(p.title)} jest w koszyku</p>
-          <p class="taskSheet__desc">To wszystko, o co prosiliśmy w tym zadaniu. Możesz jeszcze poklikać w aplikacji — do tego ekranu wrócisz przyciskiem w zakładce Koszyk.</p></div>
-        <div class="taskSheet__actions">
-          ${DS.Button({ label: 'Przejdź do kolejnego zadania', block: true, attrs: { 'data-action': 'end-task' } })}
-          ${DS.Button({ label: 'Przeglądaj dalej', type: 'ghost', block: true, attrs: { 'data-action': 'sheet-close' } })}
-        </div>
-      </div>` });
-    return sheet;
+  // Koniec zadania: wyśrodkowany komunikat, nie arkusz. ZERO akcji — bez przycisków i bez „x" w narożniku.
+  // Zadanie jest zamknięte, więc uczestnik nie ma już czego szukać w aplikacji: tapnięcie w DOWOLNYM miejscu
+  // wraca na listę zadań. Arkusz z dwiema drogami dalej („przeglądaj dalej") mieszał wynik badania — część
+  // osób klikała dalej i nagrywała ścieżkę już poza zadaniem.
+  // Adres zostaje `/app/koniec/<produkt>`, żeby w Useberry dało się rozdzielić zakup z ALAB club i bez.
+  let doneOpen = null;
+  const doneDialog = (p) => {
+    if (doneOpen) return doneOpen;
+    const host = document.getElementById('overlay') || document.body;
+    const wrap = document.createElement('div');
+    wrap.className = 'doneDialog';
+    wrap.style.position = host === document.body ? 'fixed' : 'absolute';
+    wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+    wrap.innerHTML = `<div class="doneDialog__scrim"></div>
+      <div class="doneDialog__card">
+        ${DS.icon('check-circle-fill', null, 'doneDialog__icon')}
+        <p class="doneDialog__title">Zadanie wykonane</p>
+        <p class="doneDialog__desc">${esc(p.title)} jest w koszyku.</p>
+        <p class="doneDialog__hint">Dotknij ekranu, aby wrócić do listy zadań</p>
+      </div>`;
+    host.appendChild(wrap);
+    doneOpen = wrap;
+    // Pierwsze tapnięcie zamyka i wraca na start. `once` chroni przed podwójnym wyjściem przy szybkim
+    // double tapie, a opóźnienie 400 ms przed nasłuchem — przed zamknięciem tapnięciem, które dodało produkt.
+    setTimeout(() => wrap.addEventListener('click', () => { wrap.remove(); doneOpen = null; APP.go('zadania'); }, { once: true }), 400);
+    return wrap;
   };
+  APP.afterRender.push((route) => { if (doneOpen && !route.startsWith('koniec/')) { doneOpen.remove(); doneOpen = null; } });
 
   // Dokładamy się do akcji sklepu zamiast jej przepisywać — logika badania zostaje w tym pliku.
   const addToCart = APP.ACTIONS['add-to-cart'];
@@ -200,16 +225,18 @@
     // Zadanie jest skończone tylko wtedy, gdy do koszyka wpadł WŁAŚCIWY produkt. Inny zostaje w koszyku
     // (uczestnik może się pomylić i szukać dalej), ale sukcesu nie ogłaszamy i adres końca się nie zmienia.
     const want = taskOf(s.task); if (want && want[5] && p.id !== want[5]) return;
+    // Zadanie 3: ta sama morfologia dodana w Punkcie Pobrań nie jest wykonaniem zadania o pobraniu w domu.
+    if (want && want[6] && APP.deliveryType && APP.deliveryType() !== want[6]) return;
     s.taskDone = true;
     try { history.pushState(null, '', APP.url('koniec/' + p.id)); } catch (err) { /* file:// */ }
-    setTimeout(() => doneSheet(p), 900);   // najpierw snackbar, potem arkusz
+    setTimeout(() => doneDialog(p), 900);   // najpierw snackbar, potem komunikat
   };
 
   // Wejście na adres końca zadania (odświeżenie, wklejony link) rysuje kartę produktu i ten sam arkusz.
   SCREENS['koniec/:id'] = (id) => SCREENS['product/:id'](id);
   APP.afterRender.push((route) => {
     if (!route.startsWith('koniec/')) return;
-    const p = CATALOG.byId(route.slice(7)); if (p) setTimeout(() => doneSheet(p), 60);
+    const p = CATALOG.byId(route.slice(7)); if (p) setTimeout(() => doneDialog(p), 60);
   });
 
   Object.assign(APP.ACTIONS, {

@@ -26,6 +26,7 @@
 
   const st = () => { const s = S(); if (!s.shop) s.shop = { delivery: 'punkt', cart: 0, added: {}, scroll: {}, query: '', kind: 'all', sub: {} }; if (!s.shop.sub) s.shop.sub = {}; if (!s.shop.kind) s.shop.kind = 'all'; return s.shop; };
   const type = () => st().delivery;
+  APP.deliveryType = type;   // zaślepki badania sprawdzają sposób realizacji przy zaliczaniu zadania
 
   // ---------------- katalog: pomocniki ----------------
   const avail = (p, t = type()) => p.types.includes(t);
@@ -174,9 +175,19 @@
   // Lekki „stemming”: ucinamy końcówkę fleksyjną, żeby „morfologii”, „badania”, „krwi” trafiały w te same wpisy.
   const stem = (w) => w.length >= 7 ? w.slice(0, -2) : w.length >= 5 ? w.slice(0, -1) : w;
   const hits = (text, q) => norm(q).split(/\s+/).filter(w => w.length > 1).every(w => text.includes(w) || text.includes(stem(w)));
+  // Cel zadania nie może być pierwszym trafieniem na OGÓLNE zapytanie — uczestnik ma go szukać, a nie
+  // dostać w jednym tapnięciu. Produkt z `demoteUnless` zjeżdża na trzecią pozycję, dopóki zapytanie nie
+  // trafia w jego wyróżnik: „pakiet" pokazuje Pakiet tarczycowy jako trzeci, „tarczycowy" znów jako pierwszy.
+  const DEMOTE_TO = 2;
+  const demote = (list, q) => {
+    const nq = norm(q);
+    const i = list.findIndex(p => p.demoteUnless && !nq.includes(p.demoteUnless));
+    if (i < 0 || i >= DEMOTE_TO || list.length <= DEMOTE_TO) return list;
+    const out = list.slice(); const [p] = out.splice(i, 1); out.splice(DEMOTE_TO, 0, p); return out;
+  };
   const matches = (q, t = type()) => { const items = forType(t); return {
-    pk: items.filter(p => p.kind === 'package' && hits(haystack(p), q)),
-    ts: items.filter(p => p.kind === 'test' && hits(haystack(p), q)),
+    pk: demote(items.filter(p => p.kind === 'package' && hits(haystack(p), q)), q),
+    ts: demote(items.filter(p => p.kind === 'test' && hits(haystack(p), q)), q),
     cats: catsFor(t).filter(c => hits(norm(c.label), q)) }; };
   function searchResults(q) {
     if (q.trim().length < 3) return mostSearched();
