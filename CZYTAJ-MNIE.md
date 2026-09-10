@@ -151,14 +151,13 @@ npx netlify-cli deploy --prod --dir=.
 
 ⚠️ Ta paczka **nie zawiera** `.git` ani `.netlify`, więc jest zdjęciem stanu, nie kopią roboczą.
 Deploy z rozpakowanej paczki wymaga najpierw `npx netlify-cli link` (wskazanie projektu
-`alab-prototype`). Normalnie publikujemy z repozytorium `vod123qwe/alab-prototype`.
+`alab-prototype`). Normalnie publikujemy z repozytorium projektu.
 
-**GitHub Pages** — publikuje się sam z gałęzi `main`, adres
-`https://vod123qwe.github.io/alab-prototype/app/`. Build trwa od kilkudziesięciu sekund do kilku
-minut; stan sprawdzisz przez `app/version.json`. Pamiętaj o ograniczeniu z sekcji 2: głębokie adresy
-tam nie działają.
+**GitHub Pages.** Repozytorium publikuje też kopię przez Pages, ale **nie używamy jej do badania**:
+Pages nie ma przekierowania dla routera ścieżkowego, więc głębokie adresy z sekcji 2 oddają 404.
+Jedynym adresem do rozsyłania uczestnikom jest Netlify.
 
-Po każdym wdrożeniu warto sprawdzić, czy oba adresy oddają tę samą wersję:
+Po każdym wdrożeniu warto sprawdzić, czy na żywo stoi ta wersja, którą wypchnąłeś:
 
 ```bash
 curl -s https://alab-prototype.netlify.app/app/version.json
