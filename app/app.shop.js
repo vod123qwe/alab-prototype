@@ -324,7 +324,7 @@
             ${DS.Button({ label: un ? 'Zmień punkt' : buyLabel, type: un ? 'secondary' : 'primary', block: true, attrs: { id: 'prod-buy', ...buyAttrs } })}
           </div>
           ${DS.Surface({ label: isPkg ? 'Opis pakietu' : 'Opis badania', content: DS.Cell({ icon: 'file-doc', title: p.desc, attrs: { 'data-action': 'full-desc', class: 'ds-Cell--clamp' } }) })}
-          ${isPkg ? DS.SectionHeader({ title: 'Składowe pakietu' }) + DS.Surface({ label: 'Składowe pakietu', content: `<div class="ds-Surface__list">${comps.map(c => DS.Cell({ icon: null, title: c.title, attrs: { 'data-open': c.id } })).join('')}</div>` }) : ''}
+          ${isPkg ? DS.SectionHeader({ title: 'Składowe pakietu' }) + DS.Surface({ label: 'Składowe pakietu', content: `<div class="ds-Surface__list">${comps.map(c => DS.Cell({ icon: null, title: c.title, attrs: { 'data-action': 'open-product', 'data-open': c.id } })).join('')}</div>` }) : ''}
           ${DS.Surface({ content: `<div class="ds-Surface__rows">${DS.CellInfo({ icon: 'timer', label: 'Oczekiwanie na wynik', value: p.tat })}${isPkg ? '' : DS.CellInfo({ icon: 'lab-tube', label: 'Pobierany materiał', value: p.material })}${DS.CellInfo({ icon: 'pin', label: 'Sposób realizacji', value: where })}</div>` })}
           ${DS.Surface({ content: DS.CellInfo({ icon: 'file-check-doc', label: 'Przygotowanie do badania', bullets: p.prep }) })}
           ${inPkgs.length ? DS.SectionHeader({ title: 'Pakiety z tym badaniem' }) + `<div class="ds-Carousel">${inPkgs.map(card).join('')}</div>` : ''}
@@ -423,9 +423,23 @@
   // ---------------- arkusze (iOS-owy gest zamykania w DS.presentSheet) ----------------
   function categorySheet() {
     const cats = catsFor();
-    const sheet = DS.presentSheet({ title: 'Kategorie', height: '750px',
+    const sheet = DS.presentSheet({ title: 'Kategorie', height: '750px', className: 'sheet--cats',
       content: `<div class="ds-BottomSheet__scroll" style="gap:8px">${cats.map(c => DS.Cell({ icon: c.icon, title: c.label, subtitle: plural(catCount(c), 'badanie', 'badania', 'badań'), attrs: { 'data-action': 'open-category', 'data-cat': c.id } })).join('')}</div>` });
     sheet.wrap.addEventListener('click', (e) => { if (e.target.closest('[data-action="open-category"]')) setTimeout(() => sheet.close(false), 120); });
+  }
+  // Arkusz „Składowe pakietu" 1:1 z 3309:33789: nazwa pakietu jako tytuł, „Składowe pakietu • N" jako
+  // podtytuł i lista badań wchodzących w skład. Każdy wiersz prowadzi do karty tego badania — dlatego
+  // arkusz zamykamy bez animacji i od razu otwieramy produkt, inaczej przejście dublowałoby się z gestem.
+  function packageSheet(id) {
+    const p = CATALOG.byId(id);
+    if (!p || !(p.components || []).length) return;
+    const items = p.components.map(c => CATALOG.byId(c)).filter(Boolean);
+    const sheet = DS.presentSheet({ title: p.title, subtitle: `Składowe pakietu • ${items.length}`, className: 'sheet--pkg',
+      content: `<div class="ds-BottomSheet__scroll pkg__list">${items.map(t => DS.Cell({ icon: null, title: t.title, attrs: { 'data-action': 'open-component', 'data-open': t.id } })).join('')}</div>` });
+    sheet.wrap.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-action="open-component"]');
+      if (el) { sheet.close(false); openProduct(el.dataset.open); }
+    });
   }
   // Arkusz „Filtry" 1:1 z 724:34766 (wyniki wyszukiwania: sam typ) i 724:32918 (kategoria: typ + zawężenie
   // w kategorii oraz „Wyczyść"). Rząd filtrów zniknął z ekranu — cały wybór siedzi pod ikoną filtrów, a wynik
@@ -532,7 +546,7 @@
     'open-category': (el) => go('category/' + el.dataset.cat),
     'all-categories': () => categorySheet(),
     'show-all': (el) => go('list/' + el.dataset.kind),
-    'package-details': (el) => { const id = el.closest('.ds-ProductCard')?.dataset.product; if (id) openProduct(id); },
+    'package-details': (el) => { const id = el.closest('.ds-ProductCard')?.dataset.product; if (id) packageSheet(id); },
     'filters': () => filtersSheet(),
     'filters-clear': () => { const ctx = listingCtx(current()); st().kind = 'all'; if (ctx && ctx.cat) st().sub[ctx.cat.id] = []; APP.syncUrl({ push: true }); refreshListing(); },
     'full-desc': () => info('Pełny opis — treść z API w kolejnym etapie'),

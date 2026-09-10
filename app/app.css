@@ -445,6 +445,14 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    idzie w tertiary (decyzja Jarka 2026-09-09) — wcześniej reguła akcentu łapała oba, bo szewron też jest
    bezpośrednim dzieckiem .ds-Cell i wygrywał specyficznością z domyślną barwą .ds-Cell__trailing. */
 .product .ds-Surface .ds-Cell > .ds-icon:not(.ds-Cell__trailing) { color: var(--main-accent); }
+/* Arkusz „Kategorie": ikona wiodąca w kolorze marki, szewron zostaje szary (jak na kaflach i na PDP). */
+.sheet--cats .ds-Cell > .ds-icon:not(.ds-Cell__trailing) { color: var(--main-accent); }
+/* Arkusz „Składowe pakietu" (3309:33789): same nazwy badań, bez ikon, rozdzielone włoskową kreską.
+   Ostatni wiersz bez kreski, żeby nie dublowała się z krawędzią arkusza. */
+.pkg__list { display: flex; flex-direction: column; }
+.pkg__list .ds-Cell { border-radius: 0; padding: 4px 0; box-shadow: inset 0 -1px 0 var(--outline-border); }
+.pkg__list .ds-Cell:last-child { box-shadow: none; }
+.pkg__list .ds-Cell__title { white-space: normal; overflow: visible; }
 .product .ds-Cell__trailing { color: var(--content-on-surface-tertiary); }
 
 /* Odznaka nad tytułem na karcie produktu (warianty 2726:16353): wyrównana do lewej, nie rozciąga się na kartę */
