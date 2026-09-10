@@ -61,7 +61,9 @@
 /* ---------- Cell ---------- */
 .ds-Cell { display: flex; align-items: center; gap: var(--space-2xl); min-height: 56px; width: 100%; text-align: left; color: var(--content-on-surface); border-radius: 12px; transition: background-color .14s ease; }
 .ds-Cell:active { background: var(--background-surface-secondary); }
-.ds-Cell > .ds-icon { width: 24px; height: 24px; }
+/* Ikona wiodąca 24 px, ale BEZ szewrona: `.ds-Cell > .ds-icon` (0,2,0) wygrywało specyficznością
+   z `.ds-Cell__trailing` (0,1,0), więc szewron renderował się na 24 px, choć komponent podaje 16. */
+.ds-Cell > .ds-icon:not(.ds-Cell__trailing) { width: 24px; height: 24px; }
 .ds-Cell__content { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .ds-Cell__title { font: 700 var(--headline-medium-font-size)/var(--headline-medium-line-height) var(--font-family-primary); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ds-Cell__title .match { color: var(--content-on-surface-secondary); }

@@ -458,6 +458,8 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
 .product .ds-Surface .ds-Cell > .ds-icon:not(.ds-Cell__trailing) { color: var(--main-accent); }
 /* Arkusz „Kategorie": ikona wiodąca w kolorze marki, szewron zostaje szary (jak na kaflach i na PDP). */
 .sheet--cats .ds-Cell > .ds-icon:not(.ds-Cell__trailing) { color: var(--main-accent); }
+/* Szewrony w arkuszach na tertiary, jak na PDP: niebieskie zostają tylko ikony wiodące po lewej. */
+.sheet--cats .ds-Cell__trailing, .sheet--pkg .ds-Cell__trailing { color: var(--content-on-surface-tertiary); }
 /* Arkusz „Składowe pakietu" (3309:33789): same nazwy badań, bez ikon, rozdzielone włoskową kreską.
    Ostatni wiersz bez kreski, żeby nie dublowała się z krawędzią arkusza. */
 .pkg__list { display: flex; flex-direction: column; }
@@ -469,6 +471,11 @@ html, body { margin: 0; height: 100%; overscroll-behavior: none; -webkit-tap-hig
    HomeIndicatora arkusza, żeby pasek nie nachodził na wskaźnik. Slot arkusza ma `overflow: hidden`,
    ale pasek mieści się w jego pudełku, więc nie jest obcinany. Wartość `bottom` nadpisuje JS zmierzoną
    wysokością wskaźnika — w arkuszu ma on 16 px, nie 34 px jak samodzielny. */
+/* Arkusze przewijają się, ale bez paska przewijania: na desktopie przeglądarka rysowała wewnątrz arkusza
+   ścieżkę ze strzałkami. Reguła obejmuje każdy arkusz, nie tylko składowe. Ta sama konwencja co
+   `.screen__body` i karuzele. */
+.ds-SheetLayer .ds-BottomSheet__scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.ds-SheetLayer .ds-BottomSheet__scroll::-webkit-scrollbar { display: none; }
 .sheet--pkg .pkg__list { padding-bottom: 84px; }
 .sheet--pkg .pkg__bar { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 2; }
 .product .ds-Cell__trailing { color: var(--content-on-surface-tertiary); }
