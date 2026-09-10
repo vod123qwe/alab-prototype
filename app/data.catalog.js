@@ -110,7 +110,6 @@
     t('t-e2', 'Estradiol (E2)', 'hormony', 'Hormony kobiece', 36.96, { old: 46.20, code: CODE, icd: 'K99' }),
     t('t-amh', 'AMH – hormon antymüllerowski', 'hormony', 'Diagnostyka płodności', 149.00, { unavailableAt: 'punkt', tat: '5 dni roboczych', icd: 'I43' }),
     t('t-testo', 'Testosteron całkowity', 'hormony', 'Hormony męskie', 35.70, { icd: 'M67', desc: 'Testosteron całkowity to podstawowe badanie hormonalne u mężczyzn. Pomaga ocenić libido, samopoczucie, masę mięśniową i płodność.' }),
-    p('p-tarcz-roz', 'Pakiet tarczycowy rozszerzony', 'hormony', 'Tarczyca', 127.20, ['t-tsh', 't-ft4', 't-ft3', 't-atpo', 't-morf'], { old: 159.00, code: CODE }),
     p('p-meno', 'Pakiet hormony kobiece – menopauza', 'hormony', 'Hormony kobiece', 111.30, ['t-prl', 't-e2', 't-tsh', 't-amh'], { premium: true }),
 
     // ---- Alergie i nietolerancje ----

@@ -16,7 +16,7 @@
     `<div class="stub__group">` +
     DS.ButtonTiny({ label: pill, variant: 'primary', attrs: { tabindex: '-1', 'aria-hidden': 'true' } }) +
     `<div class="stub__text"><p class="stub__title">${esc(title)}</p>` +
-    `<p class="stub__desc"><span>${esc(first)}</span><span class="stub__descStrong">${esc(second)}</span></p>` +
+    `<p class="stub__desc"><span>${esc(first)}</span>${second ? `<span class="stub__descStrong">${esc(second)}</span>` : ''}</p>` +
     `</div></div>` + (action ? `<div class="stub__action">${action}</div>` : '') + `</div></div>`;
 
   const stub = (tab, title, skeleton, second, action, opts) => `<div class="screen shop stub" data-tab="${tab}">
@@ -54,13 +54,13 @@
 
   APP.resultsStub = true;   // zakładka Wyniki jest zaślepką → bez licznika nowych wyników w dolnej nawigacji
 
-  // Zadanie 1 zaczyna się NA Starcie, więc ten ekran nie może mówić „ta część aplikacji jest
-  // w przygotowaniu" — uczestnik dostaje tu swoje zadanie. W zadaniach 2 i 3 wchodzi od razu do Sklepu,
-  // a Start odwiedza tylko z ciekawości, więc widzi zwykłą zaślepkę.
+  // Start w każdym zadaniu przypomina, co jest do zrobienia — zamiast mówić „ta część aplikacji jest
+  // w przygotowaniu". Uczestnik wraca tu, gdy się zgubi, i ma instrukcję pod ręką bez otwierania Useberry.
+  // Świadomie NIE nazywamy zakładki, w której ma to zrobić: znalezienie drogi jest częścią zadania.
+  // Poza zadaniem (podgląd z panelu) ekran zostaje zwykłą zaślepką.
   SCREENS['tab/start'] = () => {
     const t = taskOf(APP.S.task);
-    if (t && t[0] === '1') return stub('start', t[2], startSkeleton, 'Zacznij w zakładce Sklep.', '',
-      { pill: t[1], first: 'To Twoje zadanie w tym prototypie.' });
+    if (t) return stub('start', t[2], startSkeleton, '', '', { pill: t[1], first: t[3] });
     return stub('start', 'Ekran startowy', startSkeleton);
   };
   SCREENS['tab/results'] = () => stub('results', 'Wyniki badań', resultsSkeleton);

@@ -145,10 +145,15 @@ oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi
 - **Wyszukiwarka nie oddaje celu zadania za pierwszym trafieniem.** Produkt z `demoteUnless` zjeżdża
   na trzecią pozycję, dopóki zapytanie nie trafia w jego wyróżnik: „pakiet" pokazuje Pakiet tarczycowy
   jako trzeci, „tarczycowy" znów jako pierwszy.
-- **Wejście w zadanie zależy od zadania.** Zadanie 1 ma cel na Starcie, więc po splashu zostaje na tym
-  ekranie, a Start mówi wtedy „Zamów badanie ogólne moczu · Zacznij w zakładce Sklep" zamiast zaślepki
-  „w przygotowaniu". Zadania 2 i 3 są w całości w Sklepie, więc splash prowadzi prosto do zakładki
-  Sklep; Start odwiedzony z ciekawości pokazuje zwykłą zaślepkę.
+- **Start przypomina zadanie, ale nie prowadzi za rękę.** W każdym z trzech zadań ekran Start pokazuje
+  pigułkę „Zadanie N", tytuł zadania i jego scenariusz — zamiast zaślepki „ta część aplikacji jest
+  w przygotowaniu". Uczestnik ma instrukcję pod ręką, gdy się zgubi, bez otwierania Useberry.
+  **Świadomie nie nazywamy zakładki**, w której ma to zrobić: znalezienie drogi jest częścią zadania.
+  Po splashu zadanie 1 zostaje na Starcie (jego cel jest właśnie tam), a zadania 2 i 3 idą prosto do
+  zakładki Sklep. Poza zadaniem (podgląd z panelu) ekran zostaje zwykłą zaślepką.
+- **Jeden pakiet tarczycowy.** „Pakiet tarczycowy rozszerzony" wypadł z katalogu, żeby w zadaniu 2 nie
+  było dwóch bardzo podobnych pakietów do wyboru. Zapytanie „tarczycowy" zwraca teraz dokładnie jeden
+  pakiet; pakietów w katalogu jest 14.
 
 **Arkusz składowych pakietu (2026-09-10, `3309:33789`).** Stopka karty pakietu („Zobacz składowe
 pakietu • N") otwiera arkusz z nazwą pakietu, podtytułem „Składowe pakietu • N" i listą badań. Każdy
