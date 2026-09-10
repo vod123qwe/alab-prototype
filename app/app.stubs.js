@@ -262,8 +262,17 @@
 
   const i = APP.ROUTES.findIndex(r => r[1] === 'tab/results');
   if (i >= 0) APP.ROUTES.splice(i + 1, 0, ['Wyniki · pełne (poza badaniem)', 'results-full'], ['Punkt Pobrań · zaślepka', 'punkt-pobran']);
+  // Linki startowe do badania. Segment `bez-klubu` / `w-klubie` na końcu adresu USTAWIA członkostwo
+  // w ALAB club (mechanizm wariantów trasy, ten sam co w sklepie), więc każdy link daje deterministyczny
+  // stan wejścia — niezależnie od tego, co uczestnik robił wcześniej w tej samej karcie przeglądarki.
+  // Zadanie 1 ma jeden link: klub zdobywa się dopiero w trakcie. Zadania 2 i 3 mają po dwa,
+  // bo dzielimy grupę na klubowiczów i nie-klubowiczów.
   APP.ROUTES.push(['— Badanie'], ['Wybór zadań', 'zadania'],
-    ['Zadanie 1 · mocz', 'zadanie/1'], ['Zadanie 2 · Pakiet tarczycowy', 'zadanie/2'], ['Zadanie 3 · morfologia w domu', 'zadanie/3']);
+    ['Zadanie 1 · mocz', 'zadanie/1/bez-klubu'],
+    ['Zadanie 2 · pakiet, bez klubu', 'zadanie/2/bez-klubu'],
+    ['Zadanie 2 · pakiet, w klubie', 'zadanie/2/w-klubie'],
+    ['Zadanie 3 · morfologia w domu, bez klubu', 'zadanie/3/bez-klubu'],
+    ['Zadanie 3 · morfologia w domu, w klubie', 'zadanie/3/w-klubie']);
 
   // Prototyp badawczy zaczyna się od wyboru zadania. Rejestracja, logowanie i onboarding są POZA zakresem
   // tego testu, więc chowamy je z wejścia i z panelu — ekrany zostają w kodzie i wrócą, gdy będą potrzebne

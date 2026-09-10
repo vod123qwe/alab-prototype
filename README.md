@@ -132,6 +132,30 @@ oczekiwania, opis i przygotowanie. Reszta katalogu zostaje danymi przykładowymi
 | 2 | **Pakiet tarczycowy** | `/pakiet/pakiet-tarczycowy` | symbol PKTARPP, skład FT3 + FT4 + TSH, 153,00 zł, 30 dni 107,10 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 | 3 | **Morfologia krwi obwodowej** | `/badanie/morfologia-krwi-c55` | symbol MORF, ICD C55, 31,00 zł, 30 dni 21,70 zł, 1 dzień roboczy, opis, 5 punktów przygotowania |
 
+## Linki startowe do badania (2026-09-10)
+
+Pięć adresów do rozesłania uczestnikom. **Tylko Netlify** — GitHub Pages nie obsługuje głębokich
+adresów routera ścieżkowego (oddaje 404), więc linki do Useberry biorzemy z Netlify.
+
+| Zadanie | Wejście | Link |
+| --- | --- | --- |
+| 1 · mocz | splash → **Start** z treścią zadania | `https://alab-prototype.netlify.app/app/zadanie/1/bez-klubu` |
+| 2 · pakiet, bez klubu | splash → **Sklep** | `…/app/zadanie/2/bez-klubu` |
+| 2 · pakiet, w klubie | splash → **Sklep** | `…/app/zadanie/2/w-klubie` |
+| 3 · morfologia w domu, bez klubu | splash → **Sklep** | `…/app/zadanie/3/bez-klubu` |
+| 3 · morfologia w domu, w klubie | splash → **Sklep** | `…/app/zadanie/3/w-klubie` |
+
+Końcowy segment **ustawia członkostwo w ALAB club** — to ten sam mechanizm wariantów trasy, którym
+sklep zapisuje sposób realizacji i tryb klubu w adresie. Dzięki temu każdy link daje deterministyczny
+stan wejścia, niezależnie od tego, co uczestnik robił wcześniej w tej samej karcie: `w-klubie` włącza
+członkostwo, `bez-klubu` je wyłącza i oba zapisują wybór na sesję. Bez tego segmentu stan brałby się
+z pamięci sesji (`recallClub`), więc drugi link otwarty w tej samej karcie mógłby dziedziczyć klub
+z poprzedniego zadania.
+
+**Zadanie 1 ma jeden link**, bo klub zdobywa się dopiero w trakcie zadania. Zadania 2 i 3 mają po dwa,
+żeby dało się rozdzielić grupę na klubowiczów i nie-klubowiczów. Po zadaniu adres zmienia się na
+`/app/koniec/<produkt>`, więc w Useberry widać, czym zakończyła się ścieżka.
+
 **Runda uwag zespołu (2026-09-10).** Cztery zmiany w scenariuszu badania:
 
 - **Koniec zadania to wyśrodkowany komunikat, nie arkusz.** Marginesy 32 px, zielony tick 64 px,
